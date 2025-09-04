@@ -29,44 +29,52 @@ input[type=number]{width:90px;padding:8px;border-radius:8px;border:1px solid var
 .pay th,.pay td{border-bottom:1px dashed #164a30;padding:6px;text-align:center}
 .winflash{animation:flash .9s ease-in-out 1}
 @keyframes flash{0%{box-shadow:0 0 0 0 rgba(19,228,122,.7)}100%{box-shadow:0 0 0 18px rgba(19,228,122,0)}}
+
+/* 🍀 POP ефект за WILD */
+.cell.wild-pop{animation:clover-pop 600ms ease-out 1;box-shadow:0 0 0 0 rgba(19,228,122,.55)}
+@keyframes clover-pop{
+  0%{transform:scale(.8);filter:brightness(1.15)}
+  60%{transform:scale(1.15);box-shadow:0 0 18px 6px rgba(19,228,122,.45)}
+  100%{transform:scale(1);box-shadow:0 0 0 0 rgba(19,228,122,0)}
+}
 </style>
 </head>
 <body>
 <div class="wrap"><div class="panel">
-<h1>Mykonos Hot 5 🎰</h1>
+  <h1>Mykonos Hot 5 🎰</h1>
 
-<div class="status">
-  <div class="pill">Кредити: <span id="credits">1000</span></div>
-  <div class="pill">Залог: <input id="bet" type="number" min="1" max="1000" step="1" value="10"></div>
-  <div class="pill">Последна печалба: <span id="lastwin">0</span></div>
-</div>
+  <div class="status">
+    <div class="pill">Кредити: <span id="credits">1000</span></div>
+    <div class="pill">Залог: <input id="bet" type="number" min="1" max="1000" step="1" value="10"></div>
+    <div class="pill">Последна печалба: <span id="lastwin">0</span></div>
+  </div>
 
-<div class="machine"><div id="reels" class="reels"></div></div>
+  <div class="machine"><div id="reels" class="reels"></div></div>
 
-<div class="controls">
-  <button id="spinBtn" class="spin">SPIN</button>
-  <div class="wrapbox"><strong>Линии:</strong><span>5 (фиксирани)</span></div>
-  <div class="wrapbox"><strong>Общ залог:</strong><span id="totalbet">10</span></div>
-</div>
+  <div class="controls">
+    <button id="spinBtn" class="spin">SPIN</button>
+    <div class="wrapbox"><strong>Линии:</strong><span>5 (фиксирани)</span></div>
+    <div class="wrapbox"><strong>Общ залог:</strong><span id="totalbet">10</span></div>
+  </div>
 
-<div class="pay">
-  <div><strong>Таблица с печалби (× общия залог)</strong></div>
-  <table>
-    <tr><th>Символ</th><th>3</th><th>4</th><th>5</th></tr>
-    <tr><td>7️⃣ Седмица</td><td>×10</td><td>×40</td><td>×600</td></tr>
-    <tr><td>🍇 / 🍉</td><td>×8</td><td>×20</td><td>×100</td></tr>
-    <tr><td>🔔</td><td>×4</td><td>×10</td><td>×40</td></tr>
-    <tr><td>🍒 🍋 🍊 🍑</td><td>×2</td><td>×6</td><td>×20</td></tr>
-    <tr><td>💲 Scatter (навсякъде)</td><td>×3</td><td>×20</td><td>×100</td></tr>
-    <tr><td>⭐ Scatter (на 1,3,5)</td><td colspan="3">точно 3 = ×20</td></tr>
-  </table>
-  <div>🍀 WILD само на барабани 2–4, замества без scatter-и. Печалбите от scatter се добавят към линиите.</div>
-</div>
+  <div class="pay">
+    <div><strong>Таблица с печалби (× общия залог)</strong></div>
+    <table>
+      <tr><th>Символ</th><th>3</th><th>4</th><th>5</th></tr>
+      <tr><td>7️⃣ Седмица</td><td>×10</td><td>×40</td><td>×600</td></tr>
+      <tr><td>🍇 / 🍉</td><td>×8</td><td>×20</td><td>×100</td></tr>
+      <tr><td>🔔</td><td>×4</td><td>×10</td><td>×40</td></tr>
+      <tr><td>🍒 🍋 🍊 🍑</td><td>×2</td><td>×6</td><td>×20</td></tr>
+      <tr><td>💲 Scatter (навсякъде)</td><td>×3</td><td>×20</td><td>×100</td></tr>
+      <tr><td>⭐ Scatter (на 1,3,5)</td><td colspan="3">точно 3 = ×20</td></tr>
+    </table>
+    <div>🍀 WILD само на барабани 2–4, замества без scatter-и. Печалбите от scatter се добавят към линиите.</div>
+  </div>
 </div></div>
 
 <script>
 (()=>{
-// DOM refs
+// DOM
 const reelsRoot=document.getElementById('reels'),
       creditsEl=document.getElementById('credits'),
       lastWinEl=document.getElementById('lastwin'),
@@ -78,18 +86,18 @@ const reelsRoot=document.getElementById('reels'),
 const ROWS=3, COLS=5;
 const SYM={SEVEN:'7️⃣',GRAPE:'🍇',WATERMELON:'🍉',BELL:'🔔',CHERRY:'🍒',LEMON:'🍋',ORANGE:'🍊',PLUM:'🍑',WILD:'🍀',STAR:'⭐',DOLLAR:'💲'};
 
-// Reel symbol weights (per reel)
+// Weighted reels
 const base=[[SYM.SEVEN,2],[SYM.GRAPE,5],[SYM.WATERMELON,5],[SYM.BELL,6],[SYM.CHERRY,8],[SYM.LEMON,8],[SYM.ORANGE,8],[SYM.PLUM,8],[SYM.DOLLAR,3]];
 function makeBag(col){
-  const b=[], ex=[];
-  if(col>=1&&col<=3) ex.push([SYM.WILD,3]);              // wild only on reels 2-4
-  if(col===0||col===2||col===4) ex.push([SYM.STAR,2]);   // star only on 1,3,5
+  const b=[],ex=[];
+  if(col>=1&&col<=3) ex.push([SYM.WILD,3]);           // WILD: reels 2–4
+  if(col===0||col===2||col===4) ex.push([SYM.STAR,2]); // STAR: reels 1,3,5
   for(const [s,w] of base.concat(ex)) for(let i=0;i<w;i++) b.push(s);
   return b;
 }
 const reelBag=Array.from({length:COLS},(_,i)=>makeBag(i));
 
-// Paylines (left -> right)
+// Paylines
 const LINES=[
   [[0,0],[1,0],[2,0],[3,0],[4,0]],
   [[0,1],[1,1],[2,1],[3,1],[4,1]],
@@ -98,7 +106,7 @@ const LINES=[
   [[0,2],[1,1],[2,0],[3,1],[4,2]],
 ];
 
-// Paytable (multipliers of TOTAL BET)
+// Paytable (× TOTAL BET)
 const PAY={
   [SYM.SEVEN]:{3:10,4:40,5:600},
   [SYM.GRAPE]:{3:8,4:20,5:100},
@@ -127,11 +135,11 @@ const normBet=()=>Math.max(1,Math.min(1000,Math.floor(Number(betEl.value)||0)));
 betEl.addEventListener('input',()=>totalBetEl.textContent=normBet());
 totalBetEl.textContent=betEl.value;
 
-// Utils
+// Helpers
 function pick(b){return b[Math.floor(Math.random()*b.length)]}
-function setCol(c,vals){for(let r=0;r<ROWS;r++) grid[c][r].textContent=vals[r];}
+function setCol(c,vals){for(let r=0;r<ROWS;r++) grid[c][r].textContent=vals[r]}
 
-// Match with wilds (L2R)
+// Best match with wilds (L→R)
 function bestMatch(seq){
   const cand=[SYM.SEVEN,SYM.GRAPE,SYM.WATERMELON,SYM.BELL,SYM.CHERRY,SYM.LEMON,SYM.ORANGE,SYM.PLUM];
   let best={len:0,sym:null};
@@ -141,7 +149,7 @@ function bestMatch(seq){
       const s=seq[i];
       if(s===t||s===SYM.WILD) len++; else break;
     }
-    if(len>=3 && PAY[t] && PAY[t][len] && len>best.len) best={len,sym:t};
+    if(len>=3&&PAY[t]&&PAY[t][len]&&len>best.len) best={len,sym:t};
   }
   return best;
 }
@@ -171,6 +179,20 @@ function evalScatters(board,bet){
   return win;
 }
 
+// 🍀 POP wilds
+function popWilds(board){
+  for(let c=0;c<COLS;c++){
+    for(let r=0;r<ROWS;r++){
+      if(board[c][r]===SYM.WILD){
+        const cell=grid[c][r];
+        cell.classList.remove('wild-pop'); void cell.offsetWidth;
+        cell.classList.add('wild-pop');
+        cell.addEventListener('animationend',()=>cell.classList.remove('wild-pop'),{once:true});
+      }
+    }
+  }
+}
+
 function spin(){
   if(spinning) return;
   const bet=normBet();
@@ -189,6 +211,9 @@ function spin(){
       setCol(c,final[c]);
 
       if(c===COLS-1){
+        // анимирай детелините
+        popWilds(final);
+
         const win=evalLines(final,bet)+evalScatters(final,bet);
         credits+=win; creditsEl.textContent=credits; lastWinEl.textContent=win;
         if(win>0){ reelsRoot.classList.remove('winflash'); void reelsRoot.offsetWidth; reelsRoot.classList.add('winflash'); }
