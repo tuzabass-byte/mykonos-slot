@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mykonos Mini Slot (Free Demo)</title>
+<style>
+  html, body { margin: 0; padding: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: #f6f8fb; color: #0f1b2d; }
+  .wrap { max-width: 520px; margin: 24px auto 80px; padding: 16px; }
+  h1 { font-size: 22px; margin: 0 0 8px; text-align: center; letter-spacing: .3px; }
+  p.sub { margin: 0 0 16px; text-align: center; opacity: .8; }
+  .panel { background: #fff; border: 1px solid #cdd7e1; border-radius: 12px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,.04); }
+  .status { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .pill { background: #eef4ff; border: 1px solid #c9dafc; padding: 8px 10px; border-radius: 999px; font-weight: 600; font-size: 14px; }
+  .machine { background: linear-gradient(180deg, #ffffff, #f1f5ff); border: 1px solid #cdd7e1; border-radius: 12px; padding: 12px; position: relative; }
+  .reels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .reel { background: #ffffff; border: 1px solid #cdd7e1; border-radius: 10px; padding: 8px; height: 210px; display: grid; grid-template-rows: repeat(3, 1fr); gap: 6px; overflow: hidden; }
+  .cell { display: flex; align-items: center; justify-content: center; font-size: 42px; background: #f8fbff; border: 1px solid #e1e8f5; border-radius: 8px; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  button { appearance: none; border: 0; border-radius: 10px; padding: 12px; font-weight: 700; font-size: 16px; cursor: pointer; }
+  .spin { background: #2d5af0; color: #fff; }
+  .spin[disabled] { background: #9fb3ff; cursor: not-allowed; }
+  .betwrap { display: flex; align-items: center; gap: 8px; justify-content: space-between; border: 1px solid #cdd7e1; padding: 8px 10px; border-radius: 10px; background: #fff; }
+  input[type="number"] { width: 90px; padding: 8px; border-radius: 8px; border: 1px solid #cdd7e1; font-weight: 700; }
+  .paytable { margin-top: 14px; font-size: 14px; background: #fff; border: 1px solid #cdd7e1; border-radius: 12px; padding: 10px; }
+  .paytable h3 { margin: 0 0 6px; font-size: 15px; }
+  .paytable ul { margin: 6px 0 0 16px; }
+  .note { font-size: 12px; opacity: .75; margin-top: 8px; }
+  .footer { text-align: center; font-size: 12px; opacity: .7; margin-top: 14px; }
+  .winflash { animation: flash 800ms ease-in-out 1; }
+  @keyframes flash { 0% { background:#fff8c2 } 100% { background:#ffffff } }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Mykonos Mini Slot 🇬🇷</h1>
+    <p class="sub">Безплатна демо игра – за забавление (няма истински пари)</p>
+    <div class="panel">
+      <div class="status">
+        <div class="pill">Кредити: <span id="credits">1000</span></div>
+        <div class="pill">Последна печалба: <span id="lastwin">0</span></div>
+      </div>
+      <div class="machine">
+        <div class="reels" id="reels">
+          <!-- Reels filled by JS -->
+        </div>
+      </div>
+      <div class="controls">
+        <button id="spinBtn" class="spin">SPIN</button>
+        <div class="betwrap">
+          <label for="bet"><strong>Залог:</strong></label>
+          <input id="bet" type="number" min="1" max="1000" step="1" value="10">
+        </div>
+      </div>
+      <div class="paytable">
+        <h3>Печеливши линии</h3>
+        <div>5 линии: 3 хоризонтални + 2 диагонални. Плаща само 3 еднакви символа по линия.</div>
+        <h3>Таблица с печалби (множители × залог):</h3>
+        <ul>
+          <li>🏛️ храм ×50</li>
+          <li>🏺 амфора ×20</li>
+          <li>🔱 тризъбец ×12</li>
+          <li>🍇 грозде ×8</li>
+          <li>🫒 маслина ×5</li>
+          <li>🧿 око ×4</li>
+          <li>⚓ котва ×3</li>
+        </ul>
+        <p class="note">Забележка: Това е хоби демо. За реални казина е нужен сертифициран RNG и лиценз.</p>
+      </div>
+      <div class="footer">© Mykonos Demo • HTML5 • Без външни библиотеки</div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const creditsEl = document.getElementById('credits');
+  const lastWinEl = document.getElementById('lastwin');
+  const betEl = document.getElementById('bet');
+  const spinBtn = document.getElementById('spinBtn');
+  const reelsRoot = document.getElementById('reels');
+
+  // Symbol set with weights and pay multipliers (3 of a kind)
+  const symbols = [
+    {emoji:'🏛️', weight: 2, pay: 50},
+    {emoji:'🏺', weight: 4, pay: 20},
+    {emoji:'🔱', weight: 6, pay: 12},
+    {emoji:'🍇', weight: 8, pay: 8},
+    {emoji:'🫒', weight: 10, pay: 5},
+    {emoji:'🧿', weight: 12, pay: 4},
+    {emoji:'⚓', weight: 14, pay: 3},
+  ];
+
+  // Build weighted bag for RNG
+  const bag = [];
+  symbols.forEach(s => { for (let i=0;i<s.weight;i++) bag.push(s); });
+
+  // 3 reels × 3 rows each
+  const ROWS = 3, COLS = 3;
+
+  function pickSymbol() {
+    return bag[Math.floor(Math.random()*bag.length)];
+  }
+
+  // Initialize DOM grid
+  const grid = [];
+  for (let c=0; c<COLS; c++) {
+    const reel = document.createElement('div');
+    reel.className = 'reel';
+    reelsRoot.appendChild(reel);
+    grid[c] = [];
+    for (let r=0; r<ROWS; r++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = pickSymbol().emoji;
+      reel.appendChild(cell);
+      grid[c][r] = cell;
+    }
+  }
+
+  // Paylines: arrays of [col,row]
+  const lines = [
+    [[0,0],[1,0],[2,0]], // top
+    [[0,1],[1,1],[2,1]], // middle
+    [[0,2],[1,2],[2,2]], // bottom
+    [[0,0],[1,1],[2,2]], // diag TL->BR
+    [[0,2],[1,1],[2,0]], // diag BL->TR
+  ];
+
+  let credits = 1000;
+  let spinning = false;
+
+  function evaluateWin(board, bet) {
+    // board: COLS x ROWS emoji char matrix
+    let total = 0;
+    for (const line of lines) {
+      const [a,b,c] = line.map(([x,y]) => board[x][y]);
+      if (a === b && b === c) {
+        // find symbol pay
+        const sym = symbols.find(s => s.emoji === a);
+        if (sym) total += sym.pay * bet;
+      }
+    }
+    return total;
+  }
+
+  function setReelColumn(colIdx, values) {
+    for (let r=0; r<ROWS; r++) grid[colIdx][r].textContent = values[r];
+  }
+
+  function spinOnce() {
+    if (spinning) return;
+    const bet = Math.max(1, Math.min(1000, Math.floor(Number(betEl.value)||0)));
+    if (credits < bet) {
+      alert('Недостатъчни кредити. Рестартирай страницата за нови 1000.');
+      return;
+    }
+
+    credits -= bet;
+    creditsEl.textContent = credits.toString();
+    lastWinEl.textContent = '0';
+
+    spinning = true;
+    spinBtn.disabled = true;
+
+    // Simple spin animation: each column cycles random symbols then stops
+    const stopDelays = [700, 1000, 1300]; // ms for each column
+    const timers = [];
+    const finalBoard = [[],[],[]]; // COLS x ROWS emojis
+
+    for (let c=0; c<COLS; c++) {
+      const t = setInterval(() => {
+        const vals = [pickSymbol().emoji, pickSymbol().emoji, pickSymbol().emoji];
+        setReelColumn(c, vals);
+      }, 60 + c*15);
+      timers.push(t);
+
+      setTimeout(() => {
+        clearInterval(t);
+        // pick final symbols for this reel
+        for (let r=0; r<ROWS; r++) {
+          const s = pickSymbol().emoji;
+          finalBoard[c][r] = s;
+        }
+        setReelColumn(c, finalBoard[c]);
+        if (c === COLS-1) finishSpin(finalBoard, bet);
+      }, stopDelays[c]);
+    }
+  }
+
+  function finishSpin(board, bet) {
+    const win = evaluateWin(board, bet);
+    credits += win;
+    creditsEl.textContent = credits.toString();
+    lastWinEl.textContent = win.toString();
+    if (win > 0) {
+      reelsRoot.classList.remove('winflash');
+      void reelsRoot.offsetWidth; // reflow to restart animation
+      reelsRoot.classList.add('winflash');
+    }
+    spinning = false;
+    spinBtn.disabled = false;
+  }
+
+  spinBtn.addEventListener('click', spinOnce);
+})();
+</script>
+</body>
+</html>
