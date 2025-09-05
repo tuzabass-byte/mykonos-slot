@@ -1,416 +1,323 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Jump Runner – Offline</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mykonos Hot 5 — Expanding Wild Demo</title>
 <style>
-  :root {
-    --ui-bg: #0b1020;
-    --ui-fg: #e9f0ff;
-    --accent: #8fd1ff;
-    --accent-2: #76ffa8;
-    --danger: #ff6b6b;
+  :root{
+    --bg1:#0b1020;
+    --bg2:#081426;
+    --panel:#0f1b36;
+    --txt:#e9f0ff;
+    --accent:#8fd1ff;
+    --accent2:#76ffa8;
+    --gold:#ffd76b;
+    --wild:#2ecc71;
   }
-  html, body {
-    height: 100%;
-    margin: 0;
-    background: linear-gradient(180deg, #0b1020 0%, #07101c 100%);
-    color: var(--ui-fg);
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
-  }
-  .wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 14px 16px 24px;
-  }
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  h1 {
-    font-size: 22px;
-    margin: 8px 0 0;
-    letter-spacing: .5px;
-  }
-  .hud {
-    display: flex;
-    gap: 16px;
-    align-items: baseline;
-    flex-wrap: wrap;
-  }
-  .pill {
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 999px;
-    padding: 6px 10px;
-    font-size: 14px;
-  }
-  .btn {
-    appearance: none;
-    background: var(--accent);
-    color: #0b1020;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .btn:active { transform: translateY(1px); }
-  .canvas-wrap {
-    position: relative;
-    margin-top: 14px;
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 14px;
-    overflow: hidden;
-    background: radial-gradient(1200px 600px at 50% 100%, rgba(143,209,255,.15), transparent 60%);
-  }
-  canvas { display: block; width: 100%; height: auto; image-rendering: crisp-edges; }
-  .hint {
-    text-align: center;
-    font-size: 14px;
-    opacity: .85;
-    margin-top: 8px;
-  }
-  footer {
-    opacity: .7;
-    font-size: 12px;
-    margin-top: 10px;
-    text-align: center;
-  }
+  html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% 100%, rgba(143,209,255,.08), transparent 60%), linear-gradient(180deg,var(--bg1),var(--bg2)); color:var(--txt); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial}
+  .wrap{max-width:920px;margin:0 auto;padding:18px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{font-size:22px;margin:0;letter-spacing:.4px}
+  .hud{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-size:14px}
+  .btn{appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;background:var(--accent);color:#0b1020}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .machine{margin-top:14px;background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden;box-shadow:0 10px 35px rgba(0,0,0,.35)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0))}
+  .title{font-weight:900;letter-spacing:1px}
+  .reels{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px}
+  .col{background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;overflow:hidden}
+  .cell{height:84px;display:flex;align-items:center;justify-content:center;font-size:38px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);margin:6px 0;box-shadow:inset 0 4px 10px rgba(0,0,0,.25)}
+  .cell.wild{background:rgba(46,204,113,.15);border-color:rgba(46,204,113,.55);text-shadow:0 0 12px rgba(46,204,113,.7)}
+  .footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-top:1px solid rgba(255,255,255,.08)}
+  .lines{font-size:12px;opacity:.9}
+  .flash{position:absolute;inset:0;background:radial-gradient(closest-side, rgba(118,255,168,.6), rgba(118,255,168,0));pointer-events:none;opacity:0;transition:opacity .25s}
+  .flash.show{opacity:1;animation:flash .5s ease-out}
+  @keyframes flash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
+  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:10px;font-size:14px;opacity:0;transition:.25s}
+  .toast.show{opacity:1}
+  /* гръцка линийка горе/долу за стил */
+  .greek{height:8px;background:
+    linear-gradient(90deg, transparent 0 8px, rgba(255,255,255,.15) 8px 9px, transparent 9px 13px, rgba(255,255,255,.15) 13px 14px, transparent 14px 22px) repeat-x;
+    background-size:22px 8px;opacity:.7}
+  @media (max-width:640px){ .cell{height:64px;font-size:30px} }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Jump Runner – Offline</h1>
-      <div class="hud">
-        <div class="pill">Score: <span id="score">0</span></div>
-        <div class="pill">Best: <span id="best">0</span></div>
-        <button id="resetBest" class="btn" title="Изчисти най-добрия резултат">Reset Best</button>
-      </div>
-    </header>
-
-    <div class="canvas-wrap">
-      <canvas id="game" width="900" height="450" aria-label="Jump Runner игра"></canvas>
+<div class="wrap">
+  <header>
+    <h1>Mykonos Hot 5 — Expanding Wild</h1>
+    <div class="hud">
+      <div class="pill">Кредити: <span id="credits">1000</span></div>
+      <div class="pill">Залог: <span id="bet">10</span></div>
+      <div class="pill">Печалба: <span id="win">0</span></div>
+      <button id="spinBtn" class="btn">SPIN</button>
     </div>
-    <div class="hint">Клик/тап или Space/↑ за скок. Клик после Game Over = рестарт.</div>
+  </header>
 
-    <footer>Напълно офлайн • Без зависимости • Запазва най-добър резултат локално</footer>
+  <div class="machine">
+    <div class="greek"></div>
+    <div class="topbar">
+      <div class="title">🍋 🍒 🔔 ⭐ 7️⃣ • 🍀 WILD само на барабани 2–4</div>
+      <div class="pill">Paylines: 5</div>
+    </div>
+
+    <div id="reels" class="reels">
+      <!-- 5 колони × 3 клетки -->
+    </div>
+    <div id="flash" class="flash"></div>
+
+    <div class="footer">
+      <div class="lines">Линии: горна • средна • долна • диагонал ↘︎ • диагонал ↗︎</div>
+      <div class="pill">WILD 🍀 → ако се падне на (2–4) → целият екран става WILD</div>
+    </div>
+    <div class="greek"></div>
   </div>
 
+  <div id="toast" class="toast"></div>
+</div>
+
 <script>
-(() => {
-  // ----- Конфигурация -----
-  const W = 900, H = 450;
-  const GROUND_Y = H - 64;         // височина на земята
-  const GRAVITY = 2000;            // px/s^2
-  const JUMP_VELOCITY = 820;       // px/s
-  const PLAYER = { w: 38, h: 46 }; // размер на героя
-  const BASE_SPEED = 260;          // начална скорост на препятствията
-  const SPEED_GROWTH = 0.06;       // нарастване на скоростта спрямо времето
-  const SPAWN_COOLDOWN = [0.9, 1.45]; // интервал за появяване (секунди)
-  const GAP_Y_VARIANCE = 40;       // лек вертикален шум на земята за „вълни“ фон
-  const COLORS = {
-    player: "#76ffa8",
-    obstacle: "#8fd1ff",
-    danger: "#ff6b6b",
-    ground: "rgba(255,255,255,.15)",
-    cloud: "rgba(255,255,255,.08)"
-  };
+/* ----------------------------------
+   Конфигурация
+-----------------------------------*/
+const ROWS = 3, COLS = 5;
+const SYMBOLS = ['🍇','🍋','🍒','🔔','⭐','7️⃣']; // базови символи
+const WILD = '🍀';
+const ALLOWED_WILD_REELS = new Set([1,2,3]); // барабани 2–4 (0-базов индекс)
+const SPIN_TIME_PER_REEL = 700; // ms
+const EXTRA_REEL_DELAY = 120;   // ms, стъпаловидно спиране
+const CELL_CLASS = 'cell';
 
-  // ----- Състояние -----
-  const cvs = document.getElementById("game");
-  const ctx = cvs.getContext("2d");
-  const uiScore = document.getElementById("score");
-  const uiBest = document.getElementById("best");
-  const btnResetBest = document.getElementById("resetBest");
+// paytable за 5 в линия (примерни стойности, можеш да ги смениш)
+const paytable = {
+  '7️⃣': {5: 250},
+  '⭐': {5: 150},
+  '🔔': {5: 120},
+  '🍒': {5: 80},
+  '🍋': {5: 60},
+  '🍇': {5: 40},
+  [WILD]: {5: 300}
+};
 
-  let bestScore = Number(localStorage.getItem("jr_best") || 0);
-  uiBest.textContent = bestScore;
+// 5 линии
+const lines = [
+  [[0,0],[0,1],[0,2],[0,3],[0,4]], // top
+  [[1,0],[1,1],[1,2],[1,3],[1,4]], // mid
+  [[2,0],[2,1],[2,2],[2,3],[2,4]], // bottom
+  [[0,0],[1,1],[2,2],[1,3],[0,4]], // V диагонал
+  [[2,0],[1,1],[0,2],[1,3],[2,4]], // Λ диагонал
+];
 
-  let state = "ready"; // ready | playing | gameover
-  let tPrev = 0;
-  let speed = BASE_SPEED;
-  let timePlayed = 0;
-  let spawnTimer = 0;
-  let nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]);
-  let score = 0;
+// кредити / залог
+let credits = 1000;
+let bet = 10;
+const uiCredits = document.getElementById('credits');
+const uiBet = document.getElementById('bet');
+const uiWin = document.getElementById('win');
+const spinBtn = document.getElementById('spinBtn');
+const reelsEl = document.getElementById('reels');
+const flashEl = document.getElementById('flash');
+const toastEl = document.getElementById('toast');
+uiCredits.textContent = credits;
+uiBet.textContent = bet;
 
-  const player = {
-    x: 120,
-    y: GROUND_Y - PLAYER.h,
-    vy: 0,
-    onGround: true,
-    jump() {
-      if (this.onGround) {
-        this.vy = -JUMP_VELOCITY;
-        this.onGround = false;
+// създай клетки
+const colsEls = [];
+for (let c=0;c<COLS;c++){
+  const col = document.createElement('div');
+  col.className = 'col';
+  for (let r=0;r<ROWS;r++){
+    const cell = document.createElement('div');
+    cell.className = CELL_CLASS;
+    cell.textContent = ' ';
+    col.appendChild(cell);
+  }
+  reelsEl.appendChild(col);
+  colsEls.push(col);
+}
+
+// Reel strips — без WILD на 1 и 5-ти барабан; с WILD на 2–4
+const reelStrips = [
+  ['🍇','🍋','🍒','🔔','⭐','7️⃣','🍇','🍒','🍋','🔔','⭐','7️⃣'],
+  ['🍇','🍋',WILD,'🍒','🔔','⭐',WILD,'7️⃣','🍇',WILD,'🍋','🍒','🔔','⭐'],
+  ['🍇',WILD,'🍋','🍒','🔔','⭐','7️⃣','🍇','🍋',WILD,'🍒','🔔',WILD,'⭐'],
+  ['🍇','🍋','🍒','🔔',WILD,'⭐','7️⃣','🍇',WILD,'🍋','🍒','🔔','⭐'],
+  ['🍇','🍋','🍒','🔔','⭐','7️⃣','🍇','🍋','🍒','🔔','⭐','7️⃣'],
+];
+
+// помощни
+const randInt = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+
+// вземи 3 последователни символа от лента
+function take3(strip){
+  const i = randInt(0, strip.length-1);
+  // wrap около
+  const s0 = strip[i];
+  const s1 = strip[(i+1)%strip.length];
+  const s2 = strip[(i+2)%strip.length];
+  return [s0,s1,s2];
+}
+
+// генерирай крайна решетка (по ленти)
+function generateGrid(){
+  const grid = Array.from({length: ROWS}, ()=>Array(COLS).fill(''));
+  for (let c = 0; c < COLS; c++){
+    const strip = reelStrips[c];
+    const trio = take3(strip);
+    // вертикално позициониране: top..bottom
+    grid[0][c] = trio[0];
+    grid[1][c] = trio[1];
+    grid[2][c] = trio[2];
+  }
+  return grid;
+}
+
+// има ли WILD на 2–4 барабан?
+function hasAllowedWild(grid){
+  for (let r=0;r<ROWS;r++){
+    for (let c=0;c<COLS;c++){
+      if (grid[r][c]===WILD && ALLOWED_WILD_REELS.has(c)) return true;
+    }
+  }
+  return false;
+}
+
+// разпъни всичко на WILD
+function expandAllToWild(grid){
+  for (let r=0;r<ROWS;r++){
+    for (let c=0;c<COLS;c++){
+      grid[r][c] = WILD;
+    }
+  }
+}
+
+// визуализирай решетката
+function renderGrid(grid){
+  for (let c=0;c<COLS;c++){
+    const col = colsEls[c];
+    const cells = col.children;
+    for (let r=0;r<ROWS;r++){
+      const sym = grid[r][c];
+      const el = cells[r];
+      el.textContent = sym;
+      el.classList.toggle('wild', sym===WILD);
+    }
+  }
+}
+
+// проста анимация на въртене
+function spinAnimateColumn(colIndex, finalSymbols){
+  return new Promise(resolve=>{
+    const col = colsEls[colIndex];
+    const cells = col.children;
+    // временно въртене
+    const start = performance.now();
+    const total = SPIN_TIME_PER_REEL + colIndex*EXTRA_REEL_DELAY;
+    let raf;
+    function tick(t){
+      const dt = t - start;
+      // върти „фалшиво“ със случайни символи
+      for (let r=0;r<ROWS;r++){
+        const randomSym = (ALLOWED_WILD_REELS.has(colIndex)?[...SYMBOLS,WILD]:SYMBOLS)[randInt(0, (ALLOWED_WILD_REELS.has(colIndex)?SYMBOLS.length:SYMBOLS.length)-1)];
+        cells[r].textContent = randomSym;
+        cells[r].classList.toggle('wild', randomSym===WILD);
       }
-    },
-    update(dt) {
-      this.vy += GRAVITY * dt;
-      this.y += this.vy * dt;
-
-      // колизия със земята
-      if (this.y + PLAYER.h >= GROUND_Y) {
-        this.y = GROUND_Y - PLAYER.h;
-        this.vy = 0;
-        this.onGround = true;
-      }
-    },
-    rect() { return {x: this.x, y: this.y, w: PLAYER.w, h: PLAYER.h}; }
-  };
-
-  const obstacles = [];
-
-  function spawnObstacle() {
-    // случайно: нисък „куб“ или висок „стълб“ (вариация)
-    const type = Math.random() < 0.6 ? "block" : "tall";
-    const w = type === "block" ? randInt(24, 36) : randInt(26, 28);
-    const h = type === "block" ? randInt(26, 36) : randInt(60, 92);
-
-    obstacles.push({
-      x: W + 20,
-      y: GROUND_Y - h,
-      w, h,
-      passed: false
-    });
-  }
-
-  function resetGame() {
-    state = "ready";
-    speed = BASE_SPEED;
-    timePlayed = 0;
-    spawnTimer = 0;
-    nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]);
-    score = 0;
-    obstacles.length = 0;
-    player.y = GROUND_Y - PLAYER.h;
-    player.vy = 0;
-    player.onGround = true;
-    uiScore.textContent = "0";
-  }
-
-  // ----- Управление -----
-  function doJumpOrRestart() {
-    if (state === "ready") {
-      state = "playing";
-      return;
-    }
-    if (state === "gameover") {
-      resetGame();
-      state = "playing";
-      return;
-    }
-    if (state === "playing") {
-      player.jump();
-    }
-  }
-
-  window.addEventListener("keydown", (e) => {
-    if (e.code === "Space" || e.code === "ArrowUp" || e.key === " ") {
-      e.preventDefault();
-      doJumpOrRestart();
-    }
-  });
-  cvs.addEventListener("pointerdown", doJumpOrRestart);
-  btnResetBest.addEventListener("click", () => {
-    localStorage.removeItem("jr_best");
-    bestScore = 0;
-    uiBest.textContent = "0";
-  });
-
-  // ----- Главен цикъл -----
-  function loop(tNow) {
-    if (!tPrev) tPrev = tNow;
-    const dt = Math.min((tNow - tPrev) / 1000, 1/30); // clamp
-    tPrev = tNow;
-
-    drawBackground();
-
-    if (state === "ready") {
-      drawGround(0);
-      drawPlayer();
-      drawObstacles(); // празно
-      drawCenterText("Клик/тап или Space за старт");
-    } else if (state === "playing") {
-      updateGame(dt);
-      drawGround(timePlayed);
-      drawObstacles();
-      drawPlayer();
-      drawScore();
-    } else if (state === "gameover") {
-      drawGround(timePlayed);
-      drawObstacles();
-      drawPlayer(true);
-      drawScore(true);
-      drawCenterText("Game Over – Клик за рестарт");
-    }
-
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
-
-  // ----- Обновяване -----
-  function updateGame(dt) {
-    timePlayed += dt;
-    speed = BASE_SPEED + SPEED_GROWTH * 100 * timePlayed; // плавно ускорява
-
-    // играч
-    player.update(dt);
-
-    // препятствия
-    spawnTimer += dt;
-    if (spawnTimer >= nextSpawnIn) {
-      spawnTimer = 0;
-      nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]) * Math.max(0.65, 1.0 - timePlayed*0.03);
-      spawnObstacle();
-    }
-
-    for (let i = obstacles.length - 1; i >= 0; i--) {
-      const o = obstacles[i];
-      o.x -= speed * dt;
-
-      // преминато препятствие → точки
-      if (!o.passed && o.x + o.w < player.x) {
-        o.passed = true;
-        score++;
-        uiScore.textContent = String(score);
-        if (score > bestScore) {
-          bestScore = score;
-          uiBest.textContent = String(bestScore);
-          localStorage.setItem("jr_best", String(bestScore));
+      if (dt >= total){
+        // сложи финалните символи
+        for (let r=0;r<ROWS;r++){
+          cells[r].textContent = finalSymbols[r];
+          cells[r].classList.toggle('wild', finalSymbols[r]===WILD);
         }
-      }
-      // изтриване на старите
-      if (o.x + o.w < -40) obstacles.splice(i, 1);
-    }
-
-    // колизии
-    for (const o of obstacles) {
-      if (rectOverlap(player.rect(), o)) {
-        state = "gameover";
-        break;
+        cancelAnimationFrame(raf);
+        resolve();
+      } else {
+        raf = requestAnimationFrame(tick);
       }
     }
-  }
+    raf = requestAnimationFrame(tick);
+  });
+}
 
-  // ----- Рендер -----
-  function drawBackground() {
-    // „облаци“
-    ctx.clearRect(0,0,W,H);
-    ctx.save();
-    const t = performance.now() / 1000;
-    for (let i = 0; i < 6; i++) {
-      const off = (t * (10 + i*6)) % (W + 200);
-      const x = W - off + i*120;
-      const y = 60 + Math.sin((t + i)*0.7) * 10 + i*6;
-      ctx.fillStyle = COLORS.cloud;
-      ctx.beginPath();
-      ctx.ellipse(x, y, 90 - i*8, 18 - i*2, 0, 0, Math.PI*2);
-      ctx.fill();
+// оценка на печалба
+function evaluatePayout(grid){
+  // ако всичко е WILD → най-добрата 5-of-a-kind * брой линии
+  const allWild = grid.every(row => row.every(sym => sym===WILD));
+  if (allWild){
+    let best = 0;
+    for (const [sym,vals] of Object.entries(paytable)){
+      const v = vals[5]||0;
+      if (v>best) best = v;
     }
-    ctx.restore();
+    return best * lines.length;
   }
 
-  function drawGround(t) {
-    // основна линия
-    ctx.strokeStyle = COLORS.ground;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(0, GROUND_Y + 0.5);
-    ctx.lineTo(W, GROUND_Y + 0.5);
-    ctx.stroke();
-
-    // „вълни“/неръвности
-    ctx.strokeStyle = "rgba(255,255,255,.07)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let x = 0; x <= W; x += 10) {
-      const y = GROUND_Y + Math.sin((x + t*120) * 0.02) * 2 + Math.sin((x*0.33 + t*90) * 0.05) * 1.3;
-      if (x === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+  // иначе — 5-of-a-kind с WILD като заместител
+  let total = 0;
+  for (const line of lines){
+    const symbols = line.map(([r,c])=>grid[r][c]);
+    // таргет е първият не-WILD символ; ако няма → WILD
+    const target = symbols.find(s=>s!==WILD) ?? WILD;
+    const ok = symbols.every(s=>s===target || s===WILD);
+    if (ok){
+      total += (paytable[target]?.[5]||0);
     }
-    ctx.stroke();
+  }
+  return total;
+}
+
+// toast helper
+let toastTimer=null;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
+}
+
+// главна логика за SPIN
+let spinning = false;
+spinBtn.addEventListener('click', async ()=>{
+  if (spinning) return;
+  if (credits < bet){ toast('Недостатъчно кредити'); return; }
+
+  spinning = true;
+  spinBtn.disabled = true;
+  uiWin.textContent = '0';
+  credits -= bet; uiCredits.textContent = credits;
+
+  // генерирай крайна решетка и завърти визуално
+  const finalGrid = generateGrid();
+  // последователна анимация по колони
+  for (let c=0;c<COLS;c++){
+    const finals = [finalGrid[0][c], finalGrid[1][c], finalGrid[2][c]];
+    /* eslint-disable no-await-in-loop */
+    await spinAnimateColumn(c, finals);
   }
 
-  function drawPlayer(hit=false) {
-    // тяло
-    ctx.fillStyle = hit ? COLORS.danger : COLORS.player;
-    const r = player.rect();
-    roundRect(ctx, r.x, r.y, r.w, r.h, 8, true, false);
-
-    // очи
-    ctx.fillStyle = "#0b1020";
-    ctx.fillRect(r.x + r.w - 10, r.y + 10, 4, 4);
-
-    // „сянка“
-    const shadowW = 36;
-    const lift = Math.max(0, (GROUND_Y - (player.y + PLAYER.h)));
-    const alpha = Math.max(0.12, 0.3 - lift/300);
-    ctx.fillStyle = `rgba(0,0,0,${alpha})`;
-    ctx.beginPath();
-    ctx.ellipse(player.x + PLAYER.w/2, GROUND_Y + 6, shadowW - lift*0.08, 6, 0, 0, Math.PI*2);
-    ctx.fill();
+  // тригер за разпъване (ако има WILD на 2–4)
+  if (hasAllowedWild(finalGrid)){
+    flashEl.classList.add('show');
+    setTimeout(()=>flashEl.classList.remove('show'), 500);
+    expandAllToWild(finalGrid);
+    renderGrid(finalGrid);
+    toast('EXPANDING WILD! 🍀');
   }
 
-  function drawObstacles() {
-    ctx.fillStyle = COLORS.obstacle;
-    obstacles.forEach(o => roundRect(ctx, o.x, o.y, o.w, o.h, 6, true, false));
-  }
+  const win = evaluatePayout(finalGrid);
+  uiWin.textContent = String(win);
+  credits += win; uiCredits.textContent = credits;
 
-  function drawScore(dim=false) {
-    ctx.save();
-    ctx.fillStyle = dim ? "rgba(255,255,255,.7)" : "rgba(255,255,255,.95)";
-    ctx.font = "700 28px system-ui, -apple-system, Segoe UI, Roboto";
-    ctx.textAlign = "left";
-    ctx.fillText(`Score: ${score}`, 18, 40);
-    ctx.textAlign = "right";
-    ctx.fillText(`Best: ${bestScore}`, W - 18, 40);
-    ctx.restore();
-  }
+  spinning = false;
+  spinBtn.disabled = false;
+});
 
-  function drawCenterText(text) {
-    ctx.save();
-    ctx.fillStyle = "rgba(255,255,255,.92)";
-    ctx.font = "600 28px system-ui, -apple-system, Segoe UI, Roboto";
-    ctx.textAlign = "center";
-    ctx.fillText(text, W/2, H/2 - 10);
-
-    ctx.fillStyle = "rgba(255,255,255,.6)";
-    ctx.font = "400 16px system-ui, -apple-system, Segoe UI, Roboto";
-    ctx.fillText("Скок: клик/тап/Space/↑", W/2, H/2 + 18);
-    ctx.restore();
-  }
-
-  // ----- Помощни -----
-  function rectOverlap(a, b) {
-    return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
-  }
-  function rand(min, max) { return Math.random() * (max - min) + min; }
-  function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
-  function roundRect(ctx, x, y, w, h, r, fill, stroke) {
-    if (w < 2*r) r = w/2;
-    if (h < 2*r) r = h/2;
-    ctx.beginPath();
-    ctx.moveTo(x+r, y);
-    ctx.arcTo(x+w, y,   x+w, y+h, r);
-    ctx.arcTo(x+w, y+h, x,   y+h, r);
-    ctx.arcTo(x,   y+h, x,   y,   r);
-    ctx.arcTo(x,   y,   x+w, y,   r);
-    if (fill) ctx.fill();
-    if (stroke) ctx.stroke();
-  }
-
-  // стартово състояние
-  resetGame();
-})();
+// първоначално показване (празна решетка)
+renderGrid(Array.from({length:ROWS},()=>Array(COLS).fill(' ')));
 </script>
 </body>
 </html>
+
 
 
