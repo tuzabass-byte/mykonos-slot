@@ -1,168 +1,416 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="bg">
 <head>
-  <meta charset="UTF-8">
-  <title>Mykonos Hot 5 – Demo</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #002b5c;
-      color: #fff;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-    }
-    h1 {
-      margin: 20px 0;
-    }
-    #slot {
-      display: inline-grid;
-      grid-template-columns: repeat(5, 80px);
-      grid-template-rows: repeat(3, 80px);
-      gap: 5px;
-      margin: 20px auto;
-    }
-    .cell {
-      width: 80px;
-      height: 80px;
-      background: #111;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: bold;
-      border: 2px solid #555;
-    }
-    .wild {
-      background: green;
-      color: yellow;
-    }
-    #win {
-      margin-top: 15px;
-      font-size: 22px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jump Runner – Offline</title>
+<style>
+  :root {
+    --ui-bg: #0b1020;
+    --ui-fg: #e9f0ff;
+    --accent: #8fd1ff;
+    --accent-2: #76ffa8;
+    --danger: #ff6b6b;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: linear-gradient(180deg, #0b1020 0%, #07101c 100%);
+    color: var(--ui-fg);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol";
+  }
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 14px 16px 24px;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 8px 0 0;
+    letter-spacing: .5px;
+  }
+  .hud {
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .btn {
+    appearance: none;
+    background: var(--accent);
+    color: #0b1020;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn:active { transform: translateY(1px); }
+  .canvas-wrap {
+    position: relative;
+    margin-top: 14px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    overflow: hidden;
+    background: radial-gradient(1200px 600px at 50% 100%, rgba(143,209,255,.15), transparent 60%);
+  }
+  canvas { display: block; width: 100%; height: auto; image-rendering: crisp-edges; }
+  .hint {
+    text-align: center;
+    font-size: 14px;
+    opacity: .85;
+    margin-top: 8px;
+  }
+  footer {
+    opacity: .7;
+    font-size: 12px;
+    margin-top: 10px;
+    text-align: center;
+  }
+</style>
 </head>
 <body>
-  <h1>Mykonos Hot 5 – Demo</h1>
-  <div id="slot"></div>
-  <div id="win">Gewinn: 0</div>
-  <button onclick="spin()">SPIN</button>
+  <div class="wrap">
+    <header>
+      <h1>Jump Runner – Offline</h1>
+      <div class="hud">
+        <div class="pill">Score: <span id="score">0</span></div>
+        <div class="pill">Best: <span id="best">0</span></div>
+        <button id="resetBest" class="btn" title="Изчисти най-добрия резултат">Reset Best</button>
+      </div>
+    </header>
 
-  <script>
-    const ROWS = 3;
-    const COLS = 5;
+    <div class="canvas-wrap">
+      <canvas id="game" width="900" height="450" aria-label="Jump Runner игра"></canvas>
+    </div>
+    <div class="hint">Клик/тап или Space/↑ за скок. Клик после Game Over = рестарт.</div>
 
-    // символи
-    const BASE_POOL = ['A','K','Q','J','10','9'];
-    const POOL_WITH_WILD = [...BASE_POOL, 'WILD'];
-    const ALLOWED_WILD_REELS = new Set([1,2,3]); // барабани 2,3,4
+    <footer>Напълно офлайн • Без зависимости • Запазва най-добър резултат локално</footer>
+  </div>
 
-    // примерна paytable
-    const paytable = {
-      'A': {5: 100},
-      'K': {5: 80},
-      'Q': {5: 60},
-      'J': {5: 40},
-      '10': {5: 20},
-      '9': {5: 10},
-      'WILD': {5: 200}
-    };
+<script>
+(() => {
+  // ----- Конфигурация -----
+  const W = 900, H = 450;
+  const GROUND_Y = H - 64;         // височина на земята
+  const GRAVITY = 2000;            // px/s^2
+  const JUMP_VELOCITY = 820;       // px/s
+  const PLAYER = { w: 38, h: 46 }; // размер на героя
+  const BASE_SPEED = 260;          // начална скорост на препятствията
+  const SPEED_GROWTH = 0.06;       // нарастване на скоростта спрямо времето
+  const SPAWN_COOLDOWN = [0.9, 1.45]; // интервал за появяване (секунди)
+  const GAP_Y_VARIANCE = 40;       // лек вертикален шум на земята за „вълни“ фон
+  const COLORS = {
+    player: "#76ffa8",
+    obstacle: "#8fd1ff",
+    danger: "#ff6b6b",
+    ground: "rgba(255,255,255,.15)",
+    cloud: "rgba(255,255,255,.08)"
+  };
 
-    const lines = [
-      [ [0,0],[0,1],[0,2],[0,3],[0,4] ], // top
-      [ [1,0],[1,1],[1,2],[1,3],[1,4] ], // middle
-      [ [2,0],[2,1],[2,2],[2,3],[2,4] ], // bottom
-    ];
+  // ----- Състояние -----
+  const cvs = document.getElementById("game");
+  const ctx = cvs.getContext("2d");
+  const uiScore = document.getElementById("score");
+  const uiBest = document.getElementById("best");
+  const btnResetBest = document.getElementById("resetBest");
 
-    const slot = document.getElementById('slot');
-    for (let i=0;i<ROWS*COLS;i++) {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      slot.appendChild(cell);
+  let bestScore = Number(localStorage.getItem("jr_best") || 0);
+  uiBest.textContent = bestScore;
+
+  let state = "ready"; // ready | playing | gameover
+  let tPrev = 0;
+  let speed = BASE_SPEED;
+  let timePlayed = 0;
+  let spawnTimer = 0;
+  let nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]);
+  let score = 0;
+
+  const player = {
+    x: 120,
+    y: GROUND_Y - PLAYER.h,
+    vy: 0,
+    onGround: true,
+    jump() {
+      if (this.onGround) {
+        this.vy = -JUMP_VELOCITY;
+        this.onGround = false;
+      }
+    },
+    update(dt) {
+      this.vy += GRAVITY * dt;
+      this.y += this.vy * dt;
+
+      // колизия със земята
+      if (this.y + PLAYER.h >= GROUND_Y) {
+        this.y = GROUND_Y - PLAYER.h;
+        this.vy = 0;
+        this.onGround = true;
+      }
+    },
+    rect() { return {x: this.x, y: this.y, w: PLAYER.w, h: PLAYER.h}; }
+  };
+
+  const obstacles = [];
+
+  function spawnObstacle() {
+    // случайно: нисък „куб“ или висок „стълб“ (вариация)
+    const type = Math.random() < 0.6 ? "block" : "tall";
+    const w = type === "block" ? randInt(24, 36) : randInt(26, 28);
+    const h = type === "block" ? randInt(26, 36) : randInt(60, 92);
+
+    obstacles.push({
+      x: W + 20,
+      y: GROUND_Y - h,
+      w, h,
+      passed: false
+    });
+  }
+
+  function resetGame() {
+    state = "ready";
+    speed = BASE_SPEED;
+    timePlayed = 0;
+    spawnTimer = 0;
+    nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]);
+    score = 0;
+    obstacles.length = 0;
+    player.y = GROUND_Y - PLAYER.h;
+    player.vy = 0;
+    player.onGround = true;
+    uiScore.textContent = "0";
+  }
+
+  // ----- Управление -----
+  function doJumpOrRestart() {
+    if (state === "ready") {
+      state = "playing";
+      return;
+    }
+    if (state === "gameover") {
+      resetGame();
+      state = "playing";
+      return;
+    }
+    if (state === "playing") {
+      player.jump();
+    }
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space" || e.code === "ArrowUp" || e.key === " ") {
+      e.preventDefault();
+      doJumpOrRestart();
+    }
+  });
+  cvs.addEventListener("pointerdown", doJumpOrRestart);
+  btnResetBest.addEventListener("click", () => {
+    localStorage.removeItem("jr_best");
+    bestScore = 0;
+    uiBest.textContent = "0";
+  });
+
+  // ----- Главен цикъл -----
+  function loop(tNow) {
+    if (!tPrev) tPrev = tNow;
+    const dt = Math.min((tNow - tPrev) / 1000, 1/30); // clamp
+    tPrev = tNow;
+
+    drawBackground();
+
+    if (state === "ready") {
+      drawGround(0);
+      drawPlayer();
+      drawObstacles(); // празно
+      drawCenterText("Клик/тап или Space за старт");
+    } else if (state === "playing") {
+      updateGame(dt);
+      drawGround(timePlayed);
+      drawObstacles();
+      drawPlayer();
+      drawScore();
+    } else if (state === "gameover") {
+      drawGround(timePlayed);
+      drawObstacles();
+      drawPlayer(true);
+      drawScore(true);
+      drawCenterText("Game Over – Клик за рестарт");
     }
 
-    function pickSymbol(col) {
-      const pool = ALLOWED_WILD_REELS.has(col) ? POOL_WITH_WILD : BASE_POOL;
-      return pool[Math.floor(Math.random()*pool.length)];
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  // ----- Обновяване -----
+  function updateGame(dt) {
+    timePlayed += dt;
+    speed = BASE_SPEED + SPEED_GROWTH * 100 * timePlayed; // плавно ускорява
+
+    // играч
+    player.update(dt);
+
+    // препятствия
+    spawnTimer += dt;
+    if (spawnTimer >= nextSpawnIn) {
+      spawnTimer = 0;
+      nextSpawnIn = rand(SPAWN_COOLDOWN[0], SPAWN_COOLDOWN[1]) * Math.max(0.65, 1.0 - timePlayed*0.03);
+      spawnObstacle();
     }
 
-    function generateGrid() {
-      return Array.from({length: ROWS}, (_,r) =>
-        Array.from({length: COLS}, (_,c) => pickSymbol(c))
-      );
-    }
+    for (let i = obstacles.length - 1; i >= 0; i--) {
+      const o = obstacles[i];
+      o.x -= speed * dt;
 
-    function hasAllowedWild(grid) {
-      for (let r=0;r<ROWS;r++) {
-        for (let c=0;c<COLS;c++) {
-          if (grid[r][c]==='WILD' && ALLOWED_WILD_REELS.has(c)) return true;
+      // преминато препятствие → точки
+      if (!o.passed && o.x + o.w < player.x) {
+        o.passed = true;
+        score++;
+        uiScore.textContent = String(score);
+        if (score > bestScore) {
+          bestScore = score;
+          uiBest.textContent = String(bestScore);
+          localStorage.setItem("jr_best", String(bestScore));
         }
       }
-      return false;
+      // изтриване на старите
+      if (o.x + o.w < -40) obstacles.splice(i, 1);
     }
 
-    function expandAllToWild(grid) {
-      for (let r=0;r<ROWS;r++) {
-        for (let c=0;c<COLS;c++) {
-          grid[r][c] = 'WILD';
-        }
+    // колизии
+    for (const o of obstacles) {
+      if (rectOverlap(player.rect(), o)) {
+        state = "gameover";
+        break;
       }
     }
+  }
 
-    function renderGrid(grid) {
-      const cells = slot.querySelectorAll('.cell');
-      let i=0;
-      for (let r=0;r<ROWS;r++) {
-        for (let c=0;c<COLS;c++) {
-          const cell = cells[i++];
-          cell.textContent = grid[r][c];
-          cell.className = 'cell';
-          if (grid[r][c]==='WILD') cell.classList.add('wild');
-        }
-      }
+  // ----- Рендер -----
+  function drawBackground() {
+    // „облаци“
+    ctx.clearRect(0,0,W,H);
+    ctx.save();
+    const t = performance.now() / 1000;
+    for (let i = 0; i < 6; i++) {
+      const off = (t * (10 + i*6)) % (W + 200);
+      const x = W - off + i*120;
+      const y = 60 + Math.sin((t + i)*0.7) * 10 + i*6;
+      ctx.fillStyle = COLORS.cloud;
+      ctx.beginPath();
+      ctx.ellipse(x, y, 90 - i*8, 18 - i*2, 0, 0, Math.PI*2);
+      ctx.fill();
     }
+    ctx.restore();
+  }
 
-    function evaluatePayout(grid, lines, paytable) {
-      const allWild = grid.every(row=>row.every(sym=>sym==='WILD'));
-      if (allWild) {
-        let best5 = 0;
-        for (const [sym,values] of Object.entries(paytable)) {
-          const v = values[5]||0;
-          if (v>best5) best5=v;
-        }
-        return best5*lines.length;
-      }
-      // проста оценка: ако цяла линия е еднакви символи
-      let win=0;
-      for (const line of lines) {
-        const symbols = line.map(([r,c])=>grid[r][c]);
-        if (symbols.every(s=>s===symbols[0])) {
-          const sym = symbols[0];
-          win += (paytable[sym]?.[5]||0);
-        }
-      }
-      return win;
-    }
+  function drawGround(t) {
+    // основна линия
+    ctx.strokeStyle = COLORS.ground;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, GROUND_Y + 0.5);
+    ctx.lineTo(W, GROUND_Y + 0.5);
+    ctx.stroke();
 
-    function spin() {
-      let grid = generateGrid();
-      if (hasAllowedWild(grid)) {
-        expandAllToWild(grid);
-      }
-      renderGrid(grid);
-      const win = evaluatePayout(grid, lines, paytable);
-      document.getElementById('win').textContent = "Gewinn: "+win;
+    // „вълни“/неръвности
+    ctx.strokeStyle = "rgba(255,255,255,.07)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 10) {
+      const y = GROUND_Y + Math.sin((x + t*120) * 0.02) * 2 + Math.sin((x*0.33 + t*90) * 0.05) * 1.3;
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     }
-  </script>
+    ctx.stroke();
+  }
+
+  function drawPlayer(hit=false) {
+    // тяло
+    ctx.fillStyle = hit ? COLORS.danger : COLORS.player;
+    const r = player.rect();
+    roundRect(ctx, r.x, r.y, r.w, r.h, 8, true, false);
+
+    // очи
+    ctx.fillStyle = "#0b1020";
+    ctx.fillRect(r.x + r.w - 10, r.y + 10, 4, 4);
+
+    // „сянка“
+    const shadowW = 36;
+    const lift = Math.max(0, (GROUND_Y - (player.y + PLAYER.h)));
+    const alpha = Math.max(0.12, 0.3 - lift/300);
+    ctx.fillStyle = `rgba(0,0,0,${alpha})`;
+    ctx.beginPath();
+    ctx.ellipse(player.x + PLAYER.w/2, GROUND_Y + 6, shadowW - lift*0.08, 6, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  function drawObstacles() {
+    ctx.fillStyle = COLORS.obstacle;
+    obstacles.forEach(o => roundRect(ctx, o.x, o.y, o.w, o.h, 6, true, false));
+  }
+
+  function drawScore(dim=false) {
+    ctx.save();
+    ctx.fillStyle = dim ? "rgba(255,255,255,.7)" : "rgba(255,255,255,.95)";
+    ctx.font = "700 28px system-ui, -apple-system, Segoe UI, Roboto";
+    ctx.textAlign = "left";
+    ctx.fillText(`Score: ${score}`, 18, 40);
+    ctx.textAlign = "right";
+    ctx.fillText(`Best: ${bestScore}`, W - 18, 40);
+    ctx.restore();
+  }
+
+  function drawCenterText(text) {
+    ctx.save();
+    ctx.fillStyle = "rgba(255,255,255,.92)";
+    ctx.font = "600 28px system-ui, -apple-system, Segoe UI, Roboto";
+    ctx.textAlign = "center";
+    ctx.fillText(text, W/2, H/2 - 10);
+
+    ctx.fillStyle = "rgba(255,255,255,.6)";
+    ctx.font = "400 16px system-ui, -apple-system, Segoe UI, Roboto";
+    ctx.fillText("Скок: клик/тап/Space/↑", W/2, H/2 + 18);
+    ctx.restore();
+  }
+
+  // ----- Помощни -----
+  function rectOverlap(a, b) {
+    return !(a.x + a.w < b.x || a.x > b.x + b.w || a.y + a.h < b.y || a.y > b.y + b.h);
+  }
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+  function randInt(min, max) { return Math.floor(rand(min, max + 1)); }
+  function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+    if (w < 2*r) r = w/2;
+    if (h < 2*r) r = h/2;
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.arcTo(x+w, y,   x+w, y+h, r);
+    ctx.arcTo(x+w, y+h, x,   y+h, r);
+    ctx.arcTo(x,   y+h, x,   y,   r);
+    ctx.arcTo(x,   y,   x+w, y,   r);
+    if (fill) ctx.fill();
+    if (stroke) ctx.stroke();
+  }
+
+  // стартово състояние
+  resetGame();
+})();
+</script>
 </body>
 </html>
- 
 
 
