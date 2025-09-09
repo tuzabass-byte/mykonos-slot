@@ -1,78 +1,144 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mykonos – Griechisches Restaurant</title>
-  <style>
-    body {
-      margin:0; font-family: system-ui, sans-serif; line-height:1.5;
-      background:#ffffff; color:#0a1633;
-    }
-    .greek-frame {
-      position:relative; border-block:14px solid transparent;
-    }
-    .greek-frame:before, .greek-frame:after {
-      content:""; position:absolute; left:0; right:0; height:14px;
-      background:
-        repeating-linear-gradient(90deg,#0a4aa4 0 14px,transparent 14px 16px),
-        repeating-linear-gradient(90deg,#0a4aa4 0 2px,transparent 2px 16px);
-    }
-    .greek-frame:before { top:0; }
-    .greek-frame:after { bottom:0; transform:scaleY(-1); }
-    header {
-      padding:3rem 1rem; text-align:center;
-      background: radial-gradient(circle at top left, rgba(10,74,164,.15), transparent 70%);
-    }
-    h1 {
-      font-size:2.5rem; margin:0.5rem 0; color:#0a4aa4;
-    }
-    p.lead { color:#5b6a87; font-size:1.2rem; max-width:40rem; margin:0 auto 1.5rem; }
-    .btn {
-      display:inline-block; margin:0.3rem; padding:0.6rem 1.2rem;
-      border-radius:0.6rem; font-weight:bold; text-decoration:none;
-    }
-    .btn.primary { background:#0a4aa4; color:white; }
-    .btn.outline { border:2px solid #0a4aa4; color:#0a4aa4; }
-    footer {
-      text-align:center; padding:1rem; color:#5b6a87; border-top:1px solid #e2e8f0;
-    }
-    .olive {
-      margin:2rem auto; width:120px; opacity:0.4;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mykonos – Griechisches Restaurant</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Base ---------- */
+  :root{
+    --ink:#0b1736;        /* основен цвят на текста */
+    --muted:#6b778d;
+    --brand:#0a4aa4;      /* гръцко синьо */
+    --brand-2:#1e7fd1;
+    --surface:#ffffff;
+    --border:#e5e9f2;
+    --shadow:0 10px 30px rgba(10,23,54,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--ink);
+    font-family:"Manrope", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background:
+      radial-gradient(1400px 600px at 70% -200px, rgba(10,74,164,.10), transparent 60%),
+      radial-gradient(1000px 500px at -20% 0, rgba(30,127,209,.10), transparent 55%),
+      #f7f8fb;
+  }
+  a{color:inherit}
+  /* ---------- Greek key (top/bottom) ---------- */
+  .key {
+    --h:16px;
+    position:relative; border-block: var(--h) solid transparent; isolation:isolate;
+  }
+  .key:before,.key:after{
+    content:""; position:absolute; left:0; right:0; height:var(--h); z-index:-1;
+    background:
+      conic-gradient(from 90deg at 8px calc(var(--h)/2), var(--brand) 0 25%, #0000 0 100%) 0 0/16px var(--h) repeat-x,
+      linear-gradient(var(--brand),var(--brand));
+    -webkit-mask:
+      linear-gradient(#000 0 0) center/100% var(--h) no-repeat;
+            mask: linear-gradient(#000 0 0) center/100% var(--h) no-repeat;
+    opacity:.95;
+  }
+  .key:before{top:0}
+  .key:after{bottom:0; transform:scaleY(-1)}
+
+  /* ---------- Header (Hero) ---------- */
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+  header{padding:26px 0}
+  .nav{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+  .brand .mark{width:42px;height:42px;display:inline-block}
+  .brand span{font-weight:800;letter-spacing:.4px}
+
+  .hero{
+    display:grid; grid-template-columns: 1.15fr .85fr; gap:40px; align-items:center;
+    padding:64px 0 86px;
+  }
+  @media (max-width:900px){ .hero{grid-template-columns:1fr; padding:54px 0 70px;} }
+
+  .kicker{
+    text-transform:uppercase; letter-spacing:.18em; font-weight:800;
+    color:var(--brand-2); margin:0 0 6px; font-size:.9rem;
+  }
+  h1{
+    font-family:"Playfair Display", serif;
+    font-weight:700; line-height:1.08; margin:.2rem 0 .6rem;
+    font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+  }
+  .lead{color:var(--muted); font-size:1.1rem; max-width:52ch; margin:0 0 1.2rem}
+
+  .cta{display:flex; gap:12px; flex-wrap:wrap}
+  .btn{
+    display:inline-block; padding:.7rem 1.1rem; border-radius:.8rem; text-decoration:none;
+    font-weight:800; letter-spacing:.2px; border:2px solid var(--brand);
+  }
+  .btn.primary{background:var(--brand); color:#fff; box-shadow:var(--shadow)}
+  .btn.ghost{color:var(--brand); background:#fff}
+
+  /* ---------- Visual card with olive ---------- */
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:18px;
+    padding:28px; box-shadow:var(--shadow); position:relative; overflow:hidden; min-height:260px;
+  }
+  .seal{position:absolute; right:-36px; bottom:-36px; opacity:.08; transform:scale(2)}
+  .olive{position:absolute; left:-20px; bottom:-12px; color:var(--brand); opacity:.26; transform:rotate(-6deg)}
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--border); padding:22px 0; text-align:center; color:#7d889c; background:#fff}
+</style>
 </head>
 <body>
-  <header class="greek-frame">
-    <h1>Griechisches Restaurant <br> <span style="color:#1e7fd1">Mykonos</span></h1>
-    <p class="lead">Authentische Rezepte, frische Zutaten und warme Gastfreundschaft – wie auf der Insel.</p>
-    <div>
-      <a href="#menu" class="btn primary">Menü ansehen</a>
-      <a href="#kontakt" class="btn outline">Kontakt</a>
-    </div>
-    <div class="olive">
-      <!-- маслинова клонка -->
-      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10,70 C40,30 70,20 110,12" fill="none" stroke="#0a4aa4" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="55" cy="38" r="7" fill="#0a4aa4"/>
-        <circle cx="70" cy="32" r="7" fill="#0a4aa4"/>
-        <circle cx="86" cy="26" r="7" fill="#0a4aa4"/>
-      </svg>
-    </div>
-  </header>
+  <div class="key">
+    <header class="wrap">
+      <nav class="nav">
+        <a class="brand" href="#">
+          <!-- elegant circular mark -->
+          <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="32" cy="32" r="27" fill="none" stroke="#0a4aa4" stroke-width="4"/>
+            <path d="M16 38c7-9 14-12 18-12s11 3 18 12" fill="none" stroke="#0a4aa4" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+          <span>Mykonos</span>
+        </a>
+        <!-- място за бъдещи бутони/езици -->
+      </nav>
 
-  <main style="padding:2rem; text-align:center;">
-    <p style="color:#5b6a87">Dies ist nur die <strong>Startseite (Cover)</strong>. Sobald du sagst „OK“, machen wir weiter mit Menü, Galerie und Kontakt.</p>
+      <section class="hero">
+        <div>
+          <p class="kicker">Griechisches Restaurant</p>
+          <h1>Feine Küche, frischer Fisch &<br> herzliche Gastfreundschaft.</h1>
+          <p class="lead">Authentische Rezepte, ausgewählte Zutaten und ein Hauch der Ägäis – willkommen im Mykonos.</p>
+          <div class="cta">
+            <a href="#menu" class="btn primary">Menü ansehen</a>
+            <a href="#kontakt" class="btn ghost">Kontakt</a>
+          </div>
+        </div>
+
+        <div class="card" aria-hidden="true">
+          <svg class="seal" viewBox="0 0 64 64"><circle cx="32" cy="32" r="30" fill="none" stroke="#0a4aa4" stroke-width="2"/><path d="M16 38c7-9 14-12 18-12s11 3 18 12" fill="none" stroke="#0a4aa4" stroke-width="4" stroke-linecap="round"/></svg>
+          <svg class="olive" viewBox="0 0 120 80">
+            <path d="M10,70 C40,30 70,20 110,12" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="55" cy="38" r="7" fill="currentColor"/>
+            <circle cx="70" cy="32" r="7" fill="currentColor"/>
+            <circle cx="86" cy="26" r="7" fill="currentColor"/>
+          </svg>
+        </div>
+      </section>
+    </header>
+  </div>
+
+  <main class="wrap" style="padding:36px 0 70px">
+    <p style="color:#6b778d; text-align:center; max-width:60ch; margin:0 auto;">
+      Dies ist die <strong>Startseite (Cover)</strong>. Nach deiner Freigabe bauen wir Menü, Galerie und Kontakt in exakt diesem Stil.
+    </p>
   </main>
 
   <footer>
-    © <span id="year"></span> Mykonos
+    © <span id="y"></span> Mykonos
   </footer>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
 </body>
 </html>
-
 
