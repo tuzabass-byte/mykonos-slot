@@ -1,352 +1,76 @@
 <!DOCTYPE html>
-<html lang="bg">
+<html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mykonos – Гръцки ресторант</title>
-  <meta name="description" content="Гръцки ресторант Mykonos – автентични вкусове, прясна риба и специалитети от грила." />
-  <meta name="theme-color" content="#0a4aa4" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mykonos – Griechisches Restaurant</title>
   <style>
-    /* ===== Base / Theme ===== */
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0; font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-      color:var(--fg); background:var(--bg); line-height:1.6;
+    body {
+      margin:0; font-family: system-ui, sans-serif; line-height:1.5;
+      background:#ffffff; color:#0a1633;
     }
-    :root{
-      --bg:#ffffff; --fg:#0a1633; --muted:#5b6a87;
-      --brand:#0a4aa4; --brand-2:#1e7fd1;
-      --surface:#f6f8fc; --border:#e2e8f0;
+    .greek-frame {
+      position:relative; border-block:14px solid transparent;
     }
-    :root.dark{
-      --bg:#0b1221; --fg:#e6edf7; --muted:#94a3b8;
-      --brand:#7ab6ff; --brand-2:#9fd0ff;
-      --surface:#101a2f; --border:#21314f;
-    }
-    .container{max-width:1100px;margin:0 auto;padding:0 1.2rem}
-    .section{padding:4rem 0}
-    .muted{color:var(--muted)}
-    a{color:var(--brand)}
-    /* ===== Decorative Greek Stripe (top/bottom) ===== */
-    .greek-frame{
-      position:relative; isolation:isolate;
-      border-block: 12px solid transparent;
-    }
-    .greek-frame::before,
-    .greek-frame::after{
-      content:""; position:absolute; inset-inline:0; height:12px; z-index:-1;
+    .greek-frame:before, .greek-frame:after {
+      content:""; position:absolute; left:0; right:0; height:14px;
       background:
-        repeating-linear-gradient(90deg, #0a4aa4 0 14px, transparent 14px 16px),
-        repeating-linear-gradient(90deg, #0a4aa4 0 2px, transparent 2px 16px);
+        repeating-linear-gradient(90deg,#0a4aa4 0 14px,transparent 14px 16px),
+        repeating-linear-gradient(90deg,#0a4aa4 0 2px,transparent 2px 16px);
     }
-    .greek-frame::before{ top:0; }
-    .greek-frame::after{ bottom:0; transform:scaleY(-1); }
-    /* ===== Header / Nav ===== */
-    header{
-      background:
-        radial-gradient(60% 80% at 80% 10%, rgba(10,74,164,.10), transparent 60%),
-        radial-gradient(50% 80% at 10% 20%, rgba(30,127,209,.12), transparent 60%);
-      border-bottom:1px solid var(--border);
+    .greek-frame:before { top:0; }
+    .greek-frame:after { bottom:0; transform:scaleY(-1); }
+    header {
+      padding:3rem 1rem; text-align:center;
+      background: radial-gradient(circle at top left, rgba(10,74,164,.15), transparent 70%);
     }
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
-    .brand{display:inline-flex;gap:.6rem;align-items:center;text-decoration:none;color:var(--fg);font-weight:800}
-    .brand svg{width:36px;height:36px}
-    .navlist{display:flex;gap:.8rem;list-style:none;padding:0;margin:0;align-items:center}
-    .navlist a{padding:.4rem .6rem;border-radius:.5rem;text-decoration:none;color:var(--fg)}
-    .navlist a:hover{background:var(--surface)}
-    .nav-toggle{display:none;border:1px solid var(--border);background:none;border-radius:.5rem;padding:.35rem .6rem}
-    .icon-btn{border:1px solid var(--border);background:none;border-radius:.5rem;padding:.35rem .6rem;cursor:pointer}
-    @media (max-width:760px){
-      .nav-toggle{display:block}
-      .navlist{display:none;position:absolute;right:1.2rem;top:3.2rem;background:var(--bg);border:1px solid var(--border);border-radius:.6rem;padding:.6rem;flex-direction:column;align-items:flex-start}
-      .navlist.show{display:flex}
+    h1 {
+      font-size:2.5rem; margin:0.5rem 0; color:#0a4aa4;
     }
-    .hero{padding:3rem 0 4rem}
-    .hero h1{margin:0 0 .4rem;font-size:clamp(2rem,4vw,3rem)}
-    .accent{color:var(--brand-2)}
-    .cta-row{display:flex;gap:.8rem;flex-wrap:wrap}
-    .btn{display:inline-block;border:1px solid var(--brand);background:var(--brand);color:#fff;padding:.6rem 1rem;border-radius:.7rem;text-decoration:none;font-weight:700}
-    .btn:hover{filter:brightness(1.05)}
-    .btn.outline{background:transparent;color:var(--brand)}
-    .btn.small{padding:.35rem .7rem;font-weight:700}
-    /* ===== Cards / Grid ===== */
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:1rem;padding:1rem}
-    .grid{display:grid;gap:1rem}
-    @media (min-width:880px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)} }
-    /* ===== PDF block ===== */
-    .pdf-wrap{border:1px solid var(--border);border-radius:.7rem;overflow:hidden;background:#fff;margin:.6rem 0 1rem}
-    .pdf-wrap object{width:100%;height:420px}
-    /* ===== Menu preview list ===== */
-    .menu-list{list-style:none;padding:0;margin:.4rem 0 0}
-    .menu-list li{display:grid;grid-template-columns:1fr auto;padding:.45rem 0;border-bottom:1px dashed var(--border)}
-    .menu-list li:last-child{border-bottom:0}
-    /* ===== Gallery ===== */
-    .gallery{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-    .gallery img{width:100%;height:100%;object-fit:cover;border-radius:.6rem;border:1px solid var(--border)}
-    /* ===== Contact / Map ===== */
-    .contact-grid{display:grid;gap:1rem}
-    @media (min-width:820px){ .contact-grid{grid-template-columns:1fr 1.2fr} }
-    .map-wrap{border:1px solid var(--border);border-radius:.7rem;overflow:hidden;min-height:280px}
-    .map-wrap iframe{width:100%;height:100%;min-height:280px;border:0}
-    /* ===== Footer ===== */
-    footer{border-top:1px solid var(--border);padding:1.2rem 0;text-align:center;color:var(--muted)}
-    /* ===== Utility ===== */
-    .section-head{margin-bottom:1.2rem}
-    .section-head h2{margin:0 0 .25rem;font-size:clamp(1.6rem,2.5vw,2.2rem)}
-    .row{display:flex;gap:.6rem;flex-wrap:wrap}
-    .center{text-align:center}
-    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-    /* ===== Olive branch badge ===== */
-    .badge{display:inline-flex;gap:.35rem;align-items:center;padding:.35rem .6rem;border:1px solid var(--border);border-radius:.6rem;background:var(--surface)}
+    p.lead { color:#5b6a87; font-size:1.2rem; max-width:40rem; margin:0 auto 1.5rem; }
+    .btn {
+      display:inline-block; margin:0.3rem; padding:0.6rem 1.2rem;
+      border-radius:0.6rem; font-weight:bold; text-decoration:none;
+    }
+    .btn.primary { background:#0a4aa4; color:white; }
+    .btn.outline { border:2px solid #0a4aa4; color:#0a4aa4; }
+    footer {
+      text-align:center; padding:1rem; color:#5b6a87; border-top:1px solid #e2e8f0;
+    }
+    .olive {
+      margin:2rem auto; width:120px; opacity:0.4;
+    }
   </style>
 </head>
 <body>
   <header class="greek-frame">
-    <nav class="nav container" aria-label="Основна навигация">
-      <a class="brand" href="#home" aria-label="Mykonos – начало">
-        <!-- Simple circular logo with olive -->
-        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24" fill="#0a4aa4"/><path d="M16 40c7-9 14-12 18-12s11 3 18 12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
-        <span>Mykonos</span>
-      </a>
-      <button class="nav-toggle" aria-expanded="false" aria-controls="navlist">☰</button>
-      <ul id="navlist" class="navlist">
-        <li><a href="#menu">Меню</a></li>
-        <li><a href="#gallery">Галерия</a></li>
-        <li><a href="#about">За нас</a></li>
-        <li><a href="#contact">Контакт</a></li>
-        <li><a class="btn small" href="#reservation">Резервации</a></li>
-        <li><button id="themeToggle" class="icon-btn" aria-label="Тъмна/светла тема">🌓</button></li>
-      </ul>
-    </nav>
-
-    <div id="home" class="hero container">
-      <h1>Гръцки ресторант <span class="accent">Mykonos</span></h1>
-      <p class="muted">Автентични гръцки рецепти, свежи продукти и топло обслужване – точно като на острова.</p>
-      <div class="cta-row">
-        <a href="#menu" class="btn">Виж менюто</a>
-        <a href="#reservation" class="btn outline">Резервирай маса</a>
-      </div>
+    <h1>Griechisches Restaurant <br> <span style="color:#1e7fd1">Mykonos</span></h1>
+    <p class="lead">Authentische Rezepte, frische Zutaten und warme Gastfreundschaft – wie auf der Insel.</p>
+    <div>
+      <a href="#menu" class="btn primary">Menü ansehen</a>
+      <a href="#kontakt" class="btn outline">Kontakt</a>
+    </div>
+    <div class="olive">
+      <!-- маслинова клонка -->
+      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10,70 C40,30 70,20 110,12" fill="none" stroke="#0a4aa4" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="55" cy="38" r="7" fill="#0a4aa4"/>
+        <circle cx="70" cy="32" r="7" fill="#0a4aa4"/>
+        <circle cx="86" cy="26" r="7" fill="#0a4aa4"/>
+      </svg>
     </div>
   </header>
 
-  <main>
-    <!-- ===== MENU ===== -->
-    <section id="menu" class="section container greek-frame">
-      <div class="section-head">
-        <h2>Меню</h2>
-        <p class="muted">Разгледай онлайн или свали PDF за печат.</p>
-      </div>
-
-      <div class="grid cols-2">
-        <article class="card">
-          <h3>Онлайн преглед</h3>
-          <ul class="menu-list">
-            <li><span>Salate (избрани)</span><span>виж по-долу</span></li>
-            <li><span>Mykonos Spezialitäten</span><span>виж по-долу</span></li>
-            <li><span>Leber & Fisch-Spezialitäten</span><span>виж по-долу</span></li>
-            <li><span>Lamm vom Grill</span><span>виж по-долу</span></li>
-            <li><span>Kinder Teller & Dessert</span><span>виж по-долу</span></li>
-          </ul>
-          <p class="muted">* Секцията показва PDF страниците ти. Сложи файловете в <code>assets/</code>.</p>
-        </article>
-
-        <article class="card">
-          <h3>Пълен PDF (вграден)</h3>
-          <div class="pdf-wrap">
-            <!-- Ако имаш обединен PDF, замени с него -->
-            <object data="assets/KAESE_MENU_FINAL.pdf" type="application/pdf" aria-label="Меню PDF">
-              <p>Вашият браузър не поддържа вграден PDF. <a href="assets/KAESE_MENU_FINAL.pdf" download>Свали PDF</a></p>
-            </object>
-          </div>
-          <div class="row">
-            <a class="btn" href="assets/KAESE_MENU_FINAL.pdf" download>Свали</a>
-            <a class="btn outline" href="assets/KAESE_MENU_FINAL.pdf" target="_blank" rel="noopener">Отвори в нов таб</a>
-          </div>
-        </article>
-      </div>
-
-      <!-- Карти за отделни страници/секции -->
-      <div class="grid cols-2" style="margin-top:1rem">
-        <article class="card">
-          <h3>Salate</h3>
-          <div class="pdf-wrap"><object data="assets/SALATE_FINAL.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/SALATE_FINAL.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/SALATE_FINAL.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Mykonos Spezialitäten</h3>
-          <div class="pdf-wrap"><object data="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Leber & Fisch-Spezialitäten</h3>
-          <div class="pdf-wrap"><object data="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Lamm vom Grill</h3>
-          <div class="pdf-wrap"><object data="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Kinder Teller & Dessert</h3>
-          <div class="pdf-wrap"><object data="assets/KINDER_TELLER_DESSERT_FINAL.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/KINDER_TELLER_DESSERT_FINAL.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/KINDER_TELLER_DESSERT_FINAL.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Кейзе / Käse</h3>
-          <div class="pdf-wrap"><object data="assets/KAESE_MENU_FINAL.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/KAESE_MENU_FINAL.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/KAESE_MENU_FINAL.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Spirituosen & Liköre</h3>
-          <div class="pdf-wrap"><object data="assets/SPIRITUOSEN_UND_LIKOERE.pdf" type="application/pdf"></object></div>
-          <div class="row">
-            <a class="btn outline" href="assets/SPIRITUOSEN_UND_LIKOERE.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/SPIRITUOSEN_UND_LIKOERE.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-
-        <article class="card">
-          <h3>Алкохолни напитки (меню страница)</h3>
-          <div class="pdf-wrap">
-            <object data="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" type="application/pdf"></object>
-          </div>
-          <div class="row">
-            <a class="btn outline" href="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" target="_blank">Отвори</a>
-            <a class="btn" href="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" download>Свали PDF</a>
-          </div>
-        </article>
-      </div>
-
-      <p class="center muted" style="margin-top:1rem">
-        <span class="badge">
-          <!-- tiny olive svg -->
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path d="M4 17c5-6 9-8 12-8s7 2 12 8" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Автентичен гръцки стил – зиг-заг рамка и маслинови клонки
-        </span>
-      </p>
-    </section>
-
-    <!-- ===== GALLERY ===== -->
-    <section id="gallery" class="section container greek-frame">
-      <div class="section-head">
-        <h2>Галерия</h2>
-        <p class="muted">Добави снимките си в <code>assets/photo-1.jpg</code>…</p>
-      </div>
-      <div class="gallery">
-        <img src="assets/photo-1.jpg" alt="Гръцка салата с фета">
-        <img src="assets/photo-2.jpg" alt="Морски дарове на грил">
-        <img src="assets/photo-3.jpg" alt="Гирос с гарнитури">
-        <img src="assets/photo-4.jpg" alt="Домашна баклава">
-      </div>
-    </section>
-
-    <!-- ===== ABOUT ===== -->
-    <section id="about" class="section container greek-frame">
-      <div class="section-head">
-        <h2>За нас</h2>
-      </div>
-      <div class="card">
-        <p>Mykonos е семеен ресторант с вдъхновение от гръцките острови. Вярваме в честната, проста кухня – пресни продукти, зехтин, лимон и внимание към детайла.</p>
-        <p class="muted">„Като на острова, но близо до вас.“</p>
-      </div>
-    </section>
-
-    <!-- ===== RESERVATION ===== -->
-    <section id="reservation" class="section container greek-frame">
-      <div class="section-head">
-        <h2>Резервации</h2>
-      </div>
-      <div class="card">
-        <p>Обади се на <a href="tel:+49XXXXXXXXX">+49 XXX XXX XXX</a> или пиши на <a href="mailto:info@mykonos.example">info@mykonos.example</a>.</p>
-        <!-- Работи в Netlify / GitHub Pages (статична форма) -->
-        <form class="grid" name="reservation" method="POST" data-netlify="true">
-          <input type="hidden" name="form-name" value="reservation">
-          <label>Име <input name="name" required></label>
-          <label>Телефон <input name="phone" required></label>
-          <label>Дата <input type="date" name="date" required></label>
-          <label>Час <input type="time" name="time" required></label>
-          <label>Брой гости <input type="number" name="guests" min="1" max="20" value="2" required></label>
-          <label style="grid-column:1/-1">Съобщение <textarea name="message" rows="3"></textarea></label>
-          <div style="grid-column:1/-1" class="row">
-            <button class="btn" type="submit">Изпрати</button>
-            <a class="btn outline" href="assets/ABSCHLUSSSEITE_MYKONOS.pdf" target="_blank">Haus-Seite (PDF)</a>
-          </div>
-        </form>
-      </div>
-    </section>
-
-    <!-- ===== CONTACT ===== -->
-    <section id="contact" class="section container greek-frame">
-      <div class="section-head">
-        <h2>Контакт</h2>
-      </div>
-      <div class="contact-grid">
-        <div class="card">
-          <h3>Адрес</h3>
-          <p>Hauptstraße 1, 12345 Musterstadt, Deutschland</p>
-          <p>Пн–Нд: 11:30–22:30</p>
-        </div>
-        <div class="map-wrap">
-          <iframe title="Карта" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=13.404954%2C52.520008%2C13.404954%2C52.520008&layer=mapnik"></iframe>
-        </div>
-      </div>
-    </section>
+  <main style="padding:2rem; text-align:center;">
+    <p style="color:#5b6a87">Dies ist nur die <strong>Startseite (Cover)</strong>. Sobald du sagst „OK“, machen wir weiter mit Menü, Galerie und Kontakt.</p>
   </main>
 
   <footer>
-    <div class="container">
-      <p>© <span id="year"></span> Mykonos • <a href="assets/ABSCHLUSSSEITE_MYKONOS.pdf" target="_blank">Impressum</a></p>
-    </div>
+    © <span id="year"></span> Mykonos
   </footer>
 
   <script>
-    // year
-    document.getElementById('year').textContent = new Date().getFullYear();
-    // theme toggle
-    const root=document.documentElement, saved=localStorage.getItem('theme');
-    if(saved==='dark') root.classList.add('dark');
-    document.getElementById('themeToggle').addEventListener('click',()=>{
-      root.classList.toggle('dark');
-      localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light');
-    });
-    // mobile nav
-    const t=document.querySelector('.nav-toggle'), l=document.getElementById('navlist');
-    t.addEventListener('click',()=>{
-      const exp=t.getAttribute('aria-expanded')==='true';
-      t.setAttribute('aria-expanded',(!exp).toString());
-      l.classList.toggle('show');
-    });
+    document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
