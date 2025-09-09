@@ -1,323 +1,354 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mykonos Hot 5 — Expanding Wild Demo</title>
-<style>
-  :root{
-    --bg1:#0b1020;
-    --bg2:#081426;
-    --panel:#0f1b36;
-    --txt:#e9f0ff;
-    --accent:#8fd1ff;
-    --accent2:#76ffa8;
-    --gold:#ffd76b;
-    --wild:#2ecc71;
-  }
-  html,body{margin:0;height:100%;background:radial-gradient(1200px 700px at 50% 100%, rgba(143,209,255,.08), transparent 60%), linear-gradient(180deg,var(--bg1),var(--bg2)); color:var(--txt); font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial}
-  .wrap{max-width:920px;margin:0 auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{font-size:22px;margin:0;letter-spacing:.4px}
-  .hud{display:flex;gap:10px;flex-wrap:wrap}
-  .pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 10px;font-size:14px}
-  .btn{appearance:none;border:none;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer;background:var(--accent);color:#0b1020}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .machine{margin-top:14px;background:var(--panel);border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden;box-shadow:0 10px 35px rgba(0,0,0,.35)}
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0))}
-  .title{font-weight:900;letter-spacing:1px}
-  .reels{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:12px}
-  .col{background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;overflow:hidden}
-  .cell{height:84px;display:flex;align-items:center;justify-content:center;font-size:38px;border-radius:10px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.08);margin:6px 0;box-shadow:inset 0 4px 10px rgba(0,0,0,.25)}
-  .cell.wild{background:rgba(46,204,113,.15);border-color:rgba(46,204,113,.55);text-shadow:0 0 12px rgba(46,204,113,.7)}
-  .footer{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px;border-top:1px solid rgba(255,255,255,.08)}
-  .lines{font-size:12px;opacity:.9}
-  .flash{position:absolute;inset:0;background:radial-gradient(closest-side, rgba(118,255,168,.6), rgba(118,255,168,0));pointer-events:none;opacity:0;transition:opacity .25s}
-  .flash.show{opacity:1;animation:flash .5s ease-out}
-  @keyframes flash{0%{opacity:0}20%{opacity:1}100%{opacity:0}}
-  .toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.18);color:#fff;padding:8px 12px;border-radius:10px;font-size:14px;opacity:0;transition:.25s}
-  .toast.show{opacity:1}
-  /* гръцка линийка горе/долу за стил */
-  .greek{height:8px;background:
-    linear-gradient(90deg, transparent 0 8px, rgba(255,255,255,.15) 8px 9px, transparent 9px 13px, rgba(255,255,255,.15) 13px 14px, transparent 14px 22px) repeat-x;
-    background-size:22px 8px;opacity:.7}
-  @media (max-width:640px){ .cell{height:64px;font-size:30px} }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mykonos – Гръцки ресторант</title>
+  <meta name="description" content="Гръцки ресторант Mykonos – автентични вкусове, прясна риба и специалитети от грила." />
+  <meta name="theme-color" content="#0a4aa4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== Base / Theme ===== */
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:"Manrope",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--fg); background:var(--bg); line-height:1.6;
+    }
+    :root{
+      --bg:#ffffff; --fg:#0a1633; --muted:#5b6a87;
+      --brand:#0a4aa4; --brand-2:#1e7fd1;
+      --surface:#f6f8fc; --border:#e2e8f0;
+    }
+    :root.dark{
+      --bg:#0b1221; --fg:#e6edf7; --muted:#94a3b8;
+      --brand:#7ab6ff; --brand-2:#9fd0ff;
+      --surface:#101a2f; --border:#21314f;
+    }
+    .container{max-width:1100px;margin:0 auto;padding:0 1.2rem}
+    .section{padding:4rem 0}
+    .muted{color:var(--muted)}
+    a{color:var(--brand)}
+    /* ===== Decorative Greek Stripe (top/bottom) ===== */
+    .greek-frame{
+      position:relative; isolation:isolate;
+      border-block: 12px solid transparent;
+    }
+    .greek-frame::before,
+    .greek-frame::after{
+      content:""; position:absolute; inset-inline:0; height:12px; z-index:-1;
+      background:
+        repeating-linear-gradient(90deg, #0a4aa4 0 14px, transparent 14px 16px),
+        repeating-linear-gradient(90deg, #0a4aa4 0 2px, transparent 2px 16px);
+    }
+    .greek-frame::before{ top:0; }
+    .greek-frame::after{ bottom:0; transform:scaleY(-1); }
+    /* ===== Header / Nav ===== */
+    header{
+      background:
+        radial-gradient(60% 80% at 80% 10%, rgba(10,74,164,.10), transparent 60%),
+        radial-gradient(50% 80% at 10% 20%, rgba(30,127,209,.12), transparent 60%);
+      border-bottom:1px solid var(--border);
+    }
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:.8rem 0}
+    .brand{display:inline-flex;gap:.6rem;align-items:center;text-decoration:none;color:var(--fg);font-weight:800}
+    .brand svg{width:36px;height:36px}
+    .navlist{display:flex;gap:.8rem;list-style:none;padding:0;margin:0;align-items:center}
+    .navlist a{padding:.4rem .6rem;border-radius:.5rem;text-decoration:none;color:var(--fg)}
+    .navlist a:hover{background:var(--surface)}
+    .nav-toggle{display:none;border:1px solid var(--border);background:none;border-radius:.5rem;padding:.35rem .6rem}
+    .icon-btn{border:1px solid var(--border);background:none;border-radius:.5rem;padding:.35rem .6rem;cursor:pointer}
+    @media (max-width:760px){
+      .nav-toggle{display:block}
+      .navlist{display:none;position:absolute;right:1.2rem;top:3.2rem;background:var(--bg);border:1px solid var(--border);border-radius:.6rem;padding:.6rem;flex-direction:column;align-items:flex-start}
+      .navlist.show{display:flex}
+    }
+    .hero{padding:3rem 0 4rem}
+    .hero h1{margin:0 0 .4rem;font-size:clamp(2rem,4vw,3rem)}
+    .accent{color:var(--brand-2)}
+    .cta-row{display:flex;gap:.8rem;flex-wrap:wrap}
+    .btn{display:inline-block;border:1px solid var(--brand);background:var(--brand);color:#fff;padding:.6rem 1rem;border-radius:.7rem;text-decoration:none;font-weight:700}
+    .btn:hover{filter:brightness(1.05)}
+    .btn.outline{background:transparent;color:var(--brand)}
+    .btn.small{padding:.35rem .7rem;font-weight:700}
+    /* ===== Cards / Grid ===== */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:1rem;padding:1rem}
+    .grid{display:grid;gap:1rem}
+    @media (min-width:880px){ .grid.cols-2{grid-template-columns:1fr 1fr} .grid.cols-3{grid-template-columns:repeat(3,1fr)} }
+    /* ===== PDF block ===== */
+    .pdf-wrap{border:1px solid var(--border);border-radius:.7rem;overflow:hidden;background:#fff;margin:.6rem 0 1rem}
+    .pdf-wrap object{width:100%;height:420px}
+    /* ===== Menu preview list ===== */
+    .menu-list{list-style:none;padding:0;margin:.4rem 0 0}
+    .menu-list li{display:grid;grid-template-columns:1fr auto;padding:.45rem 0;border-bottom:1px dashed var(--border)}
+    .menu-list li:last-child{border-bottom:0}
+    /* ===== Gallery ===== */
+    .gallery{display:grid;gap:.6rem;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+    .gallery img{width:100%;height:100%;object-fit:cover;border-radius:.6rem;border:1px solid var(--border)}
+    /* ===== Contact / Map ===== */
+    .contact-grid{display:grid;gap:1rem}
+    @media (min-width:820px){ .contact-grid{grid-template-columns:1fr 1.2fr} }
+    .map-wrap{border:1px solid var(--border);border-radius:.7rem;overflow:hidden;min-height:280px}
+    .map-wrap iframe{width:100%;height:100%;min-height:280px;border:0}
+    /* ===== Footer ===== */
+    footer{border-top:1px solid var(--border);padding:1.2rem 0;text-align:center;color:var(--muted)}
+    /* ===== Utility ===== */
+    .section-head{margin-bottom:1.2rem}
+    .section-head h2{margin:0 0 .25rem;font-size:clamp(1.6rem,2.5vw,2.2rem)}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap}
+    .center{text-align:center}
+    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+    /* ===== Olive branch badge ===== */
+    .badge{display:inline-flex;gap:.35rem;align-items:center;padding:.35rem .6rem;border:1px solid var(--border);border-radius:.6rem;background:var(--surface)}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>Mykonos Hot 5 — Expanding Wild</h1>
-    <div class="hud">
-      <div class="pill">Кредити: <span id="credits">1000</span></div>
-      <div class="pill">Залог: <span id="bet">10</span></div>
-      <div class="pill">Печалба: <span id="win">0</span></div>
-      <button id="spinBtn" class="btn">SPIN</button>
+  <header class="greek-frame">
+    <nav class="nav container" aria-label="Основна навигация">
+      <a class="brand" href="#home" aria-label="Mykonos – начало">
+        <!-- Simple circular logo with olive -->
+        <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="24" fill="#0a4aa4"/><path d="M16 40c7-9 14-12 18-12s11 3 18 12" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/></svg>
+        <span>Mykonos</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="navlist">☰</button>
+      <ul id="navlist" class="navlist">
+        <li><a href="#menu">Меню</a></li>
+        <li><a href="#gallery">Галерия</a></li>
+        <li><a href="#about">За нас</a></li>
+        <li><a href="#contact">Контакт</a></li>
+        <li><a class="btn small" href="#reservation">Резервации</a></li>
+        <li><button id="themeToggle" class="icon-btn" aria-label="Тъмна/светла тема">🌓</button></li>
+      </ul>
+    </nav>
+
+    <div id="home" class="hero container">
+      <h1>Гръцки ресторант <span class="accent">Mykonos</span></h1>
+      <p class="muted">Автентични гръцки рецепти, свежи продукти и топло обслужване – точно като на острова.</p>
+      <div class="cta-row">
+        <a href="#menu" class="btn">Виж менюто</a>
+        <a href="#reservation" class="btn outline">Резервирай маса</a>
+      </div>
     </div>
   </header>
 
-  <div class="machine">
-    <div class="greek"></div>
-    <div class="topbar">
-      <div class="title">🍋 🍒 🔔 ⭐ 7️⃣ • 🍀 WILD само на барабани 2–4</div>
-      <div class="pill">Paylines: 5</div>
+  <main>
+    <!-- ===== MENU ===== -->
+    <section id="menu" class="section container greek-frame">
+      <div class="section-head">
+        <h2>Меню</h2>
+        <p class="muted">Разгледай онлайн или свали PDF за печат.</p>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Онлайн преглед</h3>
+          <ul class="menu-list">
+            <li><span>Salate (избрани)</span><span>виж по-долу</span></li>
+            <li><span>Mykonos Spezialitäten</span><span>виж по-долу</span></li>
+            <li><span>Leber & Fisch-Spezialitäten</span><span>виж по-долу</span></li>
+            <li><span>Lamm vom Grill</span><span>виж по-долу</span></li>
+            <li><span>Kinder Teller & Dessert</span><span>виж по-долу</span></li>
+          </ul>
+          <p class="muted">* Секцията показва PDF страниците ти. Сложи файловете в <code>assets/</code>.</p>
+        </article>
+
+        <article class="card">
+          <h3>Пълен PDF (вграден)</h3>
+          <div class="pdf-wrap">
+            <!-- Ако имаш обединен PDF, замени с него -->
+            <object data="assets/KAESE_MENU_FINAL.pdf" type="application/pdf" aria-label="Меню PDF">
+              <p>Вашият браузър не поддържа вграден PDF. <a href="assets/KAESE_MENU_FINAL.pdf" download>Свали PDF</a></p>
+            </object>
+          </div>
+          <div class="row">
+            <a class="btn" href="assets/KAESE_MENU_FINAL.pdf" download>Свали</a>
+            <a class="btn outline" href="assets/KAESE_MENU_FINAL.pdf" target="_blank" rel="noopener">Отвори в нов таб</a>
+          </div>
+        </article>
+      </div>
+
+      <!-- Карти за отделни страници/секции -->
+      <div class="grid cols-2" style="margin-top:1rem">
+        <article class="card">
+          <h3>Salate</h3>
+          <div class="pdf-wrap"><object data="assets/SALATE_FINAL.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/SALATE_FINAL.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/SALATE_FINAL.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Mykonos Spezialitäten</h3>
+          <div class="pdf-wrap"><object data="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Leber & Fisch-Spezialitäten</h3>
+          <div class="pdf-wrap"><object data="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Lamm vom Grill</h3>
+          <div class="pdf-wrap"><object data="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Kinder Teller & Dessert</h3>
+          <div class="pdf-wrap"><object data="assets/KINDER_TELLER_DESSERT_FINAL.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/KINDER_TELLER_DESSERT_FINAL.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/KINDER_TELLER_DESSERT_FINAL.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Кейзе / Käse</h3>
+          <div class="pdf-wrap"><object data="assets/KAESE_MENU_FINAL.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/KAESE_MENU_FINAL.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/KAESE_MENU_FINAL.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Spirituosen & Liköre</h3>
+          <div class="pdf-wrap"><object data="assets/SPIRITUOSEN_UND_LIKOERE.pdf" type="application/pdf"></object></div>
+          <div class="row">
+            <a class="btn outline" href="assets/SPIRITUOSEN_UND_LIKOERE.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/SPIRITUOSEN_UND_LIKOERE.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3>Алкохолни напитки (меню страница)</h3>
+          <div class="pdf-wrap">
+            <object data="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" type="application/pdf"></object>
+          </div>
+          <div class="row">
+            <a class="btn outline" href="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" target="_blank">Отвори</a>
+            <a class="btn" href="assets/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" download>Свали PDF</a>
+          </div>
+        </article>
+      </div>
+
+      <p class="center muted" style="margin-top:1rem">
+        <span class="badge">
+          <!-- tiny olive svg -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 17c5-6 9-8 12-8s7 2 12 8" stroke="currentColor" stroke-opacity=".35" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          Автентичен гръцки стил – зиг-заг рамка и маслинови клонки
+        </span>
+      </p>
+    </section>
+
+    <!-- ===== GALLERY ===== -->
+    <section id="gallery" class="section container greek-frame">
+      <div class="section-head">
+        <h2>Галерия</h2>
+        <p class="muted">Добави снимките си в <code>assets/photo-1.jpg</code>…</p>
+      </div>
+      <div class="gallery">
+        <img src="assets/photo-1.jpg" alt="Гръцка салата с фета">
+        <img src="assets/photo-2.jpg" alt="Морски дарове на грил">
+        <img src="assets/photo-3.jpg" alt="Гирос с гарнитури">
+        <img src="assets/photo-4.jpg" alt="Домашна баклава">
+      </div>
+    </section>
+
+    <!-- ===== ABOUT ===== -->
+    <section id="about" class="section container greek-frame">
+      <div class="section-head">
+        <h2>За нас</h2>
+      </div>
+      <div class="card">
+        <p>Mykonos е семеен ресторант с вдъхновение от гръцките острови. Вярваме в честната, проста кухня – пресни продукти, зехтин, лимон и внимание към детайла.</p>
+        <p class="muted">„Като на острова, но близо до вас.“</p>
+      </div>
+    </section>
+
+    <!-- ===== RESERVATION ===== -->
+    <section id="reservation" class="section container greek-frame">
+      <div class="section-head">
+        <h2>Резервации</h2>
+      </div>
+      <div class="card">
+        <p>Обади се на <a href="tel:+49XXXXXXXXX">+49 XXX XXX XXX</a> или пиши на <a href="mailto:info@mykonos.example">info@mykonos.example</a>.</p>
+        <!-- Работи в Netlify / GitHub Pages (статична форма) -->
+        <form class="grid" name="reservation" method="POST" data-netlify="true">
+          <input type="hidden" name="form-name" value="reservation">
+          <label>Име <input name="name" required></label>
+          <label>Телефон <input name="phone" required></label>
+          <label>Дата <input type="date" name="date" required></label>
+          <label>Час <input type="time" name="time" required></label>
+          <label>Брой гости <input type="number" name="guests" min="1" max="20" value="2" required></label>
+          <label style="grid-column:1/-1">Съобщение <textarea name="message" rows="3"></textarea></label>
+          <div style="grid-column:1/-1" class="row">
+            <button class="btn" type="submit">Изпрати</button>
+            <a class="btn outline" href="assets/ABSCHLUSSSEITE_MYKONOS.pdf" target="_blank">Haus-Seite (PDF)</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section id="contact" class="section container greek-frame">
+      <div class="section-head">
+        <h2>Контакт</h2>
+      </div>
+      <div class="contact-grid">
+        <div class="card">
+          <h3>Адрес</h3>
+          <p>Hauptstraße 1, 12345 Musterstadt, Deutschland</p>
+          <p>Пн–Нд: 11:30–22:30</p>
+        </div>
+        <div class="map-wrap">
+          <iframe title="Карта" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=13.404954%2C52.520008%2C13.404954%2C52.520008&layer=mapnik"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© <span id="year"></span> Mykonos • <a href="assets/ABSCHLUSSSEITE_MYKONOS.pdf" target="_blank">Impressum</a></p>
     </div>
+  </footer>
 
-    <div id="reels" class="reels">
-      <!-- 5 колони × 3 клетки -->
-    </div>
-    <div id="flash" class="flash"></div>
-
-    <div class="footer">
-      <div class="lines">Линии: горна • средна • долна • диагонал ↘︎ • диагонал ↗︎</div>
-      <div class="pill">WILD 🍀 → ако се падне на (2–4) → целият екран става WILD</div>
-    </div>
-    <div class="greek"></div>
-  </div>
-
-  <div id="toast" class="toast"></div>
-</div>
-
-<script>
-/* ----------------------------------
-   Конфигурация
------------------------------------*/
-const ROWS = 3, COLS = 5;
-const SYMBOLS = ['🍇','🍋','🍒','🔔','⭐','7️⃣']; // базови символи
-const WILD = '🍀';
-const ALLOWED_WILD_REELS = new Set([1,2,3]); // барабани 2–4 (0-базов индекс)
-const SPIN_TIME_PER_REEL = 700; // ms
-const EXTRA_REEL_DELAY = 120;   // ms, стъпаловидно спиране
-const CELL_CLASS = 'cell';
-
-// paytable за 5 в линия (примерни стойности, можеш да ги смениш)
-const paytable = {
-  '7️⃣': {5: 250},
-  '⭐': {5: 150},
-  '🔔': {5: 120},
-  '🍒': {5: 80},
-  '🍋': {5: 60},
-  '🍇': {5: 40},
-  [WILD]: {5: 300}
-};
-
-// 5 линии
-const lines = [
-  [[0,0],[0,1],[0,2],[0,3],[0,4]], // top
-  [[1,0],[1,1],[1,2],[1,3],[1,4]], // mid
-  [[2,0],[2,1],[2,2],[2,3],[2,4]], // bottom
-  [[0,0],[1,1],[2,2],[1,3],[0,4]], // V диагонал
-  [[2,0],[1,1],[0,2],[1,3],[2,4]], // Λ диагонал
-];
-
-// кредити / залог
-let credits = 1000;
-let bet = 10;
-const uiCredits = document.getElementById('credits');
-const uiBet = document.getElementById('bet');
-const uiWin = document.getElementById('win');
-const spinBtn = document.getElementById('spinBtn');
-const reelsEl = document.getElementById('reels');
-const flashEl = document.getElementById('flash');
-const toastEl = document.getElementById('toast');
-uiCredits.textContent = credits;
-uiBet.textContent = bet;
-
-// създай клетки
-const colsEls = [];
-for (let c=0;c<COLS;c++){
-  const col = document.createElement('div');
-  col.className = 'col';
-  for (let r=0;r<ROWS;r++){
-    const cell = document.createElement('div');
-    cell.className = CELL_CLASS;
-    cell.textContent = ' ';
-    col.appendChild(cell);
-  }
-  reelsEl.appendChild(col);
-  colsEls.push(col);
-}
-
-// Reel strips — без WILD на 1 и 5-ти барабан; с WILD на 2–4
-const reelStrips = [
-  ['🍇','🍋','🍒','🔔','⭐','7️⃣','🍇','🍒','🍋','🔔','⭐','7️⃣'],
-  ['🍇','🍋',WILD,'🍒','🔔','⭐',WILD,'7️⃣','🍇',WILD,'🍋','🍒','🔔','⭐'],
-  ['🍇',WILD,'🍋','🍒','🔔','⭐','7️⃣','🍇','🍋',WILD,'🍒','🔔',WILD,'⭐'],
-  ['🍇','🍋','🍒','🔔',WILD,'⭐','7️⃣','🍇',WILD,'🍋','🍒','🔔','⭐'],
-  ['🍇','🍋','🍒','🔔','⭐','7️⃣','🍇','🍋','🍒','🔔','⭐','7️⃣'],
-];
-
-// помощни
-const randInt = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
-
-// вземи 3 последователни символа от лента
-function take3(strip){
-  const i = randInt(0, strip.length-1);
-  // wrap около
-  const s0 = strip[i];
-  const s1 = strip[(i+1)%strip.length];
-  const s2 = strip[(i+2)%strip.length];
-  return [s0,s1,s2];
-}
-
-// генерирай крайна решетка (по ленти)
-function generateGrid(){
-  const grid = Array.from({length: ROWS}, ()=>Array(COLS).fill(''));
-  for (let c = 0; c < COLS; c++){
-    const strip = reelStrips[c];
-    const trio = take3(strip);
-    // вертикално позициониране: top..bottom
-    grid[0][c] = trio[0];
-    grid[1][c] = trio[1];
-    grid[2][c] = trio[2];
-  }
-  return grid;
-}
-
-// има ли WILD на 2–4 барабан?
-function hasAllowedWild(grid){
-  for (let r=0;r<ROWS;r++){
-    for (let c=0;c<COLS;c++){
-      if (grid[r][c]===WILD && ALLOWED_WILD_REELS.has(c)) return true;
-    }
-  }
-  return false;
-}
-
-// разпъни всичко на WILD
-function expandAllToWild(grid){
-  for (let r=0;r<ROWS;r++){
-    for (let c=0;c<COLS;c++){
-      grid[r][c] = WILD;
-    }
-  }
-}
-
-// визуализирай решетката
-function renderGrid(grid){
-  for (let c=0;c<COLS;c++){
-    const col = colsEls[c];
-    const cells = col.children;
-    for (let r=0;r<ROWS;r++){
-      const sym = grid[r][c];
-      const el = cells[r];
-      el.textContent = sym;
-      el.classList.toggle('wild', sym===WILD);
-    }
-  }
-}
-
-// проста анимация на въртене
-function spinAnimateColumn(colIndex, finalSymbols){
-  return new Promise(resolve=>{
-    const col = colsEls[colIndex];
-    const cells = col.children;
-    // временно въртене
-    const start = performance.now();
-    const total = SPIN_TIME_PER_REEL + colIndex*EXTRA_REEL_DELAY;
-    let raf;
-    function tick(t){
-      const dt = t - start;
-      // върти „фалшиво“ със случайни символи
-      for (let r=0;r<ROWS;r++){
-        const randomSym = (ALLOWED_WILD_REELS.has(colIndex)?[...SYMBOLS,WILD]:SYMBOLS)[randInt(0, (ALLOWED_WILD_REELS.has(colIndex)?SYMBOLS.length:SYMBOLS.length)-1)];
-        cells[r].textContent = randomSym;
-        cells[r].classList.toggle('wild', randomSym===WILD);
-      }
-      if (dt >= total){
-        // сложи финалните символи
-        for (let r=0;r<ROWS;r++){
-          cells[r].textContent = finalSymbols[r];
-          cells[r].classList.toggle('wild', finalSymbols[r]===WILD);
-        }
-        cancelAnimationFrame(raf);
-        resolve();
-      } else {
-        raf = requestAnimationFrame(tick);
-      }
-    }
-    raf = requestAnimationFrame(tick);
-  });
-}
-
-// оценка на печалба
-function evaluatePayout(grid){
-  // ако всичко е WILD → най-добрата 5-of-a-kind * брой линии
-  const allWild = grid.every(row => row.every(sym => sym===WILD));
-  if (allWild){
-    let best = 0;
-    for (const [sym,vals] of Object.entries(paytable)){
-      const v = vals[5]||0;
-      if (v>best) best = v;
-    }
-    return best * lines.length;
-  }
-
-  // иначе — 5-of-a-kind с WILD като заместител
-  let total = 0;
-  for (const line of lines){
-    const symbols = line.map(([r,c])=>grid[r][c]);
-    // таргет е първият не-WILD символ; ако няма → WILD
-    const target = symbols.find(s=>s!==WILD) ?? WILD;
-    const ok = symbols.every(s=>s===target || s===WILD);
-    if (ok){
-      total += (paytable[target]?.[5]||0);
-    }
-  }
-  return total;
-}
-
-// toast helper
-let toastTimer=null;
-function toast(msg){
-  toastEl.textContent = msg;
-  toastEl.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
-}
-
-// главна логика за SPIN
-let spinning = false;
-spinBtn.addEventListener('click', async ()=>{
-  if (spinning) return;
-  if (credits < bet){ toast('Недостатъчно кредити'); return; }
-
-  spinning = true;
-  spinBtn.disabled = true;
-  uiWin.textContent = '0';
-  credits -= bet; uiCredits.textContent = credits;
-
-  // генерирай крайна решетка и завърти визуално
-  const finalGrid = generateGrid();
-  // последователна анимация по колони
-  for (let c=0;c<COLS;c++){
-    const finals = [finalGrid[0][c], finalGrid[1][c], finalGrid[2][c]];
-    /* eslint-disable no-await-in-loop */
-    await spinAnimateColumn(c, finals);
-  }
-
-  // тригер за разпъване (ако има WILD на 2–4)
-  if (hasAllowedWild(finalGrid)){
-    flashEl.classList.add('show');
-    setTimeout(()=>flashEl.classList.remove('show'), 500);
-    expandAllToWild(finalGrid);
-    renderGrid(finalGrid);
-    toast('EXPANDING WILD! 🍀');
-  }
-
-  const win = evaluatePayout(finalGrid);
-  uiWin.textContent = String(win);
-  credits += win; uiCredits.textContent = credits;
-
-  spinning = false;
-  spinBtn.disabled = false;
-});
-
-// първоначално показване (празна решетка)
-renderGrid(Array.from({length:ROWS},()=>Array(COLS).fill(' ')));
-</script>
+  <script>
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+    // theme toggle
+    const root=document.documentElement, saved=localStorage.getItem('theme');
+    if(saved==='dark') root.classList.add('dark');
+    document.getElementById('themeToggle').addEventListener('click',()=>{
+      root.classList.toggle('dark');
+      localStorage.setItem('theme', root.classList.contains('dark')?'dark':'light');
+    });
+    // mobile nav
+    const t=document.querySelector('.nav-toggle'), l=document.getElementById('navlist');
+    t.addEventListener('click',()=>{
+      const exp=t.getAttribute('aria-expanded')==='true';
+      t.setAttribute('aria-expanded',(!exp).toString());
+      l.classList.toggle('show');
+    });
+  </script>
 </body>
 </html>
-
 
 
