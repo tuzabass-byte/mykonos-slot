@@ -1,85 +1,170 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mykonos – Griechisches Restaurant</title>
-  <style>
-    body {
-      margin:0;
-      font-family: Arial, sans-serif;
-      background:#fff;
-      color:#222;
-      text-align:center;
-    }
-    /* --- Гръцка рамка (зиг-заг) --- */
-    .frame {
-      border: 10px solid transparent;
-      padding: 30px 15px;
-      position: relative;
-    }
-    .frame:before, .frame:after {
-      content:"";
-      position:absolute;
-      left:0; right:0;
-      height:10px;
-      background:repeating-linear-gradient(90deg, #0a4aa4 0 20px, transparent 20px 24px);
-    }
-    .frame:before { top:0; }
-    .frame:after { bottom:0; transform:scaleY(-1); }
-    h1 {
-      font-size:2.5rem;
-      color:#0a4aa4;
-      margin-bottom:0.3em;
-    }
-    p.lead {
-      color:#555;
-      max-width:600px;
-      margin:0 auto 1.5em;
-      font-size:1.1rem;
-    }
-    .btn {
-      display:inline-block;
-      margin:0.3em;
-      padding:0.6em 1.2em;
-      border-radius:5px;
-      font-weight:bold;
-      text-decoration:none;
-      border:2px solid #0a4aa4;
-    }
-    .btn.primary { background:#0a4aa4; color:#fff; }
-    .btn.outline { background:#fff; color:#0a4aa4; }
-    footer {
-      margin-top:2em;
-      padding:1em;
-      border-top:1px solid #ddd;
-      color:#777;
-      font-size:0.9rem;
-    }
-    /* --- Маслинова клонка --- */
-    .olive {
-      margin:2em auto 0;
-      width:120px;
-      opacity:0.5;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mykonos – Griechisches Restaurant</title>
+<meta name="description" content="Mykonos – authentische griechische Küche, frischer Fisch, Grill, Salate.">
+<style>
+  /* ===== Base / Theme ===== */
+  :root{
+    --bg:#ffffff; --ink:#0a1633; --muted:#6b7280;
+    --brand:#0a4aa4; --brand2:#1e7fd1;
+    --surface:#f7f8fb; --border:#e5e9f2;
+    --shadow:0 10px 30px rgba(10,23,54,.08);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.6}
+  a{color:var(--brand);text-decoration:none}
+  .container{max-width:1100px;margin:0 auto;padding:0 18px}
+  .section{padding:56px 0}
+  .muted{color:var(--muted)} .center{text-align:center}
+
+  /* ===== Greek border (key) top/bottom per section ===== */
+  .greek{
+    position:relative; isolation:isolate; border-block:14px solid transparent;
+  }
+  .greek::before,.greek::after{
+    content:""; position:absolute; inset-inline:0; height:14px; z-index:-1;
+    background:
+      repeating-linear-gradient(90deg, var(--brand) 0 14px, transparent 14px 16px),
+      repeating-linear-gradient(90deg, var(--brand) 0 2px, transparent 2px 16px);
+  }
+  .greek::before{top:0} .greek::after{bottom:0; transform:scaleY(-1)}
+
+  /* ===== Header / Sticky Nav ===== */
+  .site-header{position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--border); box-shadow:0 4px 18px rgba(0,0,0,.04)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
+  .brand{display:flex;align-items:center;gap:10px;color:inherit}
+  .brand .mark{width:36px;height:36px}
+  .navlinks{display:flex;gap:10px;flex-wrap:wrap}
+  .navlinks a{padding:.45rem .65rem;border-radius:.55rem;color:inherit}
+  .navlinks a:hover{background:var(--surface)}
+  .btn{display:inline-block;border:2px solid var(--brand);color:#fff;background:var(--brand);padding:.6rem .9rem;border-radius:.7rem;font-weight:800}
+  .btn.outline{background:transparent;color:var(--brand)}
+
+  /* ===== Hero ===== */
+  .hero{padding:60px 0;background:
+    radial-gradient(1200px 500px at 85% -80px, rgba(10,74,164,.10), transparent 60%),
+    radial-gradient(1000px 420px at -10% 0, rgba(30,127,209,.10), transparent 55%)}
+  .hero h1{font-size:clamp(2rem,4.5vw,3rem);margin:.2rem 0 .4rem;letter-spacing:.3px}
+  .lead{color:var(--muted);max-width:60ch;margin:0 auto 1rem}
+  .cta{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-top:.4rem}
+
+  /* ===== Menu images (scroll page) ===== */
+  .menu-stack{display:grid;gap:18px}
+  .menu-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .menu-card img,.menu-card object{display:block;width:100%;height:auto}
+  .menu-card h3{margin:0;padding:10px 14px;border-bottom:1px solid var(--border);font-size:1rem;background:var(--surface)}
+  .menu-note{font-size:.95rem;color:var(--muted);text-align:center;margin-top:10px}
+
+  /* ===== Gallery (optional) ===== */
+  .gallery{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+  .gallery img{width:100%;height:100%;object-fit:cover;border-radius:10px;border:1px solid var(--border)}
+
+  /* ===== Contact ===== */
+  .contact{display:grid;gap:16px}
+  @media (min-width:860px){ .contact{grid-template-columns:1fr 1.2fr} }
+  .card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:14px}
+  .map{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+  footer{border-top:1px solid var(--border);padding:16px 0;text-align:center;color:var(--muted)}
+</style>
 </head>
 <body>
-  <div class="frame">
-    <h1>Griechisches Restaurant<br>Mykonos</h1>
-    <p class="lead">Authentische Rezepte, frische Zutaten und warme Gastfreundschaft – wie auf der Insel.</p>
-    <a href="#menu" class="btn primary">Menü ansehen</a>
-    <a href="#kontakt" class="btn outline">Kontakt</a>
-    <div class="olive">
-      <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10,70 C40,30 70,20 110,12" fill="none" stroke="#0a4aa4" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="55" cy="38" r="7" fill="#0a4aa4"/>
-        <circle cx="70" cy="32" r="7" fill="#0a4aa4"/>
-        <circle cx="86" cy="26" r="7" fill="#0a4aa4"/>
+
+<!-- ===== Sticky header ===== -->
+<header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="#home">
+      <!-- simple round logo -->
+      <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="32" cy="32" r="27" fill="none" stroke="#0a4aa4" stroke-width="4"/>
+        <path d="M16 38c7-9 14-12 18-12s11 3 18 12" fill="none" stroke="#0a4aa4" stroke-width="5" stroke-linecap="round"/>
       </svg>
+      <strong>Mykonos</strong>
+    </a>
+    <nav class="navlinks" aria-label="Hauptnavigation">
+      <a href="#home">Start</a>
+      <a href="#menu">Menü</a>
+      <a href="#gallery">Galerie</a>
+      <a href="#contact">Kontakt</a>
+      <a class="btn outline" href="tel:+49XXXXXXXXX">Anrufen</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section id="home" class="hero greek">
+  <div class="container center">
+    <h1>Griechisches Restaurant <span style="color:var(--brand2)">Mykonos</span></h1>
+    <p class="lead">Authentische Rezepte, frische Zutaten und warme Gastfreundschaft – wie auf der Insel.</p>
+    <div class="cta">
+      <a class="btn" href="#menu">Menü ansehen</a>
+      <a class="btn outline" href="#contact">Kontakt</a>
     </div>
   </div>
+</section>
 
-  <footer>
-    © <span id="year"></span
+<!-- ===== Menü: ВСИЧКО като картинки, скрол надолу ===== -->
+<section id="menu" class="section container">
+  <h2 class="center" style="margin:0 0 12px">Menü</h2>
+  <p class="menu-note">Scrolle nach unten – jede Seite des Menüs ist hier als Bild eingebettet (schnell auf Handy & Desktop).</p>
+
+  <div class="menu-stack">
+    <!-- Сложи тук ТВОИТЕ страници като jpg/png в assets/menu/ и смени имената ↓ -->
+    <div class="menu-card"><h3>Salate</h3><img loading="lazy" src="assets/menu/salate_final.jpg" alt="Salate"></div>
+    <div class="menu-card"><h3>Mykonos Spezialitäten</h3><img loading="lazy" src="assets/menu/mykonos_spezialitaeten_final.jpg" alt="Mykonos Spezialitäten"></div>
+    <div class="menu-card"><h3>Leber & Fisch</h3><img loading="lazy" src="assets/menu/leber_und_fisch_spezialitaeten.jpg" alt="Leber und Fisch Spezialitäten"></div>
+    <div class="menu-card"><h3>Lamm vom Grill</h3><img loading="lazy" src="assets/menu/lamm_vom_grill_final.jpg" alt="Lamm vom Grill"></div>
+    <div class="menu-card"><h3>Kinder Teller & Dessert</h3><img loading="lazy" src="assets/menu/kinder_teller_dessert_final.jpg" alt="Kinder Teller und Dessert"></div>
+    <div class="menu-card"><h3>Überbackene Gerichte</h3><img loading="lazy" src="assets/menu/ueberbackene_gerichte_final.jpg" alt="Überbackene Gerichte"></div>
+
+    <!-- Ако предпочиташ PDF вместо изображения, можеш да добавиш такива карти:
+    <div class="menu-card">
+      <h3>Gesamtes Menü (PDF)</h3>
+      <object data="assets/menu/gesamt_menu.pdf" type="application/pdf"></object>
+    </div>
+    -->
+  </div>
+</section>
+
+<!-- ===== Галерия (по желание) ===== -->
+<section id="gallery" class="section container greek">
+  <h2 class="center" style="margin:0 0 12px">Galerie</h2>
+  <div class="gallery">
+    <img loading="lazy" src="assets/photos/photo-1.jpg" alt="Gericht 1">
+    <img loading="lazy" src="assets/photos/photo-2.jpg" alt="Gericht 2">
+    <img loading="lazy" src="assets/photos/photo-3.jpg" alt="Gericht 3">
+    <img loading="lazy" src="assets/photos/photo-4.jpg" alt="Gericht 4">
+  </div>
+</section>
+
+<!-- ===== Kontakt ===== -->
+<section id="contact" class="section container">
+  <h2 class="center" style="margin:0 0 12px">Kontakt</h2>
+  <div class="contact">
+    <div class="card">
+      <p><strong>Adresse</strong><br>Hauptstraße 1, 12345 Musterstadt, Deutschland</p>
+      <p><strong>Öffnungszeiten</strong><br>Mo–So: 11:30–22:30</p>
+      <p><strong>Telefon</strong><br><a href="tel:+49XXXXXXXXX">+49 XXX XXX XXX</a></p>
+      <p><strong>E-Mail</strong><br><a href="mailto:info@mykonos.example">info@mykonos.example</a></p>
+    </div>
+    <div class="map">
+      <iframe title="Karte" loading="lazy"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=13.404954%2C52.520008%2C13.404954%2C52.520008&layer=mapnik"
+        style="width:100%;height:320px;border:0"></iframe>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © <span id="y"></span> Mykonos
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
 
