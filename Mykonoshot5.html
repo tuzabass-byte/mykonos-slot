@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mykonos – Menü (PDF-Scroll)</title>
-<meta name="description" content="Gesamtes Menü als eingebettete PDFs – einfach nach unten scrollen.">
+<meta name="description" content="Gesamtes Menü als eingebettete PDFs – nach unten scrollen.">
 <style>
   :root{--bg:#fff;--ink:#0a1633;--muted:#6b7280;--brand:#0a4aa4;--surface:#f7f8fb;--border:#e5e9f2;--shadow:0 10px 30px rgba(10,23,54,.08)}
   *{box-sizing:border-box} html{scroll-behavior:smooth}
@@ -46,107 +46,75 @@
       </svg>
       <strong>Mykonos</strong>
     </a>
-    <nav class="navlinks">
-      <a href="#salate">Salate</a>
-      <a href="#mykonos">Mykonos Spezialitäten</a>
-      <a href="#leber-fisch">Leber & Fisch</a>
-      <a href="#lamm">Lamm vom Grill</a>
-      <a href="#kinder">Kinder & Dessert</a>
-      <a href="#ueberbacken">Überbackene Gerichte</a>
-      <a href="#kaese">Käse</a>
-      <a href="#spirit">Spirituosen</a>
-      <a href="#getraenke">Getränke</a>
-    </nav>
+    <nav class="navlinks" id="toc" aria-label="Abschnitte"></nav>
   </div>
 </header>
 
 <section class="section container greek center">
   <h1 style="margin:.2rem 0 .4rem">Menü – einfach nach unten scrollen</h1>
-  <p class="muted">Alle Seiten sind als PDF eingebettet. Tippe auf „PDF öffnen“, wenn dein Browser die Anzeige blockiert.</p>
+  <p class="muted">Alle Seiten sind als PDF eingebettet. Wenn dein Browser blockiert, nutze „PDF öffnen“.</p>
 </section>
 
 <section id="menu" class="section container">
-  <div class="menu-stack">
-
-    <div id="salate" class="card">
-      <h3>Salate</h3>
-      <object data="assets/menu/SALATE_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/SALATE_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/SALATE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="mykonos" class="card">
-      <h3>Mykonos Spezialitäten</h3>
-      <object data="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="leber-fisch" class="card">
-      <h3>Leber & Fisch-Spezialitäten</h3>
-      <object data="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="lamm" class="card">
-      <h3>Lamm vom Grill</h3>
-      <object data="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="kinder" class="card">
-      <h3>Kinder Teller & Dessert</h3>
-      <object data="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="ueberbacken" class="card">
-      <h3>Überbackene Gerichte</h3>
-      <object data="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="kaese" class="card">
-      <h3>Käse</h3>
-      <object data="assets/menu/KAESE_MENU_FINAL.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/KAESE_MENU_FINAL.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/KAESE_MENU_FINAL.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="spirit" class="card">
-      <h3>Spirituosen & Liköre</h3>
-      <object data="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-    <div id="getraenke" class="card">
-      <h3>Getränke</h3>
-      <object data="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" type="application/pdf">
-        <p>PDF nicht angezeigt. <a href="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" target="_blank" rel="noopener">PDF öffnen</a>.</p>
-      </object>
-      <div class="dl"><a href="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" download>PDF herunterladen</a></div>
-    </div>
-
-  </div>
+  <div class="menu-stack" id="stack"><!-- wird per JS gefüllt --></div>
 </section>
 
-<footer class="center" style="border-top:1px solid var(--border);padding:16px 0;color:var(--muted)">
+<footer class="center">
   © <span id="y"></span> Mykonos
 </footer>
-<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+
+<script>
+  document.getElementById('y').textContent=new Date().getFullYear();
+
+  // === HIER NUR DIE DATEINAMEN ANPASSEN (genau wie in assets/menu/) ===
+  // Tipp: öffne PDF in GitHub und kopiere den Namen 1:1 (mit Groß/Kleinschreibung und Umlauten).
+  const items = [
+    {id:'salate',            title:'Salate',                               file:'SALATE_FINAL.pdf'},
+    {id:'mykonos',           title:'Mykonos Spezialitäten',                file:'MYKONOS_SPEZIALITÄTEN_FINAL.pdf'},
+    {id:'leber-fisch',       title:'Leber & Fisch-Spezialitäten',          file:'LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf'},
+    {id:'lamm',              title:'Lamm vom Grill',                       file:'LAMM_VOM_GRILL_FINAL_CORRECTED.pdf'},
+    {id:'kinder',            title:'Kinder Teller & Dessert',               file:'KINDER_TELLER_DESSERT_FINAL.pdf'},
+    {id:'ueberbackene',      title:'Überbackene Gerichte',                 file:'UEBERBACKENE_GERICHTE_FINAL.pdf'},
+    {id:'grillplatten',      title:'Grillplatten',                         file:'GRILLPLATTEN_FINAL_CORRECTED.pdf'},
+    {id:'grillspez',         title:'Grillspezialitäten',                   file:'GRILLSPEZIALITÄTEN_FINAL.pdf'},
+    {id:'eier-gemuese-nudel',title:'Eier · Gemüse · Nudel',                file:'EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf'}, // ← ändere auf deinen genauen Namen
+    {id:'feinschmecker',     title:'Feinschmecker Ecke',                   file:'FEINSCHMECKER_ECKE_FINAL.pdf'},
+    {id:'vorspeisen-suppen', title:'Vorspeisen · Warme Suppen',            file:'Vorspeisen_Warme_Suppen_FINAL.pdf'},
+    {id:'kaese',             title:'Käse',                                 file:'KAESE_MENU_FINAL.pdf'},
+    {id:'weinkarte',         title:'Weinkarte & Aperitifs',                file:'WEINKARTE_UND_APERITIFS.pdf'},
+    {id:'spirituosen',       title:'Spirituosen & Liköre',                 file:'SPIRITUOSEN_UND_LIKOERE.pdf'},
+    {id:'getraenke',         title:'Getränke',                             file:'GETRÄNKE_FINAL.pdf'}, // evtl. GETRAENKE_FINAL.pdf
+    {id:'alkoholische',      title:'Alkoholische Getränke',                file:'A_menu_page_displays_alcoholic_beverages,_divided_.pdf'},
+    {id:'familie',           title:'Unsere Familienangebote',              file:'UNSERE_FAMILIENFREUNDLICH_FINAL.pdf'}, // passe an
+    {id:'hinweis1',          title:'Hinweis (Seite 1)',                    file:'Griechisches_Menu_Seite1_A4.pdf'}, // passe an
+    {id:'hinweis2',          title:'Hinweis (Seite 2)',                    file:'Griechisches_Menu_Seite_AL_A4.pdf'}, // passe an
+    {id:'abschluss',         title:'Abschlussseite / Impressum',           file:'ABSCHLUSSSEITE_MYKONOS.pdf'}
+  ];
+  // === Ende der Liste ===
+
+  // Build TOC
+  const toc = document.getElementById('toc');
+  items.forEach(it=>{
+    const a=document.createElement('a');
+    a.href='#'+it.id; a.textContent=it.title;
+    toc.appendChild(a);
+  });
+
+  // Build cards
+  const stack = document.getElementById('stack');
+  items.forEach(it=>{
+    const card = document.createElement('article');
+    card.className='card'; card.id=it.id;
+    card.innerHTML = `
+      <h3>${it.title}</h3>
+      <object data="assets/menu/${it.file}" type="application/pdf">
+        <p>PDF nicht angezeigt. <a href="assets/menu/${it.file}" target="_blank" rel="noopener">PDF öffnen</a>.</p>
+      </object>
+      <div class="dl"><a href="assets/menu/${it.file}" download>PDF herunterladen</a></div>
+    `;
+    stack.appendChild(card);
+  });
+</script>
 </body>
 </html>
 
