@@ -5,130 +5,98 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mykonos – Menü</title>
 <style>
-  :root{--brand:#0a4aa4;--border:#e5e9f2;--muted:#6b7280}
-  *{box-sizing:border-box} html{scroll-behavior:smooth}
-  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0a1633;background:#fff}
-  .container{max-width:1100px;margin:0 auto;padding:0 16px}
-  .section{padding:20px 0}
-  .title{padding:24px 0 8px;text-align:center}
-  .note{color:var(--muted);text-align:center;margin:0 0 10px}
-  .card{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:16px 0}
-  .card h3{margin:0;padding:10px 14px;border-bottom:1px solid var(--border);background:#f7f8fb;font-size:1rem}
-  .pdf-frame{display:block;width:100%;height:90vh;max-height:1000px;border:0}
-  .dl{padding:10px 14px;border-top:1px solid var(--border)}
-  .dl a{color:var(--brand);font-weight:700;text-decoration:none}
-  footer{border-top:1px solid var(--border);padding:14px 0;text-align:center;color:var(--muted)}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#222}
+  h1{text-align:center;margin:20px 0;color:#0a4aa4}
+  .card{max-width:900px;margin:30px auto;border:1px solid #ddd;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+  .card h3{margin:0;padding:12px;background:#f7f7f7;border-bottom:1px solid #ddd;font-size:18px}
+  .a4{position:relative;width:100%;overflow:hidden}
+  .a4::before{content:"";display:block;padding-top:141.42%} /* A4 пропорция */
+  .a4 iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 </style>
 </head>
 <body>
 
-<main class="container section">
-  <h1 class="title">Menü – scrollen</h1>
-  <p class="note">Alle Seiten sind als PDF eingebettet.</p>
+<h1>Restaurant Mykonos – Menü</h1>
 
-  <article class="card"><h3>Salate</h3>
-    <iframe class="pdf-frame" src="assets/menu/SALATE_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/SALATE_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Salate</h3>
+  <div class="a4"><iframe src="assets/menu/SALATE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Mykonos Spezialitäten</h3>
-    <iframe class="pdf-frame" src="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Mykonos Spezialitäten</h3>
+  <div class="a4"><iframe src="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Leber & Fisch-Spezialitäten</h3>
-    <iframe class="pdf-frame" src="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Leber & Fisch-Spezialitäten</h3>
+  <div class="a4"><iframe src="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Lamm vom Grill</h3>
-    <iframe class="pdf-frame" src="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Lamm vom Grill</h3>
+  <div class="a4"><iframe src="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Kinder Teller & Dessert</h3>
-    <iframe class="pdf-frame" src="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Kinder Teller & Dessert</h3>
+  <div class="a4"><iframe src="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Überbackene Gerichte</h3>
-    <iframe class="pdf-frame" src="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Überbackene Gerichte</h3>
+  <div class="a4"><iframe src="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Grillplatten</h3>
-    <iframe class="pdf-frame" src="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Grillplatten</h3>
+  <div class="a4"><iframe src="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Grillspezialitäten</h3>
-    <iframe class="pdf-frame" src="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Grillspezialitäten</h3>
+  <div class="a4"><iframe src="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Eier · Gemüse · Nudel</h3>
-    <iframe class="pdf-frame" src="assets/menu/EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Eier · Gemüse · Nudel</h3>
+  <div class="a4"><iframe src="assets/menu/EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Feinschmecker Ecke</h3>
-    <iframe class="pdf-frame" src="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Feinschmecker Ecke</h3>
+  <div class="a4"><iframe src="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Vorspeisen · Warme Suppen</h3>
-    <iframe class="pdf-frame" src="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Vorspeisen · Warme Suppen</h3>
+  <div class="a4"><iframe src="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Käse</h3>
-    <iframe class="pdf-frame" src="assets/menu/KAESE_MENU_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/KAESE_MENU_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Käse</h3>
+  <div class="a4"><iframe src="assets/menu/KAESE_MENU_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Weinkarte & Aperitifs</h3>
-    <iframe class="pdf-frame" src="assets/menu/WEINKARTE_UND_APERITIFS.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/WEINKARTE_UND_APERITIFS.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Weinkarte & Aperitifs</h3>
+  <div class="a4"><iframe src="assets/menu/WEINKARTE_UND_APERITIFS.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Spirituosen & Liköre</h3>
-    <iframe class="pdf-frame" src="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Spirituosen & Liköre</h3>
+  <div class="a4"><iframe src="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Getränke</h3>
-    <iframe class="pdf-frame" src="assets/menu/GETRÄNKE_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/GETRÄNKE_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Getränke</h3>
+  <div class="a4"><iframe src="assets/menu/GETRÄNKE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Alkoholische Getränke</h3>
-    <iframe class="pdf-frame" src="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Alkoholische Getränke</h3>
+  <div class="a4"><iframe src="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Unsere Familienangebote</h3>
-    <iframe class="pdf-frame" src="assets/menu/UNSERE_FAMILIENFREUNDLICH_FINAL.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/UNSERE_FAMILIENFREUNDLICH_FINAL.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Unsere Familienangebote</h3>
+  <div class="a4"><iframe src="assets/menu/UNSERE_FAMILIENFREUNDLICH_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Hinweis (Seite 1)</h3>
-    <iframe class="pdf-frame" src="assets/menu/Griechisches_Menu_Seite1_A4.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/Griechisches_Menu_Seite1_A4.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Hinweis (Seite 1)</h3>
+  <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite1_A4.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Hinweis (Seite 2)</h3>
-    <iframe class="pdf-frame" src="assets/menu/Griechisches_Menu_Seite_AL_A4.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/Griechisches_Menu_Seite_AL_A4.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Hinweis (Seite 2)</h3>
+  <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite2_A4.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-  <article class="card"><h3>Abschlussseite / Impressum</h3>
-    <iframe class="pdf-frame" src="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf#view=FitH&toolbar=0"></iframe>
-    <div class="dl"><a href="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf" download>PDF herunterladen</a></div>
-  </article>
+<div class="card"><h3>Abschlussseite / Impressum</h3>
+  <div class="a4"><iframe src="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf#view=FitH&toolbar=0"></iframe></div>
+</div>
 
-</main>
-
-<footer>© <span id="y"></span> Mykonos</footer>
-<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
 </body>
 </html>
