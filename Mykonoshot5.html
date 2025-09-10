@@ -5,98 +5,84 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mykonos – Menü</title>
 <style>
-  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#222}
-  h1{text-align:center;margin:20px 0;color:#0a4aa4}
-  .card{max-width:900px;margin:30px auto;border:1px solid #ddd;border-radius:8px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,.1)}
-  .card h3{margin:0;padding:12px;background:#f7f7f7;border-bottom:1px solid #ddd;font-size:18px}
-  .a4{position:relative;width:100%;overflow:hidden}
-  .a4::before{content:"";display:block;padding-top:141.42%} /* A4 пропорция */
-  .a4 iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  :root{--border:#e5e9f2;}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:#0a1633;background:#fff}
+  h1{margin:18px 0 6px;text-align:center;color:#0a4aa4}
+  p.note{margin:0 0 8px;text-align:center;color:#6b7280}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px 24px}
+  .card{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:16px 0;background:#fff}
+  .card h3{margin:0;padding:10px 14px;border-bottom:1px solid var(--border);background:#f7f8fb;font-size:1rem}
+  /* Цяла А4 страница без вътрешен скрол */
+  .a4{position:relative;width:100%;overflow:hidden;background:#fff}
+  .a4::before{content:"";display:block;padding-top:141.42%} /* 1.414 = A4 вис/шир */
+  .a4 iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+  .dl{padding:10px 14px;border-top:1px solid var(--border)}
+  .dl a{color:#0a4aa4;font-weight:700;text-decoration:none}
 </style>
 </head>
 <body>
+  <h1>Restaurant Mykonos – Menü</h1>
+  <p class="note">Jede Karte zeigt eine vollständige A4-Seite. Scroll einfach nach unten.</p>
 
-<h1>Restaurant Mykonos – Menü</h1>
+  <div id="list" class="wrap"></div>
 
-<div class="card"><h3>Salate</h3>
-  <div class="a4"><iframe src="assets/menu/SALATE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
+<script>
+/* === 1) ТУК са ТВОИТЕ ИМЕНА на файлове (точно както са в assets/menu/) ===
+   Ако някое е различно, просто го смени 1:1. Можеш да променяш заглавията свободно. */
+const items = [
+  {title:'Salate',                              file:'SALATE_FINAL.pdf'},
+  {title:'Mykonos Spezialitäten',               file:'MYKONOS_SPEZIALITÄTEN_FINAL.pdf'},
+  {title:'Leber & Fisch-Spezialitäten',         file:'LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf'},
+  {title:'Lamm vom Grill',                      file:'LAMM_VOM_GRILL_FINAL_CORRECTED.pdf'},
+  {title:'Kinder Teller & Dessert',             file:'KINDER_TELLER_DESSERT_FINAL.pdf'},
+  {title:'Überbackene Gerichte',                file:'UEBERBACKENE_GERICHTE_FINAL.pdf'},
+  {title:'Grillplatten',                        file:'GRILLPLATTEN_FINAL_CORRECTED.pdf'},
+  {title:'Grillspezialitäten',                  file:'GRILLSPEZIALITÄTEN_FINAL.pdf'},
+  {title:'Eier · Gemüse · Nudel',               file:'EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf'},
+  {title:'Feinschmecker Ecke',                  file:'FEINSCHMECKER_ECKE_FINAL.pdf'},
+  {title:'Vorspeisen · Warme Suppen',           file:'Vorspeisen_Warme_Suppen_FINAL.pdf'},
+  {title:'Käse',                                file:'KAESE_MENU_FINAL.pdf'},
+  {title:'Weinkarte & Aperitifs',               file:'WEINKARTE_UND_APERITIFS.pdf'},
+  {title:'Spirituosen & Liköre',                file:'SPIRITUOSEN_UND_LIKOERE.pdf'},
+  {title:'Getränke',                            file:'GETRÄNKE_FINAL.pdf'}, // ако е GETRAENKE_FINAL.pdf – смени точно тук
+  {title:'Alkoholische Getränke',               file:'A_menu_page_displays_alcoholic_beverages,_divided_.pdf'},
+  {title:'Unsere Familienangebote',             file:'UNSERE_FAMILIENFREUNDLICH_FINAL.pdf'},
+  {title:'Hinweis (Seite 1)',                   file:'Griechisches_Menu_Seite1_A4.pdf'},
+  {title:'Hinweis (Seite 2)',                   file:'Griechisches_Menu_Seite2_A4.pdf'}, // ако е AL_A4.pdf – смени
+  {title:'Abschlussseite / Impressum',          file:'ABSCHLUSSSEITE_MYKONOS.pdf'},
+];
 
-<div class="card"><h3>Mykonos Spezialitäten</h3>
-  <div class="a4"><iframe src="assets/menu/MYKONOS_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
+/* === 2) Надеждно вграждане ===
+   - Абсолютен URL към GitHub Pages
+   - encodeURIComponent за името (работи с ÄÖÜ, интервали и запетаи)
+   - На iOS/Safari ползваме Google Docs Viewer като резервен вариант.
+*/
+const base = location.origin + location.pathname.replace(/Mykonoshot5\.html$/,'') + 'assets/menu/';
 
-<div class="card"><h3>Leber & Fisch-Spezialitäten</h3>
-  <div class="a4"><iframe src="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent);
+}
 
-<div class="card"><h3>Lamm vom Grill</h3>
-  <div class="a4"><iframe src="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
+const list = document.getElementById('list');
+items.forEach(it=>{
+  const safe = encodeURIComponent(it.file);
+  const directURL = base + safe;
 
-<div class="card"><h3>Kinder Teller & Dessert</h3>
-  <div class="a4"><iframe src="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
+  // Ако е iOS – ползвай GDocs viewer (по-стабилно за PDF), иначе – директно
+  const src = isIOS()
+    ? 'https://docs.google.com/gview?embedded=1&url=' + encodeURIComponent(directURL)
+    : directURL + '#view=FitH&toolbar=0&navpanes=0&scrollbar=0';
 
-<div class="card"><h3>Überbackene Gerichte</h3>
-  <div class="a4"><iframe src="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Grillplatten</h3>
-  <div class="a4"><iframe src="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Grillspezialitäten</h3>
-  <div class="a4"><iframe src="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Eier · Gemüse · Nudel</h3>
-  <div class="a4"><iframe src="assets/menu/EIER_GEMUSE_NUDEL_Visualisierung_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Feinschmecker Ecke</h3>
-  <div class="a4"><iframe src="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Vorspeisen · Warme Suppen</h3>
-  <div class="a4"><iframe src="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Käse</h3>
-  <div class="a4"><iframe src="assets/menu/KAESE_MENU_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Weinkarte & Aperitifs</h3>
-  <div class="a4"><iframe src="assets/menu/WEINKARTE_UND_APERITIFS.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Spirituosen & Liköre</h3>
-  <div class="a4"><iframe src="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Getränke</h3>
-  <div class="a4"><iframe src="assets/menu/GETRÄNKE_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Alkoholische Getränke</h3>
-  <div class="a4"><iframe src="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Unsere Familienangebote</h3>
-  <div class="a4"><iframe src="assets/menu/UNSERE_FAMILIENFREUNDLICH_FINAL.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Hinweis (Seite 1)</h3>
-  <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite1_A4.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Hinweis (Seite 2)</h3>
-  <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite2_A4.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
-<div class="card"><h3>Abschlussseite / Impressum</h3>
-  <div class="a4"><iframe src="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf#view=FitH&toolbar=0"></iframe></div>
-</div>
-
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.innerHTML = `
+    <h3>${it.title}</h3>
+    <div class="a4"><iframe loading="lazy" src="${src}"></iframe></div>
+    <div class="dl"><a href="${directURL}" download>PDF herunterladen</a></div>
+  `;
+  list.appendChild(card);
+});
+</script>
 </body>
 </html>
