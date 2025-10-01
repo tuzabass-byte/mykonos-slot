@@ -1,126 +1,331 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="bg">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Restaurant Mykonos – Menü</title>
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Arial,sans-serif;color:#0a1633;background:#f5f6fa}
-  h1{margin:18px 0 12px;text-align:center;color:#0a4aa4}
-  .wrap{max-width:1100px;margin:0 auto;padding:0 16px 24px}
-  .card{border:1px solid #e5e9f2;border-radius:14px;overflow:hidden;margin:16px 0;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
-  .card h3{margin:0;padding:10px 14px;border-bottom:1px solid #e5e9f2;background:#f7f8fb;font-size:1rem}
-  .a4{width:100%;aspect-ratio:1/1.414;overflow:hidden;background:#fff}
-  .a4 iframe{width:100%;height:100%;border:0;background:#fff;pointer-events:none}
-  .dl{padding:10px 14px;border-top:1px solid #e5e9f2;text-align:right}
-  .dl a{color:#0a4aa4;font-weight:700;text-decoration:none}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Направи Милионер — 1 € = 1 пиксел</title>
+  <meta name="description" content="Бъди част от най-голямата онлайн мозайка. Дай 1 € и вземи своето място." />
+  <style>
+    *{box-sizing:border-box}
+    :root{
+      --bg:#0e0f13; --panel:#16181f; --text:#e9ecf1; --muted:#a6adbb; --brand:#4f7cff; --brand-2:#7aa2ff; --border:#232736;
+    }
+    html,body{height:100%}
+    body{margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:linear-gradient(180deg,#0e0f13,#0f121b 50%,#101522); color:var(--text)}
+    a{color:var(--brand); text-decoration:none}
+    .header{display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border); position:sticky; top:0; backdrop-filter:saturate(140%) blur(6px); background:rgba(16,18,34,0.7); z-index:10}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{width:40px; height:40px}
+    .sub{color:var(--muted); margin:0}
+    .nav a{margin-left:16px; color:#cfd6e7}
+    .hero{display:grid; grid-template-columns:1.1fr 1fr; gap:24px; padding:40px 20px; align-items:center}
+    .hero-copy h2{font-size:40px; margin:0 0 8px}
+    .hero-copy p{color:#cbd3e6}
+    .cta-row{display:flex; gap:12px; margin:16px 0 8px}
+    .btn{border:1px solid var(--border); background:var(--panel); color:var(--text); padding:12px 16px; border-radius:10px; cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--brand),var(--brand-2)); border:none; font-weight:700}
+    .btn.ghost{background:transparent}
+    .btn.disabled{opacity:.6; cursor:not-allowed}
+    .stats{margin-top:12px}
+    .stat{display:inline-block; margin-right:24px}
+    .stat-num{font-size:28px; font-weight:800}
+    .stat-label{color:var(--muted); font-size:12px}
+    .progress{width:100%; height:10px; background:#0c0e15; border:1px solid var(--border); border-radius:999px; overflow:hidden; margin:8px 0 4px}
+    .progress-bar{height:100%; background:linear-gradient(90deg,#4f7cff,#7aa2ff); width:0%}
+    .goal{color:var(--muted); font-size:12px}
+    .how,.mosaic,.join{padding:28px 20px}
+    .grid{display:grid; grid-template-columns:repeat(25, 1fr); gap:2px; background:#0c0e15; padding:6px; border-radius:12px; border:1px solid var(--border)}
+    .tile{width:100%; aspect-ratio:1/1; background:#1f2330; border-radius:4px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; overflow:hidden}
+    .tile img{width:100%; height:100%; object-fit:cover; display:block; border-radius:4px}
+    .card{background:var(--panel); border:1px solid var(--border); padding:16px; border-radius:14px}
+    .pay-cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px}
+    .uploader{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
+    .lbl{color:#cbd3e6; font-size:14px}
+    input[type="file"], input[type="text"]{background:#0f121b; color:#e9ecf1; border:1px solid var(--border); padding:10px 12px; border-radius:10px}
+    .hero canvas{width:100%; max-width:600px; border-radius:16px; border:1px solid var(--border); background:#0c0e15}
+    footer.footer{padding:28px 20px; color:#9aa3b8; border-top:1px solid var(--border)}
+    .fine{font-size:12px; color:#7f8799}
+    .code{background:#0c0f16; padding:10px; border-radius:8px; border:1px solid var(--border); overflow:auto}
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr; padding-top:20px}
+      .grid{grid-template-columns:repeat(12,1fr)}
+      .uploader{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-  <h1>Restaurant Mykonos – Menü</h1>
-  <div class="wrap">
+  <header class="header">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4f7cff"/><stop offset="100%" stop-color="#7aa2ff"/></linearGradient></defs>
+        <rect rx="44" width="256" height="256" fill="#11162a"/>
+        <g transform="translate(28,28)">
+          <rect x="0" y="0" width="200" height="200" rx="22" fill="#0d1326" stroke="#22305b" stroke-width="4"/>
+          <rect x="18" y="18" width="164" height="164" rx="16" fill="url(#g)"/>
+          <text x="100" y="110" font-size="64" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" fill="white" font-weight="bold">1€</text>
+        </g>
+      </svg>
+      <div>
+        <h1>Направи Милионер</h1>
+        <p class="sub">1 € = 1 пиксел • Стани част от мозайката</p>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#how">Как работи</a>
+      <a href="#mosaic">Мозайка</a>
+      <a href="#join">Включи се</a>
+    </nav>
+  </header>
 
-    <article class="card"><h3>Salate</h3>
-      <div class="a4"><iframe src="assets/menu/SALATE_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/SALATE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <h2>Бъди 1 от 1 000 000</h2>
+        <p>Дай 1 € и вземи своето място в най-голямата онлайн мозайка. Всеки пиксел = един човек. Когато стигнем 1 000 000 — празнуваме заедно.</p>
+        <div class="cta-row">
+          <a class="btn primary" href="#join">Давам 1 € — взимам пиксел</a>
+          <button class="btn ghost" id="shareBtn">Сподели</button>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-num" id="countNum">0</div>
+            <div class="stat-label">събрани пиксела</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" id="percentNum">0.00%</div>
+            <div class="stat-label">прогрес</div>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width:0%"></div>
+          </div>
+          <div class="goal">Цел: 1 000 000 пиксела</div>
+        </div>
+      </div>
+      <canvas id="mosaicPreview" width="600" height="600" aria-label="Визуализация на мозайката"></canvas>
+    </section>
 
-    <article class="card"><h3>Käse</h3>
-      <div class="a4"><iframe src="assets/menu/KÄSE_MENU_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/KÄSE_MENU_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    <section id="how" class="how">
+      <h3>Как работи</h3>
+      <ol>
+        <li>Натисни „Давам 1 €“.</li>
+        <li>Плати бързо с карта/PayPal (интеграцията се добавя по-долу).</li>
+        <li>Качи квадратна снимка или използвай инициали.</li>
+        <li>Сподели линка си и предизвикай 5 приятели.</li>
+      </ol>
+    </section>
 
-    <article class="card"><h3>Mykonos Spezialitäten</h3>
-      <div class="a4"><iframe src="assets/menu/MYKONOS_SPEZIALITA%CC%88TEN_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/MYKONOS_SPEZIALITA%CC%88TEN_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    <section id="mosaic" class="mosaic">
+      <h3>Мозайка (демо визуализация)</h3>
+      <p>Това е демо на живата мозайка (статичен front-end). Реалната мозайка се обновява, когато свържем плащанията и бекенда.</p>
+      <div id="grid" class="grid" role="grid" aria-label="Мрежа от пиксели"></div>
+    </section>
 
-    <article class="card"><h3>Leber & Fisch-Spezialitäten</h3>
-      <div class="a4"><iframe src="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/LEBER_UND_FISCH_SPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    <section id="join" class="join">
+      <h3>Включи се</h3>
+      <p class="muted">Този демо билд работи изцяло като статична страница (GitHub Pages). Плащанията са „симулирани“, докато не добавиш Stripe/PayPal.</p>
 
-    <article class="card"><h3>Lamm vom Grill</h3>
-      <div class="a4"><iframe src="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/LAMM_VOM_GRILL_FINAL_CORRECTED.pdf" download>PDF herunterladen</a></div>
-    </article>
+      <div class="pay-cards">
+        <div class="card">
+          <h4>Stripe (препоръчително)</h4>
+          <p>Свържи Stripe Checkout за 1 € плащане.</p>
+          <button class="btn disabled" title="Добави Stripe ключове и backend">Плати 1 € с карта</button>
+          <pre class="code"><code>// TODO: Stripe интеграция (пример)
+// &lt;script src="https://js.stripe.com/v3"&gt;&lt;/script&gt;
+// const stripe = Stripe('pk_live_...');
+// fetch('/create-checkout-session',{method:'POST'})...</code></pre>
+        </div>
+        <div class="card">
+          <h4>PayPal</h4>
+          <p>Вгради PayPal Buttons (client-id) за 1 €.</p>
+          <button class="btn disabled" title="Добави PayPal client-id">Плати 1 € с PayPal</button>
+          <pre class="code"><code>&lt;script src="https://www.paypal.com/sdk/js?client-id=ВАШИЯТ_ID&amp;currency=EUR"&gt;&lt;/script&gt;</code></pre>
+        </div>
+        <div class="card">
+          <h4>Симулация (само за тест)</h4>
+          <p>Добавя 1 „дарение“ локално, за да видиш как работи UI-то.</p>
+          <button id="simulateBtn" class="btn primary">Симулирай 1 € (добави пиксел)</button>
+        </div>
+      </div>
 
-    <article class="card"><h3>Kinder Teller & Dessert</h3>
-      <div class="a4"><iframe src="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/KINDER_TELLER_DESSERT_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+      <div class="uploader">
+        <label for="imgInput" class="lbl">Качи картинка (по избор):</label>
+        <input type="file" id="imgInput" accept="image/*" />
+        <label for="initials" class="lbl">Инициали (ако няма картинка):</label>
+        <input id="initials" maxlength="3" placeholder="напр. IV" />
+      </div>
+    </section>
 
-    <article class="card"><h3>Überbackene Gerichte</h3>
-      <div class="a4"><iframe src="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/UEBERBACKENE_GERICHTE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    <footer class="footer">
+      <p>© <span id="year"></span> NapraviMilioner • Прозрачност: демо версия без реални плащания.</p>
+      <p class="fine">Качените снимки се обработват локално. За продукция добавете политика за поверителност, условия и съгласие.</p>
+    </footer>
+  </main>
 
-    <article class="card"><h3>Grillplatten</h3>
-      <div class="a4"><iframe src="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/GRILLPLATTEN_FINAL_CORRECTED.pdf" download>PDF herunterladen</a></div>
-    </article>
+  <script>
+    const GOAL = 1000000;
+    const state = { count: 0, tiles: [] };
+    try { const raw = localStorage.getItem('nm_state_v1'); if(raw) Object.assign(state, JSON.parse(raw)); } catch(e){}
+    const save = () => localStorage.setItem('nm_state_v1', JSON.stringify(state));
 
-    <article class="card"><h3>Grillspezialitäten</h3>
-      <div class="a4"><iframe src="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/GRILLSPEZIALITÄTEN_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    const countNum = document.getElementById('countNum');
+    const percentNum = document.getElementById('percentNum');
+    const progressBar = document.getElementById('progressBar');
+    const grid = document.getElementById('grid');
+    const year = document.getElementById('year');
+    const shareBtn = document.getElementById('shareBtn');
+    year.textContent = new Date().getFullYear();
 
-    <article class="card"><h3>Eier · Gemüse · Nudel</h3>
-      <div class="a4"><iframe src="assets/menu/EIER_GEMUSE_NUDEL_Visual.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/EIER_GEMUSE_NUDEL_Visual.pdf" download>PDF herunterladen</a></div>
-    </article>
+    const fmt = n => n.toLocaleString('bg-BG');
+    const percent = n => ((n/GOAL)*100).toFixed(2) + '%';
 
-    <article class="card"><h3>Feinschmecker Ecke</h3>
-      <div class="a4"><iframe src="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/FEINSCHMECKER_ECKE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function renderStats(){
+      countNum.textContent = fmt(state.count);
+      percentNum.textContent = percent(state.count);
+      progressBar.style.width = percent(state.count);
+    }
 
-    <article class="card"><h3>Vorspeisen · Warme Suppen</h3>
-      <div class="a4"><iframe src="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/Vorspeisen_Warme_Suppen_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function initialsFromName(name){
+      const clean = (name || '').trim().toUpperCase().replace(/[^A-ZА-Я0-9]/g,'');
+      if (!clean) return '★';
+      if (clean.length <= 2) return clean;
+      return clean[0] + clean[clean.length-1];
+    }
 
-    <article class="card"><h3>Weinkarte & Aperitifs</h3>
-      <div class="a4"><iframe src="assets/menu/WEINKARTE_UND_APERITIFS_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/WEINKARTE_UND_APERITIFS_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function randColor(){
+      const hues = [206,220,230,250,280];
+      const h = hues[Math.floor(Math.random()*hues.length)];
+      const s = 70 + Math.floor(Math.random()*20);
+      const l = 45 + Math.floor(Math.random()*10);
+      return `hsl(${h}deg ${s}% ${l}%)`;
+    }
 
-    <article class="card"><h3>Spirituosen & Liköre</h3>
-      <div class="a4"><iframe src="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/SPIRITUOSEN_UND_LIKOERE.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function addTile({imgData=null, initials='BG'}){
+      state.tiles.unshift({ imgData, initials });
+      if (state.tiles.length > 500) state.tiles.length = 500;
+      save();
+      renderGrid();
+      renderPreview();
+    }
 
-    <article class="card"><h3>Getränke</h3>
-      <div class="a4"><iframe src="assets/menu/GETRÄNKE_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/GETRÄNKE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function renderGrid(){
+      grid.innerHTML = '';
+      state.tiles.forEach(t => {
+        const el = document.createElement('div');
+        el.className = 'tile';
+        if (t.imgData){
+          const im = document.createElement('img');
+          im.src = t.imgData;
+          el.appendChild(im);
+        } else {
+          el.textContent = t.initials || '★';
+          el.style.background = randColor();
+        }
+        grid.appendChild(el);
+      });
+      // запълване за визуален ефект
+      const want = Math.max(0, (gridComputedCols() * 12) - state.tiles.length);
+      for (let i = 0; i < want; i++){
+        const p = document.createElement('div');
+        p.className = 'tile';
+        p.style.opacity = 0.25;
+        grid.appendChild(p);
+      }
+    }
 
-    <article class="card"><h3>Alkoholische Getränke</h3>
-      <div class="a4"><iframe src="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/A_menu_page_displays_alcoholic_beverages,_divided_.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function gridComputedCols(){
+      const s = window.getComputedStyle(grid).gridTemplateColumns;
+      return s.split(' ').length;
+    }
 
-    <article class="card"><h3>Unsere Familienangebote</h3>
-      <div class="a4"><iframe src="assets/menu/UNSERE_FAMILIENFREUNDLICHEN_ANGEBOTE_FINAL.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/UNSERE_FAMILIENFREUNDLICHEN_ANGEBOTE_FINAL.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function drawChecker(ctx, size=12){
+      const w = ctx.canvas.width, h = ctx.canvas.height;
+      ctx.fillStyle = '#0c0e15'; ctx.fillRect(0,0,w,h);
+      ctx.fillStyle = '#11162a';
+      for(let y=0;y<h;y+=size){
+        for(let x=0;x<w;x+=size){
+          if ((x/size + y/size) % 2 === 0) ctx.fillRect(x,y,size,size);
+        }
+      }
+    }
 
-    <article class="card"><h3>Hinweis Seite 1</h3>
-      <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite1_A4.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/Griechisches_Menu_Seite1_A4.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function renderPreview(){
+      const canvas = document.getElementById('mosaicPreview');
+      const ctx = canvas.getContext('2d');
+      drawChecker(ctx, 12);
+      const cells = 30; // 30x30 preview
+      const cw = canvas.width / cells;
+      const ch = canvas.height / cells;
+      for(let i=0;i<Math.min(state.tiles.length, cells*cells);i++){
+        const t = state.tiles[i];
+        const cx = i % cells;
+        const cy = Math.floor(i / cells);
+        if (t.imgData){
+          const img = new Image();
+          img.onload = () => ctx.drawImage(img, cx*cw, cy*ch, cw, ch);
+          img.src = t.imgData;
+        } else {
+          ctx.fillStyle = randColor();
+          ctx.fillRect(cx*cw, cy*ch, cw, ch);
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.font = Math.floor(ch*0.5) + 'px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText((t.initials||'★').slice(0,2), cx*cw+cw/2, cy*ch+ch/2);
+        }
+      }
+    }
 
-    <article class="card"><h3>Hinweis Seite 2</h3>
-      <div class="a4"><iframe src="assets/menu/Griechisches_Menu_Seite2_A4.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/Griechisches_Menu_Seite2_A4.pdf" download>PDF herunterladen</a></div>
-    </article>
+    function updateAll(){ renderStats(); renderGrid(); renderPreview(); }
+    updateAll();
 
-    <article class="card"><h3>Abschlussseite / Impressum</h3>
-      <div class="a4"><iframe src="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf#view=FitH&toolbar=0&navpanes=0&scrollbar=0"></iframe></div>
-      <div class="dl"><a href="assets/menu/ABSCHLUSSSEITE_MYKONOS.pdf" download>PDF herunterladen</a></div>
-    </article>
+    // Share
+    shareBtn?.addEventListener('click', async () => {
+      const url = location.href.split('#')[0];
+      const text = '1€ = 1 пиксел. Аз се включих в NapraviMilioner — включи се и ти!';
+      try{
+        if (navigator.share){
+          await navigator.share({ title: 'Napravi Milioner', text, url });
+        } else {
+          await navigator.clipboard.writeText(url);
+          alert('Линкът е копиран. Сподели с приятели!');
+        }
+      } catch(e){ console.warn(e); }
+    });
 
-  </div>
+    // Simulate payment
+    document.getElementById('simulateBtn')?.addEventListener('click', async () => {
+      state.count += 1;
+      const initials = document.getElementById('initials').value.trim() || 'BG';
+      const file = document.getElementById('imgInput').files[0];
+      if (file){
+        const data = await readAsDataURL(file);
+        addTile({ imgData: data, initials: initialsFromName(initials) });
+      } else {
+        addTile({ initials: initialsFromName(initials) });
+      }
+      save(); updateAll();
+    });
+
+    function readAsDataURL(file){
+      return new Promise((resolve,reject)=>{
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = reject;
+        r.readAsDataURL(file);
+      });
+    }
+
+    /* TODO — Интеграция за истински плащания:
+       1) Stripe Checkout:
+          - добави <script src="https://js.stripe.com/v3"></script>
+          - const stripe = Stripe('pk_live_...');
+          - бекенд: POST /create-checkout-session прави сесия за 1 €
+          - webhook: записваш дарителя; след redirect връщаш към /thanks
+
+       2) PayPal Buttons:
+          - добави <script src="https://www.paypal.com/sdk/js?client-id=ID&currency=EUR"></script>
+          - paypal.Buttons({ createOrder, onApprove }). След capture -> API запис
+    */
+  </script>
 </body>
 </html>
