@@ -1,15 +1,193 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mykonos Casino</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body{
+      margin:0;
+      font-family:Arial,sans-serif;
+      background:linear-gradient(#0b3d91,#4a8df0);
+      color:#fff;
+      text-align:center;
+      padding:20px;
+    }
+    .box{
+      max-width:800px;
+      margin:20px auto;
+      background:rgba(255,255,255,0.12);
+      padding:20px;
+      border-radius:18px;
+      box-sizing:border-box;
+    }
+    input,button,select{
+      width:100%;
+      padding:12px;
+      margin:8px 0;
+      border:none;
+      border-radius:10px;
+      font-size:16px;
+      box-sizing:border-box;
+    }
+    button{
+      background:gold;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    .secondary{
+      background:#fff;
+      color:#000;
+    }
+    .hidden{display:none;}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .card{
+      background:rgba(255,255,255,0.12);
+      border-radius:14px;
+      overflow:hidden;
+    }
+    .card img{
+      width:100%;
+      height:130px;
+      object-fit:cover;
+      display:block;
+    }
+    .card h3{
+      margin:10px 0;
+    }
+    #reels{
+      font-size:42px;
+      margin:20px 0;
+      letter-spacing:6px;
+      min-height:60px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box" id="loginBox">
+  <h1>Mykonos Casino</h1>
+  <input id="name" placeholder="Име" />
+  <input id="pin" placeholder="PIN" type="password" />
+  <button onclick="login()">Влез</button>
+  <p id="msg"></p>
+</div>
+
+<div class="box hidden" id="menuBox">
+  <h2 id="welcome"></h2>
+  <p>Coins: <strong id="coins">0</strong></p>
+
+  <div class="grid">
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" alt="">
+      <h3>Greek Style</h3>
+      <button onclick="startGame('Greek Style')">Play</button>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800" alt="">
+      <h3>Night Style</h3>
+      <button onclick="startGame('Night Style')">Play</button>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800" alt="">
+      <h3>Burning Hot</h3>
+      <button onclick="startGame('Burning Hot')">Play</button>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800" alt="">
+      <h3>Luxury Gold</h3>
+      <button onclick="startGame('Luxury Gold')">Play</button>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=800" alt="">
+      <h3>Fruit Classic</h3>
+      <button onclick="startGame('Fruit Classic')">Play</button>
+    </div>
+  </div>
+
+  <button class="secondary" onclick="logout()">Logout</button>
+</div>
+
+<div class="box hidden" id="gameBox">
+  <h2 id="gameTitle"></h2>
+  <p>Играч: <strong id="playerNameView"></strong></p>
+  <p>Coins: <strong id="points">0</strong></p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div>
+      <label>Bet</label>
+      <select id="bet">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div>
+      <label>Lines</label>
+      <select id="lines">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="reels">🍒 🍋 ⭐ 🍇 7️⃣</div>
+
+  <button onclick="spin()">SPIN</button>
+  <p id="gameMsg"></p>
+
+  <div id="winBox" class="hidden">
+    <p>Win: <strong id="winAmount">0</strong></p>
+    <button onclick="collectWin()">Collect</button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <button class="secondary" onclick="backToMenu()">⬅ Back</button>
+    <button class="secondary" onclick="logout()">Logout</button>
+  </div>
+</div>
+
 <script>
+const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let player = null;
+let currentGame = "";
+let currentWin = 0;
+
+function showSection(id){
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("menuBox").classList.add("hidden");
+  document.getElementById("gameBox").classList.add("hidden");
+  document.getElementById(id).classList.remove("hidden");
+}
+
 async function login(){
   const name = document.getElementById("name").value.trim();
   const pin = document.getElementById("pin").value.trim();
-  const msgEl = document.getElementById("msg");
+  const msg = document.getElementById("msg");
+
+  msg.textContent = "";
 
   if(!name || !pin){
-    msgEl.innerText = "Vuvedi ime i PIN";
+    msg.textContent = "Въведи име и PIN.";
     return;
   }
 
-  let { data, error } = await db
+  const { data, error } = await db
     .from("players")
     .select("*")
     .eq("Name", name)
@@ -18,20 +196,130 @@ async function login(){
 
   if(error){
     console.error(error);
-    msgEl.innerText = "Greshka pri vruzkata";
+    msg.textContent = "Грешка при връзка.";
     return;
   }
 
   if(!data || data.length === 0){
-    msgEl.innerText = "Greshno ime ili PIN";
+    msg.textContent = "Грешно име или PIN.";
     return;
   }
 
   player = data[0];
+  document.getElementById("welcome").textContent = "Здрасти, " + player.Name;
+  document.getElementById("coins").textContent = player.Points ?? 0;
+  showSection("menuBox");
+}
 
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("menu").classList.remove("hidden");
-  document.getElementById("welcome").innerText = "Zdrasti " + player.Name;
-  document.getElementById("coins").innerText = player.Points ?? 0;
+function startGame(gameName){
+  currentGame = gameName;
+  currentWin = 0;
+  document.getElementById("gameTitle").textContent = gameName;
+  document.getElementById("playerNameView").textContent = player.Name;
+  document.getElementById("points").textContent = player.Points ?? 0;
+  document.getElementById("gameMsg").textContent = "";
+  document.getElementById("winBox").classList.add("hidden");
+  document.getElementById("reels").textContent = "🍒 🍋 ⭐ 🍇 7️⃣";
+  showSection("gameBox");
+}
+
+async function spin(){
+  if(!player) return;
+
+  const bet = Number(document.getElementById("bet").value);
+  const lines = Number(document.getElementById("lines").value);
+  const totalBet = bet * lines;
+
+  if((player.Points ?? 0) < totalBet){
+    document.getElementById("gameMsg").textContent = "Нямаш достатъчно coins.";
+    return;
+  }
+
+  player.Points -= totalBet;
+
+  const symbols = ["🍒","🍋","⭐","🍇","7️⃣"];
+  const reels = [];
+  for(let i=0;i<5;i++){
+    reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
+  }
+
+  document.getElementById("reels").textContent = reels.join(" ");
+
+  let reward = 0;
+  if(reels[0] === reels[1] && reels[1] === reels[2]){
+    reward = bet * 3;
+  }
+  if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3]){
+    reward = bet * 6;
+  }
+  if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3] && reels[3] === reels[4]){
+    reward = bet * 10;
+  }
+
+  const { error } = await db
+    .from("players")
+    .update({ Points: player.Points })
+    .eq("id", player.id);
+
+  if(error){
+    console.error(error);
+    document.getElementById("gameMsg").textContent = "Грешка при запис.";
+    return;
+  }
+
+  if(reward > 0){
+    currentWin = reward;
+    document.getElementById("winAmount").textContent = reward;
+    document.getElementById("winBox").classList.remove("hidden");
+    document.getElementById("gameMsg").textContent = "Печалба: " + reward;
+  } else {
+    currentWin = 0;
+    document.getElementById("winBox").classList.add("hidden");
+    document.getElementById("gameMsg").textContent = "Нищо.";
+  }
+
+  document.getElementById("points").textContent = player.Points;
+  document.getElementById("coins").textContent = player.Points;
+}
+
+async function collectWin(){
+  if(!player || currentWin <= 0) return;
+
+  player.Points += currentWin;
+
+  const { error } = await db
+    .from("players")
+    .update({ Points: player.Points })
+    .eq("id", player.id);
+
+  if(error){
+    console.error(error);
+    document.getElementById("gameMsg").textContent = "Грешка при запис.";
+    return;
+  }
+
+  document.getElementById("points").textContent = player.Points;
+  document.getElementById("coins").textContent = player.Points;
+  document.getElementById("gameMsg").textContent = "Прибра " + currentWin;
+  currentWin = 0;
+  document.getElementById("winBox").classList.add("hidden");
+}
+
+function backToMenu(){
+  document.getElementById("coins").textContent = player.Points ?? 0;
+  showSection("menuBox");
+}
+
+function logout(){
+  player = null;
+  currentGame = "";
+  currentWin = 0;
+  document.getElementById("name").value = "";
+  document.getElementById("pin").value = "";
+  document.getElementById("msg").textContent = "";
+  showSection("loginBox");
 }
 </script>
+
+</body>
+</html>
