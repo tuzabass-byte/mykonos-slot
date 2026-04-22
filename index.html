@@ -1,456 +1,200 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mykonos Casino</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #0b3d91, #1e90ff);
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    .box {
-      max-width: 700px;
-      margin: 20px auto;
-      background: rgba(255,255,255,0.12);
-      padding: 20px;
-      border-radius: 18px;
-      box-sizing: border-box;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      background: gold;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .hidden { display: none; }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .triple {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-    }
-    .secondary {
-      background: white;
-      color: black;
-    }
-    .red {
-      background: #d93025;
-      color: white;
-    }
-    .black {
-      background: #111;
-      color: white;
-    }
-    #reels {
-      font-size: 42px;
-      line-height: 1.5;
-      margin: 15px 0;
-      min-height: 70px;
-      letter-spacing: 6px;
-    }
-    .game-title {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-    .small {
-      font-size: 14px;
-      opacity: 0.9;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Mykonos Casino</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(#0b3d91,#1e90ff);
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+.box{
+  max-width:800px;
+  margin:auto;
+}
+input,button{
+  padding:12px;
+  margin:8px;
+  border-radius:10px;
+  border:none;
+}
+button{
+  background:gold;
+  font-weight:bold;
+}
+.hidden{display:none;}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.card{
+  background:rgba(255,255,255,0.1);
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+}
+
+.card h3{
+  margin:10px;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="box" id="loginBox">
-    <h1>Mykonos Casino</h1>
-    <p>Влез с име и PIN</p>
-    <input id="playerName" placeholder="Име" />
-    <input id="playerPin" placeholder="PIN" type="password" />
-    <button onclick="login()">Влез</button>
-    <p id="loginMsg"></p>
-  </div>
+<div id="loginBox" class="box">
+<h2>Mykonos Casino</h2>
+<input id="name" placeholder="Име"><br>
+<input id="pin" placeholder="PIN"><br>
+<button onclick="login()">Влез</button>
+<p id="msg"></p>
+</div>
 
-  <div class="box hidden" id="menuBox">
-    <h2 id="menuWelcome"></h2>
-    <p>Coins: <strong id="menuCoins">0</strong></p>
-    <p>Избери игра</p>
+<div id="menu" class="box hidden">
+<h2 id="welcome"></h2>
+<p>Coins: <span id="coins"></span></p>
 
-    <div class="grid">
-      <button onclick="openGame(1)">Mykonos Classic</button>
-      <button onclick="openGame(2)">Poseidon Gold</button>
-      <button onclick="openGame(3)">Olympus Fire</button>
-      <button onclick="openGame(4)">Greek Fortune</button>
-      <button onclick="openGame(5)">Santorini Nights</button>
-    </div>
+<div class="grid">
 
-    <button class="secondary" onclick="logout()">Logout</button>
-  </div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
+<h3>Greek Style</h3>
+<button onclick="startGame('Greek')">Play</button>
+</div>
 
-  <div class="box hidden" id="gameBox">
-    <div class="game-title" id="gameTitle"></div>
-    <p>Играч: <strong id="playerLabel"></strong></p>
-    <p>Coins: <strong id="points">0</strong></p>
-    <p>Lines: <strong id="linesView">5</strong></p>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
+<h3>Night Style</h3>
+<button onclick="startGame('Night')">Play</button>
+</div>
 
-    <div class="row">
-      <div>
-        <label>Залог</label>
-        <select id="betSelect" onchange="updateBetInfo()">
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="200">200</option>
-        </select>
-      </div>
-      <div>
-        <label>Линии</label>
-        <select id="linesSelect" onchange="updateBetInfo()">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-        </select>
-      </div>
-    </div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1511512578047-dfb367046420">
+<h3>Burning Hot</h3>
+<button onclick="startGame('Fire')">Play</button>
+</div>
 
-    <p>Total Bet: <strong id="totalBet">50</strong></p>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1519681393784-d120267933ba">
+<h3>Luxury Gold</h3>
+<button onclick="startGame('Gold')">Play</button>
+</div>
 
-    <div id="reels">🍋 🍒 ⭐ 🍇 🫒</div>
+<div class="card">
+<img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443">
+<h3>Fruit Classic</h3>
+<button onclick="startGame('Fruit')">Play</button>
+</div>
 
-    <button onclick="spin()">SPIN</button>
-    <p id="msg"></p>
+</div>
 
-    <div id="winBox" class="hidden">
-      <p>Печалба: <strong id="winAmount">0</strong></p>
-      <div class="row">
-        <button onclick="collectWin()">Collect</button>
-        <button onclick="showDoubleGame()">Double</button>
-      </div>
-    </div>
+<button onclick="logout()">Logout</button>
+</div>
 
-    <div id="doubleBox" class="hidden">
-      <p>Избери цвят</p>
-      <div class="row">
-        <button class="red" onclick="doubleGame('red')">RED</button>
-        <button class="black" onclick="doubleGame('black')">BLACK</button>
-      </div>
-      <p class="small">Double до 3 пъти</p>
-    </div>
+<div id="game" class="hidden box">
+<h2 id="gameTitle"></h2>
+<p>Coins: <span id="points"></span></p>
 
-    <div class="triple">
-      <button class="secondary" onclick="backToMenu()">Обратно</button>
-      <button class="secondary" onclick="logout()">Logout</button>
-      <button class="secondary" onclick="refreshPlayer()">Refresh Coins</button>
-    </div>
-  </div>
+<div id="reels" style="font-size:40px;">🍒 🍋 ⭐ 🍇 7️⃣</div>
 
-  <script>
-    const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<button onclick="spin()">SPIN</button>
+<p id="gameMsg"></p>
 
-    let currentPlayer = null;
-    let currentGame = 1;
-    let currentWin = 0;
-    let doubleCount = 0;
+<button onclick="back()">⬅ Back</button>
+</div>
 
-    const gameConfigs = {
-      1: {
-        title: "Mykonos Classic",
-        symbols: ["🍋","🍒","⭐","🍇","🫒"]
-      },
-      2: {
-        title: "Poseidon Gold",
-        symbols: ["🔱","💎","⭐","🪙","🌊"]
-      },
-      3: {
-        title: "Olympus Fire",
-        symbols: ["⚡","🔥","👑","💎","⭐"]
-      },
-      4: {
-        title: "Greek Fortune",
-        symbols: ["🏺","🫒","🍇","💰","⭐"]
-      },
-      5: {
-        title: "Santorini Nights",
-        symbols: ["🌙","⭐","💎","🍷","🏛️"]
-      }
-    };
+<script>
+const db = supabase.createClient(
+"https://xjcvntplrbjsaozkduqd.supabase.co",
+"sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq"
+);
 
-    function show(id) {
-      document.getElementById("loginBox").classList.add("hidden");
-      document.getElementById("menuBox").classList.add("hidden");
-      document.getElementById("gameBox").classList.add("hidden");
-      document.getElementById(id).classList.remove("hidden");
-    }
+let player=null;
 
-    function setMessage(text) {
-      document.getElementById("msg").textContent = text;
-    }
+async function login(){
+let name=nameInput.value;
+let pin=pinInput.value;
 
-    function updateMenu() {
-      if (!currentPlayer) return;
-      document.getElementById("menuWelcome").textContent = "Здрасти, " + currentPlayer.Name;
-      document.getElementById("menuCoins").textContent = currentPlayer.Points ?? 0;
-    }
+let {data}=await db.from("players").select("*").eq("Name",name).eq("Pin",pin);
 
-    function updateGameInfo() {
-      if (!currentPlayer) return;
-      document.getElementById("playerLabel").textContent = currentPlayer.Name;
-      document.getElementById("points").textContent = currentPlayer.Points ?? 0;
-      document.getElementById("linesView").textContent = document.getElementById("linesSelect").value;
-      updateBetInfo();
-    }
+if(!data||data.length==0){
+msg.innerText="Грешен вход";
+return;
+}
 
-    function updateBetInfo() {
-      const bet = Number(document.getElementById("betSelect").value);
-      const lines = Number(document.getElementById("linesSelect").value);
-      document.getElementById("linesView").textContent = lines;
-      document.getElementById("totalBet").textContent = bet * lines;
-    }
+player=data[0];
 
-    async function refreshPlayer() {
-      if (!currentPlayer) return;
+loginBox.classList.add("hidden");
+menu.classList.remove("hidden");
 
-      const { data, error } = await db
-        .from("players")
-        .select("*")
-        .eq("id", currentPlayer.id)
-        .limit(1);
+welcome.innerText="Здрасти "+player.Name;
+coins.innerText=player.Points;
+}
 
-      if (!error && data && data.length > 0) {
-        currentPlayer = data[0];
-        updateMenu();
-        updateGameInfo();
-      }
-    }
+function startGame(type){
+menu.classList.add("hidden");
+game.classList.remove("hidden");
 
-    async function savePlayerPoints(points) {
-      const { error } = await db
-        .from("players")
-        .update({ Points: points })
-        .eq("id", currentPlayer.id);
+gameTitle.innerText=type+" Slot";
+points.innerText=player.Points;
+}
 
-      if (!error) {
-        currentPlayer.Points = points;
-      }
-      return error;
-    }
+async function spin(){
+if(player.Points<10){alert("нямаш coins");return;}
 
-    async function login() {
-      const name = document.getElementById("playerName").value.trim();
-      const pin = document.getElementById("playerPin").value.trim();
-      const loginMsg = document.getElementById("loginMsg");
+player.Points-=10;
 
-      if (!name || !pin) {
-        loginMsg.textContent = "Въведи име и PIN.";
-        return;
-      }
+let symbols=["🍒","🍋","⭐","🍇","7️⃣"];
+let reels=[];
 
-      const { data, error } = await db
-        .from("players")
-        .select("*")
-        .eq("Name", name)
-        .eq("Pin", pin)
-        .limit(1);
+for(let i=0;i<5;i++){
+reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
+}
 
-      if (error) {
-        loginMsg.textContent = "Грешка при връзка с базата.";
-        console.error(error);
-        return;
-      }
+document.getElementById("reels").innerText=reels.join(" ");
 
-      if (!data || data.length === 0) {
-        loginMsg.textContent = "Грешно име или PIN.";
-        return;
-      }
+let win=0;
 
-      currentPlayer = data[0];
-      loginMsg.textContent = "";
-      updateMenu();
-      show("menuBox");
-    }
+if(reels[0]==reels[1]&&reels[1]==reels[2]){
+win=30;
+}
 
-    function openGame(gameId) {
-      currentGame = gameId;
-      currentWin = 0;
-      doubleCount = 0;
+if(win>0){
+player.Points+=win;
+gameMsg.innerText="Печалба "+win;
+}else{
+gameMsg.innerText="Нищо";
+}
 
-      document.getElementById("gameTitle").textContent = gameConfigs[gameId].title;
-      document.getElementById("reels").textContent = gameConfigs[gameId].symbols.slice(0, 5).join(" ");
-      document.getElementById("winBox").classList.add("hidden");
-      document.getElementById("doubleBox").classList.add("hidden");
-      setMessage("");
-      updateGameInfo();
-      show("gameBox");
-    }
+await db.from("players").update({Points:player.Points}).eq("id",player.id);
 
-    function backToMenu() {
-      updateMenu();
-      show("menuBox");
-    }
+points.innerText=player.Points;
+coins.innerText=player.Points;
+}
 
-    function getMultiplier(matches, lines) {
-      if (matches >= 5) return lines * 5;
-      if (matches === 4) return lines * 3;
-      if (matches === 3) return lines * 2;
-      return 0;
-    }
+function back(){
+game.classList.add("hidden");
+menu.classList.remove("hidden");
+}
 
-    async function spin() {
-      if (!currentPlayer) return;
+function logout(){
+location.reload();
+}
+</script>
 
-      document.getElementById("winBox").classList.add("hidden");
-      document.getElementById("doubleBox").classList.add("hidden");
-      currentWin = 0;
-      doubleCount = 0;
-
-      const bet = Number(document.getElementById("betSelect").value);
-      const lines = Number(document.getElementById("linesSelect").value);
-      const totalBet = bet * lines;
-      let points = Number(currentPlayer.Points || 0);
-
-      if (points < totalBet) {
-        setMessage("Нямаш достатъчно coins.");
-        return;
-      }
-
-      points -= totalBet;
-
-      const symbols = gameConfigs[currentGame].symbols;
-      const reels = [];
-      for (let i = 0; i < 5; i++) {
-        reels.push(symbols[Math.floor(Math.random() * symbols.length)]);
-      }
-
-      document.getElementById("reels").textContent = reels.join(" ");
-
-      const counts = {};
-      reels.forEach(s => counts[s] = (counts[s] || 0) + 1);
-
-      let bestCount = 0;
-      for (const sym in counts) {
-        if (counts[sym] > bestCount) bestCount = counts[sym];
-      }
-
-      const multiplier = getMultiplier(bestCount, lines);
-      let reward = 0;
-
-      if (multiplier > 0) {
-        reward = bet * multiplier;
-      }
-
-      const saveError = await savePlayerPoints(points);
-      if (saveError) {
-        setMessage("Грешка при запис.");
-        console.error(saveError);
-        return;
-      }
-
-      if (reward > 0) {
-        currentWin = reward;
-        document.getElementById("winAmount").textContent = reward;
-        document.getElementById("winBox").classList.remove("hidden");
-        setMessage("Печалба: " + reward + " coins.");
-      } else {
-        setMessage("Опитай пак.");
-      }
-
-      updateMenu();
-      updateGameInfo();
-    }
-
-    async function collectWin() {
-      if (!currentPlayer || currentWin <= 0) return;
-
-      const points = Number(currentPlayer.Points || 0) + currentWin;
-      const saveError = await savePlayerPoints(points);
-
-      if (saveError) {
-        setMessage("Грешка при запис.");
-        console.error(saveError);
-        return;
-      }
-
-      setMessage("Прибра " + currentWin + " coins.");
-      currentWin = 0;
-      doubleCount = 0;
-      document.getElementById("winBox").classList.add("hidden");
-      document.getElementById("doubleBox").classList.add("hidden");
-
-      updateMenu();
-      updateGameInfo();
-    }
-
-    function showDoubleGame() {
-      if (currentWin <= 0) return;
-      document.getElementById("doubleBox").classList.remove("hidden");
-      setMessage("Избери RED или BLACK.");
-    }
-
-    function randomRedBlack() {
-      return Math.random() < 0.5 ? "red" : "black";
-    }
-
-    function doubleGame(choice) {
-      if (currentWin <= 0) return;
-
-      if (doubleCount >= 3) {
-        setMessage("Достигна максимума от 3 double.");
-        return;
-      }
-
-      const result = randomRedBlack();
-
-      if (choice === result) {
-        currentWin *= 2;
-        doubleCount++;
-        document.getElementById("winAmount").textContent = currentWin;
-        setMessage("Познато! Новата печалба е " + currentWin + " coins.");
-      } else {
-        currentWin = 0;
-        doubleCount = 0;
-        document.getElementById("winAmount").textContent = 0;
-        document.getElementById("winBox").classList.add("hidden");
-        document.getElementById("doubleBox").classList.add("hidden");
-        setMessage("Не позна. Загуби печалбата.");
-      }
-    }
-
-    function logout() {
-      currentPlayer = null;
-      currentWin = 0;
-      doubleCount = 0;
-      document.getElementById("playerName").value = "";
-      document.getElementById("playerPin").value = "";
-      document.getElementById("loginMsg").textContent = "";
-      document.getElementById("winBox").classList.add("hidden");
-      document.getElementById("doubleBox").classList.add("hidden");
-      setMessage("");
-      show("loginBox");
-    }
-  </script>
 </body>
 </html>
