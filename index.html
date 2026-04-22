@@ -15,14 +15,14 @@
       padding: 20px;
     }
     .box {
-      max-width: 520px;
-      margin: 30px auto;
+      max-width: 560px;
+      margin: 20px auto;
       background: rgba(255,255,255,0.12);
-      padding: 24px;
+      padding: 22px;
       border-radius: 18px;
       box-sizing: border-box;
     }
-    input, button {
+    input, select, button {
       width: 100%;
       padding: 12px;
       margin: 8px 0;
@@ -36,17 +36,44 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .hidden { display: none; }
-    #result {
-      font-size: 34px;
+    .white-btn {
+      background: #fff;
+    }
+    .red-btn {
+      background: #d93025;
+      color: white;
+    }
+    .black-btn {
+      background: #111;
+      color: white;
+    }
+    .hidden {
+      display: none;
+    }
+    #reels {
+      font-size: 48px;
       margin: 18px 0;
+      letter-spacing: 8px;
+    }
+    .info {
+      font-size: 18px;
+      margin: 8px 0;
+    }
+    .small {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
   <div class="box" id="loginBox">
     <h1>Mykonos Casino</h1>
-    <p>Влез с твоето име и PIN</p>
+    <p>Влез с име и PIN</p>
     <input id="playerName" placeholder="Име" />
     <input id="playerPin" placeholder="PIN" type="password" />
     <button onclick="login()">Влез</button>
@@ -55,11 +82,42 @@
 
   <div class="box hidden" id="gameBox">
     <h2 id="welcome"></h2>
-    <p>Точки: <strong id="points">0</strong></p>
-    <div id="result">🍋 🍒 ⭐</div>
+    <div class="info">Coins: <strong id="points">0</strong></div>
+    <div class="info">Mystery Pot: <strong id="jackpot">0</strong></div>
+    <div class="info">Free Spins: <strong id="freeSpins">0</strong></div>
+
+    <label for="betSelect">Залог</label>
+    <select id="betSelect">
+      <option value="10">10</option>
+      <option value="20">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+      <option value="200">200</option>
+    </select>
+
+    <div id="reels">🍋 🍒 ⭐ 🍇 🫒</div>
+
     <button onclick="spin()">SPIN</button>
     <p id="msg"></p>
-    <button onclick="logout()" style="background:#fff;">Излез</button>
+
+    <div id="winBox" class="hidden">
+      <p>Печалба: <strong id="winAmount">0</strong></p>
+      <div class="row">
+        <button onclick="collectWin()">Collect</button>
+        <button onclick="showDoubleGame()">Double</button>
+      </div>
+    </div>
+
+    <div id="doubleBox" class="hidden">
+      <p>Избери цвят за Double</p>
+      <div class="row">
+        <button class="red-btn" onclick="doubleGame('red')">Red</button>
+        <button class="black-btn" onclick="doubleGame('black')">Black</button>
+      </div>
+      <p class="small">Може до 3 пъти подред</p>
+    </div>
+
+    <button class="white-btn" onclick="logout()">Излез</button>
   </div>
 
   <script>
@@ -68,7 +126,75 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    const symbols = ["🍋", "🍒", "⭐", "🍇", "🫒", "🎰", "💎", "🟣"];
+    const scatterSymbol = "🟣";
+
     let currentPlayer = null;
+    let currentWin = 0;
+    let doubleCount = 0;
+    let freeSpins = 0;
+    let jackpotValue = 0;
+
+    function setMessage(text) {
+      document.getElementById("msg").textContent = text;
+    }
+
+    function updateUi() {
+      document.getElementById("points").textContent = currentPlayer?.Points ?? 0;
+      document.getElementById("freeSpins").textContent = freeSpins;
+      document.getElementById("jackpot").textContent = jackpotValue;
+    }
+
+    async function loadJackpot() {
+      const { data, error } = await supabaseClient
+        .from("game_state")
+        .select("*")
+        .order("id", { ascending: true })
+        .limit(1);
+
+      if (!error && data && data.length > 0) {
+        jackpotValue = Number(data[0].jackpot || 0);
+      } else {
+        jackpotValue = 0;
+      }
+      updateUi();
+    }
+
+    async function savePlayerPoints(points) {
+      const { error } = await supabaseClient
+        .from("players")
+        .update({ Points: points })
+        .eq("id", currentPlayer.id);
+
+      if (!error) {
+        currentPlayer.Points = points;
+      }
+      return error;
+    }
+
+    async function saveJackpot(value) {
+      const { data, error } = await supabaseClient
+        .from("game_state")
+        .select("id")
+        .order("id", { ascending: true })
+        .limit(1);
+
+      if (error || !data || data.length === 0) {
+        return error || new Error("No jackpot row found.");
+      }
+
+      const rowId = data[0].id;
+
+      const updateRes = await supabaseClient
+        .from("game_state")
+        .update({ jackpot: value })
+        .eq("id", rowId);
+
+      if (!updateRes.error) {
+        jackpotValue = value;
+      }
+      return updateRes.error;
+    }
 
     async function login() {
       const name = document.getElementById("playerName").value.trim();
@@ -99,68 +225,177 @@
       }
 
       currentPlayer = data[0];
+      freeSpins = 0;
+      currentWin = 0;
+      doubleCount = 0;
+
+      await loadJackpot();
+
       document.getElementById("loginBox").classList.add("hidden");
       document.getElementById("gameBox").classList.remove("hidden");
       document.getElementById("welcome").textContent = "Здрасти, " + currentPlayer.Name;
-      document.getElementById("points").textContent = currentPlayer.Points ?? 0;
       document.getElementById("loginMsg").textContent = "";
+      document.getElementById("winBox").classList.add("hidden");
+      document.getElementById("doubleBox").classList.add("hidden");
+      setMessage("");
+      updateUi();
     }
 
     async function spin() {
       if (!currentPlayer) return;
 
+      document.getElementById("winBox").classList.add("hidden");
+      document.getElementById("doubleBox").classList.add("hidden");
+      currentWin = 0;
+      doubleCount = 0;
+
+      const bet = Number(document.getElementById("betSelect").value);
       let points = Number(currentPlayer.Points || 0);
-      if (points < 10) {
-        document.getElementById("msg").textContent = "Нямаш достатъчно точки.";
-        return;
+      let usingFreeSpin = false;
+
+      if (freeSpins > 0) {
+        freeSpins--;
+        usingFreeSpin = true;
+      } else {
+        if (points < bet) {
+          setMessage("Нямаш достатъчно coins.");
+          return;
+        }
+        points -= bet;
       }
 
-      points -= 10;
+      const jackpotAdd = Math.max(1, Math.floor(bet * 0.05));
+      const newJackpot = jackpotValue + jackpotAdd;
+      const jackpotError = await saveJackpot(newJackpot);
+      if (jackpotError) {
+        console.error(jackpotError);
+      }
 
-      const symbols = ["🍋","🍒","⭐","🍇","7️⃣","🫒"];
-      const a = symbols[Math.floor(Math.random() * symbols.length)];
-      const b = symbols[Math.floor(Math.random() * symbols.length)];
-      const c = symbols[Math.floor(Math.random() * symbols.length)];
+      const reels = [];
+      for (let i = 0; i < 5; i++) {
+        reels.push(symbols[Math.floor(Math.random() * symbols.length)]);
+      }
 
-      document.getElementById("result").textContent = `${a} ${b} ${c}`;
+      document.getElementById("reels").textContent = reels.join(" ");
+
+      const counts = {};
+      reels.forEach(s => counts[s] = (counts[s] || 0) + 1);
 
       let reward = 0;
-      let message = "Опитай пак!";
+      let message = usingFreeSpin ? "Free Spin! " : "";
 
-      if (a === b && b === c) {
-        reward = 100;
-        message = "Голяма печалба! +100";
-      } else if (a === b || b === c || a === c) {
-        reward = 25;
-        message = "Малка печалба! +25";
+      const scatterCount = counts[scatterSymbol] || 0;
+      if (scatterCount >= 3) {
+        freeSpins += 10;
+        message += "SCATTER! +10 free spins. ";
       }
 
-      points += reward;
+      const nonScatterSymbols = symbols.filter(s => s !== scatterSymbol);
+      for (const sym of nonScatterSymbols) {
+        const c = counts[sym] || 0;
+        if (c >= 5) reward = Math.max(reward, bet * 12);
+        else if (c === 4) reward = Math.max(reward, bet * 6);
+        else if (c === 3) reward = Math.max(reward, bet * 3);
+      }
 
-      const { error } = await supabaseClient
-        .from("players")
-        .update({ Points: points })
-        .eq("id", currentPlayer.id);
+      const jackpotHitChance = Math.random();
+      if (jackpotHitChance < 0.02 && jackpotValue > 0) {
+        reward += jackpotValue;
+        message += "MYSTERY POT СПЕЧЕЛЕН! +" + jackpotValue + " ";
+        await saveJackpot(0);
+      }
 
-      if (error) {
-        document.getElementById("msg").textContent = "Грешка при запис.";
-        console.error(error);
+      const saveError = await savePlayerPoints(points);
+      if (saveError) {
+        setMessage("Грешка при запис.");
+        console.error(saveError);
         return;
       }
 
-      currentPlayer.Points = points;
-      document.getElementById("points").textContent = points;
-      document.getElementById("msg").textContent = message;
+      if (reward > 0) {
+        currentWin = reward;
+        document.getElementById("winAmount").textContent = currentWin;
+        document.getElementById("winBox").classList.remove("hidden");
+        message += "Печалба: " + reward;
+      } else if (!message) {
+        message = "Опитай пак.";
+      }
+
+      setMessage(message);
+      updateUi();
+    }
+
+    async function collectWin() {
+      if (!currentPlayer || currentWin <= 0) return;
+
+      const points = Number(currentPlayer.Points || 0) + currentWin;
+      const saveError = await savePlayerPoints(points);
+      if (saveError) {
+        setMessage("Грешка при запис.");
+        console.error(saveError);
+        return;
+      }
+
+      setMessage("Прибра " + currentWin + " coins.");
+      currentWin = 0;
+      doubleCount = 0;
+      document.getElementById("winBox").classList.add("hidden");
+      document.getElementById("doubleBox").classList.add("hidden");
+      updateUi();
+    }
+
+    function showDoubleGame() {
+      if (currentWin <= 0) return;
+      document.getElementById("doubleBox").classList.remove("hidden");
+      setMessage("Избери Red или Black.");
+    }
+
+    function randomRedBlack() {
+      return Math.random() < 0.5 ? "red" : "black";
+    }
+
+    async function doubleGame(choice) {
+      if (currentWin <= 0) return;
+      if (doubleCount >= 3) {
+        setMessage("Достигна максимума от 3 double.");
+        return;
+      }
+
+      const result = randomRedBlack();
+
+      if (choice === result) {
+        currentWin *= 2;
+        doubleCount++;
+        document.getElementById("winAmount").textContent = currentWin;
+        setMessage("Познато! Новата печалба е " + currentWin + " coins.");
+      } else {
+        currentWin = 0;
+        doubleCount = 0;
+        document.getElementById("winAmount").textContent = 0;
+        document.getElementById("winBox").classList.add("hidden");
+        document.getElementById("doubleBox").classList.add("hidden");
+        setMessage("Не позна. Загуби печалбата.");
+      }
     }
 
     function logout() {
       currentPlayer = null;
+      currentWin = 0;
+      doubleCount = 0;
+      freeSpins = 0;
       document.getElementById("playerName").value = "";
       document.getElementById("playerPin").value = "";
       document.getElementById("loginBox").classList.remove("hidden");
       document.getElementById("gameBox").classList.add("hidden");
-      document.getElementById("msg").textContent = "";
+      document.getElementById("winBox").classList.add("hidden");
+      document.getElementById("doubleBox").classList.add("hidden");
+      setMessage("");
     }
+
+    setInterval(async () => {
+      if (!currentPlayer) return;
+      await loadJackpot();
+    }, 4000);
   </script>
 </body>
 </html>
