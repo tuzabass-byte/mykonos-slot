@@ -1,602 +1,3 @@
-<!DOCTYPE html>
-<html lang="bg">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mykonos Casino</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body{
-      margin:0;
-      font-family:Arial,sans-serif;
-      background:linear-gradient(180deg,#061b47,#1249a3 40%,#0a2c73);
-      color:#fff;
-      text-align:center;
-      padding:16px;
-    }
-    .box{
-      max-width:900px;
-      margin:18px auto;
-      background:rgba(255,255,255,0.08);
-      border:1px solid rgba(255,255,255,0.12);
-      border-radius:18px;
-      padding:18px;
-      box-sizing:border-box;
-      backdrop-filter: blur(4px);
-    }
-    input,select,button{
-      width:100%;
-      padding:12px;
-      margin:8px 0;
-      border:none;
-      border-radius:12px;
-      font-size:16px;
-      box-sizing:border-box;
-    }
-    button{
-      background:linear-gradient(180deg,#ffe16a,#e8b700);
-      color:#1b1b1b;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .secondary{
-      background:#ffffff;
-      color:#111;
-    }
-    .danger{
-      background:#d93025;
-      color:#fff;
-    }
-    .black{
-      background:#111;
-      color:#fff;
-    }
-    .hidden{display:none;}
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:12px;
-    }
-    .card{
-      background:rgba(255,255,255,0.08);
-      border-radius:16px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,0.1);
-    }
-    .card img{
-      width:100%;
-      height:140px;
-      object-fit:cover;
-      display:block;
-    }
-    .card h3{
-      margin:10px 0 4px;
-    }
-    .small{
-      opacity:.85;
-      font-size:14px;
-      padding:0 10px 10px;
-    }
-    .topstats{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:10px;
-      margin-bottom:14px;
-    }
-    .jackpot{
-      background:linear-gradient(180deg,#1c1f7a,#02123f);
-      border:2px solid rgba(255,255,255,0.15);
-      border-radius:14px;
-      padding:10px 6px;
-      box-shadow: inset 0 0 10px rgba(255,255,255,.08);
-    }
-    .jackpot .label{
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:1px;
-      opacity:.95;
-    }
-    .jackpot .value{
-      font-size:28px;
-      font-weight:800;
-      color:#ffce45;
-      margin-top:4px;
-    }
-    .mega .value{color:#ff5454;}
-    .major .value{color:#ffb347;}
-    .minor .value{color:#d9d9d9;}
-    .mini .value{color:#76d96f;}
-    .slot-wrap{
-      background:linear-gradient(180deg,#1d1b1b,#3f1408 55%,#162708);
-      border:4px solid #d8a947;
-      border-radius:20px;
-      padding:12px;
-      margin:14px 0;
-      box-shadow:0 10px 30px rgba(0,0,0,.35);
-    }
-    .slot-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:10px;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .slot-title{
-      font-size:26px;
-      font-weight:800;
-      color:#ffd65e;
-      text-shadow:0 2px 0 #000;
-    }
-    .freebox{
-      background:#1d7e2f;
-      color:#fff;
-      padding:8px 14px;
-      border-radius:12px;
-      font-weight:700;
-    }
-    .slot-grid{
-      display:grid;
-      grid-template-columns:60px 1fr 60px;
-      gap:10px;
-      align-items:stretch;
-    }
-    .lines-side{
-      background:#1a812c;
-      border-radius:14px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-around;
-      align-items:center;
-      color:#fff;
-      font-weight:700;
-      padding:8px 0;
-      min-height:360px;
-    }
-    .reels{
-      display:grid;
-      grid-template-columns:repeat(5,1fr);
-      gap:8px;
-      min-height:360px;
-    }
-    .reel{
-      display:grid;
-      grid-template-rows:repeat(3,1fr);
-      gap:8px;
-    }
-    .cell{
-      background:linear-gradient(180deg,#3a1b10,#101010);
-      border:3px solid #d2a04a;
-      border-radius:14px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:42px;
-      min-height:108px;
-      box-shadow: inset 0 0 15px rgba(255,255,255,.08);
-    }
-    .control-row{
-      display:grid;
-      grid-template-columns:1.2fr 1fr 1fr 1fr;
-      gap:10px;
-      margin-top:12px;
-    }
-    .panel{
-      background:#111;
-      color:#fff;
-      border-radius:12px;
-      padding:10px;
-      font-weight:700;
-    }
-    .panel strong{
-      color:#ffd65e;
-    }
-    .win-banner{
-      background:linear-gradient(180deg,#7f1919,#d93025);
-      border-radius:14px;
-      padding:10px;
-      margin-top:10px;
-      font-size:20px;
-      font-weight:800;
-    }
-    .menu-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:10px;
-    }
-    @media(max-width:760px){
-      .grid{grid-template-columns:1fr;}
-      .topstats{grid-template-columns:1fr 1fr;}
-      .slot-grid{grid-template-columns:40px 1fr 40px;}
-      .reels{gap:4px;}
-      .reel{gap:4px;}
-      .cell{font-size:30px; min-height:84px;}
-      .control-row{grid-template-columns:1fr 1fr;}
-    }
-  </style>
-</head>
-<body>
-
-<div class="box" id="loginBox">
-  <h1>Mykonos Casino</h1>
-  <p>Влез с име и PIN</p>
-  <input id="name" placeholder="Име">
-  <input id="pin" placeholder="PIN" type="password">
-  <button id="loginBtn" type="button">Влез</button>
-  <p id="msg"></p>
-</div>
-
-<div class="box hidden" id="menuBox">
-  <h2 id="welcome"></h2>
-  <p>Coins: <strong id="coins">0</strong></p>
-
-  <div class="grid">
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200" alt="">
-      <h3>Burning Hot</h3>
-      <div class="small">Classic fruit style</div>
-      <button type="button" onclick="startGame('Burning Hot')">Play</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=1200" alt="">
-      <h3>Book of Gold</h3>
-      <div class="small">Scatter + free spins</div>
-      <button type="button" onclick="startGame('Book of Gold')">Play</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200" alt="">
-      <h3>Road Rage</h3>
-      <div class="small">Fast spin style</div>
-      <button type="button" onclick="startGame('Road Rage')">Play</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=1200" alt="">
-      <h3>Chicken Road</h3>
-      <div class="small">Funny bonus theme</div>
-      <button type="button" onclick="startGame('Chicken Road')">Play</button>
-    </div>
-
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=1200" alt="">
-      <h3>Night Style</h3>
-      <div class="small">Neon casino mood</div>
-      <button type="button" onclick="startGame('Night Style')">Play</button>
-    </div>
-  </div>
-
-  <button class="secondary" type="button" onclick="logout()">Logout</button>
-</div>
-
-<div class="box hidden" id="gameBox">
-  <div class="topstats">
-    <div class="jackpot mega">
-      <div class="label">MEGA</div>
-      <div class="value" id="megaPot">0</div>
-    </div>
-    <div class="jackpot major">
-      <div class="label">MAJOR</div>
-      <div class="value" id="majorPot">0</div>
-    </div>
-    <div class="jackpot minor">
-      <div class="label">MINOR</div>
-      <div class="value" id="minorPot">0</div>
-    </div>
-    <div class="jackpot mini">
-      <div class="label">MINI</div>
-      <div class="value" id="miniPot">0</div>
-    </div>
-  </div>
-
-  <div class="slot-wrap">
-    <div class="slot-header">
-      <div class="slot-title" id="gameTitle">Burning Hot</div>
-      <div class="freebox">FREE SPINS: <span id="freeSpins">0</span></div>
-    </div>
-
-    <div class="slot-grid">
-      <div class="lines-side">
-        <div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
-      </div>
-
-      <div class="reels" id="reels">
-      </div>
-
-      <div class="lines-side">
-        <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
-      </div>
-    </div>
-
-    <div class="control-row">
-      <div class="panel">Coins<br><strong id="points">0</strong></div>
-      <div class="panel">Bet<br><strong id="betLabel">10</strong></div>
-      <div class="panel">Lines<br><strong id="linesLabel">5</strong></div>
-      <div class="panel">Win<br><strong id="winLabel">0</strong></div>
-    </div>
-
-    <div class="control-row">
-      <select id="bet" onchange="syncSelectors()">
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="50">50</option>
-        <option value="100">100</option>
-      </select>
-
-      <select id="lines" onchange="syncSelectors()">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-      </select>
-
-      <button type="button" onclick="spin()">SPIN</button>
-      <button class="secondary" type="button" onclick="backToMenu()">Back</button>
-    </div>
-
-    <div id="gameMsg" class="win-banner hidden"></div>
-
-    <div class="menu-actions">
-      <button class="danger" type="button" onclick="doubleGame('red')">DOUBLE RED</button>
-      <button class="black" type="button" onclick="doubleGame('black')">DOUBLE BLACK</button>
-    </div>
-  </div>
-
-  <button class="secondary" type="button" onclick="logout()">Logout</button>
-</div>
-
-<script>
-const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-let player = null;
-let currentGame = "";
-let currentWin = 0;
-let freeSpins = 0;
-let reelMatrix = [];
-let jackpots = { mega: 1000, major: 300, minor: 100, mini: 30 };
-
-const gameConfigs = {
-  "Burning Hot": ["7️⃣","🔔","🍒","🍋","🍇","🍉","⭐","BAR"],
-  "Book of Gold": ["📕","🪲","👑","🐍","🪙","🧿","A","K","Q","J","10"],
-  "Road Rage": ["🚗","🚓","🏁","🔥","💥","🛞","⚡","🔧"],
-  "Chicken Road": ["🐔","🥚","🌽","🚧","🔥","🪙","🚦","🐣"],
-  "Night Style": ["🌙","💎","🍸","✨","🎲","7️⃣","⭐","🪩"]
-};
-
-const scatterMap = {
-  "Burning Hot": "7️⃣",
-  "Book of Gold": "📕",
-  "Road Rage": "🏁",
-  "Chicken Road": "🥚",
-  "Night Style": "🌙"
-};
-
-let audioCtx = null;
-
-function initAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-}
-
-function beep(freq, duration, type="sine", volume=0.03){
-  if(!audioCtx) return;
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type;
-  osc.frequency.value = freq;
-  gain.gain.value = volume;
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-  osc.start();
-  setTimeout(()=>osc.stop(), duration);
-}
-
-function playSpinSound(){
-  initAudio();
-  beep(180,80,"square",0.02);
-  setTimeout(()=>beep(220,80,"square",0.02),90);
-  setTimeout(()=>beep(260,100,"square",0.02),180);
-}
-function playWinSound(){
-  initAudio();
-  beep(520,100,"triangle",0.04);
-  setTimeout(()=>beep(660,120,"triangle",0.04),120);
-  setTimeout(()=>beep(820,150,"triangle",0.04),260);
-}
-function playJackpotSound(){
-  initAudio();
-  beep(400,120,"sawtooth",0.05);
-  setTimeout(()=>beep(550,120,"sawtooth",0.05),140);
-  setTimeout(()=>beep(700,160,"sawtooth",0.05),280);
-  setTimeout(()=>beep(920,220,"sawtooth",0.05),460);
-}
-function playFreeSpinSound(){
-  initAudio();
-  beep(700,100,"triangle",0.04);
-  setTimeout(()=>beep(900,140,"triangle",0.04),120);
-}
-
-function byId(id){ return document.getElementById(id); }
-
-function showSection(id){
-  byId("loginBox").classList.add("hidden");
-  byId("menuBox").classList.add("hidden");
-  byId("gameBox").classList.add("hidden");
-  byId(id).classList.remove("hidden");
-}
-
-function syncSelectors(){
-  byId("betLabel").textContent = byId("bet").value;
-  byId("linesLabel").textContent = byId("lines").value;
-}
-
-function renderReels(matrix){
-  const reels = byId("reels");
-  reels.innerHTML = "";
-  for(let c=0;c<5;c++){
-    const reel = document.createElement("div");
-    reel.className = "reel";
-    for(let r=0;r<3;r++){
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      cell.textContent = matrix[r][c];
-      reel.appendChild(cell);
-    }
-    reels.appendChild(reel);
-  }
-}
-
-function randomMatrix(symbols){
-  const matrix = [];
-  for(let r=0;r<3;r++){
-    const row = [];
-    for(let c=0;c<5;c++){
-      row.push(symbols[Math.floor(Math.random()*symbols.length)]);
-    }
-    matrix.push(row);
-  }
-  return matrix;
-}
-
-async function loadJackpots(){
-  const { data, error } = await db.from("game_state").select("*").limit(1);
-  if(!error && data && data.length){
-    jackpots.mega = Number(data[0].mega || 0);
-    jackpots.major = Number(data[0].major || 0);
-    jackpots.minor = Number(data[0].minor || 0);
-    jackpots.mini = Number(data[0].mini || 0);
-  }
-  byId("megaPot").textContent = jackpots.mega;
-  byId("majorPot").textContent = jackpots.major;
-  byId("minorPot").textContent = jackpots.minor;
-  byId("miniPot").textContent = jackpots.mini;
-}
-
-async function saveJackpots(){
-  const { data, error } = await db.from("game_state").select("id").limit(1);
-  if(error || !data || !data.length) return;
-  await db.from("game_state").update({
-    mega: jackpots.mega,
-    major: jackpots.major,
-    minor: jackpots.minor,
-    mini: jackpots.mini
-  }).eq("id", data[0].id);
-}
-
-async function savePoints(){
-  await db.from("players").update({ Points: player.Points }).eq("id", player.id);
-}
-
-async function login(){
-  initAudio();
-  const name = byId("name").value.trim();
-  const pin = byId("pin").value.trim();
-  byId("msg").textContent = "";
-
-  if(!name || !pin){
-    byId("msg").textContent = "Въведи име и PIN.";
-    return;
-  }
-
-  const { data, error } = await db
-    .from("players")
-    .select("*")
-    .eq("Name", name)
-    .eq("Pin", pin)
-    .limit(1);
-
-  if(error){
-    byId("msg").textContent = "Грешка при връзка.";
-    return;
-  }
-
-  if(!data || !data.length){
-    byId("msg").textContent = "Грешно име или PIN.";
-    return;
-  }
-
-  player = data[0];
-  byId("welcome").textContent = "Здрасти, " + player.Name;
-  byId("coins").textContent = player.Points || 0;
-  await loadJackpots();
-  showSection("menuBox");
-}
-
-function startGame(gameName){
-  currentGame = gameName;
-  currentWin = 0;
-  freeSpins = 0;
-  byId("gameTitle").textContent = gameName;
-  byId("points").textContent = player.Points || 0;
-  byId("winLabel").textContent = "0";
-  byId("gameMsg").classList.add("hidden");
-  byId("freeSpins").textContent = "0";
-  syncSelectors();
-  reelMatrix = randomMatrix(gameConfigs[currentGame]);
-  renderReels(reelMatrix);
-  loadJackpots();
-  showSection("gameBox");
-}
-
-function getLinesToCheck(lines){
-  const all = [
-    [[0,0],[0,1],[0,2],[0,3],[0,4]],
-    [[1,0],[1,1],[1,2],[1,3],[1,4]],
-    [[2,0],[2,1],[2,2],[2,3],[2,4]],
-    [[0,0],[1,1],[2,2],[1,3],[0,4]],
-    [[2,0],[1,1],[0,2],[1,3],[2,4]],
-    [[0,0],[0,1],[1,2],[0,3],[0,4]],
-    [[2,0],[2,1],[1,2],[2,3],[2,4]],
-    [[1,0],[0,1],[1,2],[2,3],[1,4]],
-    [[1,0],[2,1],[1,2],[0,3],[1,4]],
-    [[0,0],[1,1],[1,2],[1,3],[0,4]],
-    [[2,0],[1,1],[1,2],[1,3],[2,4]],
-    [[1,0],[1,1],[0,2],[1,3],[1,4]],
-    [[1,0],[1,1],[2,2],[1,3],[1,4]],
-    [[0,0],[1,1],[0,2],[1,3],[0,4]],
-    [[2,0],[1,1],[2,2],[1,3],[2,4]],
-    [[0,0],[0,1],[2,2],[0,3],[0,4]],
-    [[2,0],[2,1],[0,2],[2,3],[2,4]],
-    [[0,0],[2,1],[0,2],[2,3],[0,4]],
-    [[2,0],[0,1],[2,2],[0,3],[2,4]],
-    [[1,0],[0,1],[2,2],[0,3],[1,4]]
-  ];
-  return all.slice(0, lines);
-}
-
-function countScatter(matrix, scatter){
-  let c = 0;
-  for(let r=0;r<3;r++){
-    for(let col=0;col<5;col++){
-      if(matrix[r][col] === scatter) c++;
-    }
-  }
-  return c;
-}
-
-function calcLineWin(line, matrix, betPerLine){
-  const first = matrix[line[0][0]][line[0][1]];
-  let count = 1;
-
-  for(let i=1;i<line.length;i++){
-    const [r,c] = line[i];
-    if(matrix[r][c] === first){
-      count++;
-    } else {
-      break;
-    }
-  }
-
-  if(count < 3) return 0;
-
-  const payoutMap = { 3: 2, 4: 5, 5: 10 };
-  return betPerLine * payoutMap[count];
-}
-
 async function spin(){
   if(!player) return;
 
@@ -611,112 +12,105 @@ async function spin(){
     freeSpins--;
   } else {
     if((player.Points || 0) < totalBet){
-      byId("gameMsg").textContent = "Нямаш достатъчно coins.";
+      byId("gameMsg").textContent = "Нямаш coins.";
       byId("gameMsg").classList.remove("hidden");
       return;
     }
     player.Points -= totalBet;
-
-    jackpots.mega += Math.max(1, Math.floor(totalBet * 0.02));
-    jackpots.major += Math.max(1, Math.floor(totalBet * 0.01));
-    jackpots.minor += Math.max(1, Math.floor(totalBet * 0.005));
-    jackpots.mini += Math.max(1, Math.floor(totalBet * 0.003));
-    await saveJackpots();
   }
 
-  reelMatrix = randomMatrix(gameConfigs[currentGame]);
-  renderReels(reelMatrix);
+  // 🎰 ANIMATION
+  const symbols = gameConfigs[currentGame];
 
-  let reward = 0;
-  const betPerLine = bet;
-  const linesToCheck = getLinesToCheck(lines);
-
-  for(const line of linesToCheck){
-    reward += calcLineWin(line, reelMatrix, betPerLine);
+  for(let i=0;i<8;i++){
+    setTimeout(()=>{
+      const temp = randomMatrix(symbols);
+      renderReels(temp);
+    }, i * 80);
   }
 
-  const scatterCount = countScatter(reelMatrix, scatter);
-  if(scatterCount >= 3){
-    freeSpins += 10;
-    playFreeSpinSound();
-  }
+  setTimeout(async ()=>{
 
-  let jackpotText = "";
-  const chance = Math.random();
+    reelMatrix = randomMatrix(symbols);
+    renderReels(reelMatrix);
 
-  if(chance < 0.005){
-    reward += jackpots.mini;
-    jackpotText = " MINI JACKPOT!";
-    jackpots.mini = 30;
-    playJackpotSound();
-  } else if(chance < 0.002){
-    reward += jackpots.minor;
-    jackpotText = " MINOR JACKPOT!";
-    jackpots.minor = 100;
-    playJackpotSound();
-  } else if(chance < 0.001){
-    reward += jackpots.major;
-    jackpotText = " MAJOR JACKPOT!";
-    jackpots.major = 300;
-    playJackpotSound();
-  } else if(chance < 0.0005){
-    reward += jackpots.mega;
-    jackpotText = " MEGA JACKPOT!";
-    jackpots.mega = 1000;
-    playJackpotSound();
-  }
+    let reward = 0;
+    const betPerLine = bet;
+    const linesToCheck = getLinesToCheck(lines);
 
-  if(jackpotText){
-    await saveJackpots();
-  }
+    for(const line of linesToCheck){
+      reward += calcLineWin(line, reelMatrix, betPerLine);
+    }
 
-  if(reward > 0){
-    player.Points += reward;
-    byId("winLabel").textContent = reward;
-    byId("gameMsg").textContent = "Печалба: " + reward + jackpotText;
-    byId("gameMsg").classList.remove("hidden");
-    playWinSound();
-  } else if(scatterCount >= 3){
-    byId("gameMsg").textContent = "SCATTER! +10 FREE SPINS";
-    byId("gameMsg").classList.remove("hidden");
-    byId("winLabel").textContent = "0";
-  } else {
-    byId("gameMsg").textContent = "Нищо.";
-    byId("gameMsg").classList.remove("hidden");
-    byId("winLabel").textContent = "0";
-  }
+    const scatterCount = countScatter(reelMatrix, scatter);
+    if(scatterCount >= 3){
+      freeSpins += 10;
+      playFreeSpinSound();
+    }
 
-  await savePoints();
-  byId("points").textContent = player.Points || 0;
-  byId("coins").textContent = player.Points || 0;
-  byId("freeSpins").textContent = freeSpins;
-  await loadJackpots();
+    // 💰 JACKPOT CHANCE (по-трудно)
+    let jackpotText = "";
+    const chance = Math.random();
+
+    if(jackpots.mini > 80 && chance < 0.008){
+      reward += jackpots.mini;
+      jackpotText = " MINI JACKPOT!";
+      jackpots.mini = 50;
+      playJackpotSound();
+    } 
+    else if(jackpots.minor > 250 && chance < 0.003){
+      reward += jackpots.minor;
+      jackpotText = " MINOR JACKPOT!";
+      jackpots.minor = 150;
+      playJackpotSound();
+    } 
+    else if(jackpots.major > 900 && chance < 0.001){
+      reward += jackpots.major;
+      jackpotText = " MAJOR JACKPOT!";
+      jackpots.major = 500;
+      playJackpotSound();
+    } 
+    else if(jackpots.mega > 3500 && chance < 0.0003){
+      reward += jackpots.mega;
+      jackpotText = " MEGA JACKPOT!";
+      jackpots.mega = 2000;
+      playJackpotSound();
+    }
+
+    if(jackpotText){
+      await saveJackpots();
+    }
+
+    if(reward > 0){
+      player.Points += reward;
+      byId("winLabel").textContent = reward;
+      byId("gameMsg").textContent = "Печалба: " + reward + jackpotText;
+      byId("gameMsg").classList.remove("hidden");
+      playWinSound();
+
+      // ✨ WIN FLASH EFFECT
+      document.querySelectorAll(".cell").forEach(c=>{
+        c.style.boxShadow = "0 0 15px gold";
+      });
+
+      setTimeout(()=>{
+        document.querySelectorAll(".cell").forEach(c=>{
+          c.style.boxShadow = "";
+        });
+      },500);
+
+    } else {
+      byId("gameMsg").textContent = "Нищо.";
+      byId("gameMsg").classList.remove("hidden");
+      byId("winLabel").textContent = "0";
+    }
+
+    await savePoints();
+    byId("points").textContent = player.Points || 0;
+    byId("coins").textContent = player.Points || 0;
+    byId("freeSpins").textContent = freeSpins;
+
+    await loadJackpots();
+
+  }, 700);
 }
-
-function doubleGame(choice){
-  if(currentWin <= 0) return;
-}
-
-function backToMenu(){
-  byId("coins").textContent = player.Points || 0;
-  showSection("menuBox");
-}
-
-function logout(){
-  player = null;
-  currentGame = "";
-  currentWin = 0;
-  freeSpins = 0;
-  byId("name").value = "";
-  byId("pin").value = "";
-  byId("msg").textContent = "";
-  showSection("loginBox");
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  byId("loginBtn").addEventListener("click", login);
-});
-</script>
-
-</body>
-</html>
