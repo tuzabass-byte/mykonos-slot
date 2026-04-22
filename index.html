@@ -1,68 +1,422 @@
-<div class="slot-wrap" id="mainWrap">
-  <div class="title">🔥 BURNING HOT 🔥</div>
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mykonos Burning Hot</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 10px;
+    }
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .hidden { display: none; }
+    .panel {
+      background: #1b1b1b;
+      border: 2px solid #b8860b;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    h1, h2, h3, p { margin: 8px 0; }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 6px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+    }
+    button {
+      background: gold;
+      color: #111;
+      font-weight: bold;
+    }
+    .jackpots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .jackpot {
+      background: #0d1b3d;
+      border: 2px solid #2f4fa3;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .jackpot b {
+      display: block;
+      font-size: 22px;
+      color: #ffd54a;
+      margin-top: 4px;
+    }
+    .title {
+      text-align: center;
+      font-size: 28px;
+      color: #ffd54a;
+      margin: 10px 0;
+      font-weight: bold;
+    }
+    .slot {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin: 12px 0;
+    }
+    .reel {
+      display: grid;
+      grid-template-rows: repeat(3, 80px);
+      gap: 6px;
+    }
+    .cell {
+      background: linear-gradient(#3a1a10, #111);
+      border: 2px solid #d4a04a;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      min-height: 80px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .stat {
+      background: #000;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+    .stat b {
+      display: block;
+      color: #ffd54a;
+      font-size: 20px;
+      margin-top: 4px;
+    }
+    .msg {
+      background: #7b1f1f;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
 
-  <div class="slot-grid">
-    <div class="lines-side">
-      <div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
+    <div id="loginBox" class="panel">
+      <h1>Mykonos Burning Hot</h1>
+      <input id="name" placeholder="Име">
+      <input id="pin" placeholder="PIN" type="password">
+      <button id="loginBtn" type="button">Влез</button>
+      <p id="loginMsg"></p>
     </div>
 
-    <div class="reels" id="reels"></div>
+    <div id="gameBox" class="hidden">
+      <div class="jackpots">
+        <div class="jackpot">MINI<b id="miniPot">50</b></div>
+        <div class="jackpot">MINOR<b id="minorPot">150</b></div>
+        <div class="jackpot">MAJOR<b id="majorPot">500</b></div>
+        <div class="jackpot">MEGA<b id="megaPot">2000</b></div>
+      </div>
 
-    <div class="lines-side">
-      <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+      <div class="panel">
+        <div class="title">🔥 BURNING HOT 🔥</div>
+
+        <div class="slot" id="slot"></div>
+
+        <div class="stats">
+          <div class="stat">COINS<b id="coins">0</b></div>
+          <div class="stat">FREE<b id="freeSpins">0</b></div>
+          <div class="stat">WIN<b id="winValue">0</b></div>
+        </div>
+
+        <select id="bet">
+          <option value="10">Bet 10</option>
+          <option value="20">Bet 20</option>
+          <option value="50">Bet 50</option>
+          <option value="100">Bet 100</option>
+        </select>
+
+        <button id="spinBtn" type="button">SPIN</button>
+        <button id="logoutBtn" type="button">Logout</button>
+
+        <div id="gameMsg" class="msg hidden"></div>
+      </div>
     </div>
+
   </div>
 
-  <div class="control-bar">
-    <div class="info-box">COINS<br><strong id="coins">0</strong></div>
-    <div>
-      <select id="bet" onchange="syncSelectors()">
-        <option value="10">Bet 10</option>
-        <option value="20">Bet 20</option>
-        <option value="50">Bet 50</option>
-        <option value="100">Bet 100</option>
-      </select>
-    </div>
-    <div>
-      <select id="lines" onchange="syncSelectors()">
-        <option value="5">Lines 5</option>
-        <option value="10">Lines 10</option>
-        <option value="20">Lines 20</option>
-      </select>
-    </div>
-    <div class="info-box">FREE<br><strong id="freeSpins">0</strong></div>
-    <div>
-      <button class="spin-btn" type="button" onclick="spinMain()">SPIN</button>
-    </div>
-  </div>
+  <script>
+    const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <div id="gameMsg" class="message hidden"></div>
-</div>
+    const symbols = ["7️⃣","🔔","🍒","🍋","🍇","BAR","💥"];
+    const scatter = "💥";
 
-<div class="slot-wrap hidden" id="bonusWrap">
-  <div class="bonusTitle">🎁 FREE SPINS BONUS 🎁</div>
+    const payouts = {
+      "🍋": {3:20,4:50,5:100},
+      "🍒": {3:30,4:70,5:120},
+      "🍇": {3:40,4:80,5:150},
+      "🔔": {3:60,4:120,5:250},
+      "BAR": {3:80,4:180,5:350},
+      "7️⃣": {3:120,4:300,5:600}
+    };
 
-  <div class="slot-grid">
-    <div class="lines-side">
-      <div>5</div><div>4</div><div>3</div><div>2</div><div>1</div>
-    </div>
+    let player = null;
+    let freeSpins = 0;
+    let jackpots = { mini: 50, minor: 150, major: 500, mega: 2000 };
 
-    <div class="reels" id="bonusReels"></div>
+    function byId(id){ return document.getElementById(id); }
 
-    <div class="lines-side">
-      <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
-    </div>
-  </div>
+    function randomSymbol() {
+      const roll = Math.random();
+      if (roll < 0.04) return scatter;
+      const normal = ["7️⃣","🔔","🍒","🍋","🍇","BAR"];
+      return normal[Math.floor(Math.random() * normal.length)];
+    }
 
-  <div class="control-bar">
-    <div class="info-box">COINS<br><strong id="bonusCoins">0</strong></div>
-    <div class="info-box">BET<br><strong id="bonusBetLabel">10</strong></div>
-    <div class="info-box">LINES<br><strong id="bonusLinesLabel">5</strong></div>
-    <div class="info-box">LEFT<br><strong id="bonusLeft">0</strong></div>
-    <div>
-      <button class="spin-btn" type="button" onclick="spinBonus()">FREE SPIN</button>
-    </div>
-  </div>
+    function randomMatrix() {
+      const m = [];
+      for (let r = 0; r < 3; r++) {
+        const row = [];
+        for (let c = 0; c < 5; c++) row.push(randomSymbol());
+        m.push(row);
+      }
+      return m;
+    }
 
-  <div id="bonusMsg" class="message hidden"></div>
-</div>
+    function render(matrix) {
+      const slot = byId("slot");
+      slot.innerHTML = "";
+      for (let c = 0; c < 5; c++) {
+        const reel = document.createElement("div");
+        reel.className = "reel";
+        for (let r = 0; r < 3; r++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.textContent = matrix[r][c];
+          reel.appendChild(cell);
+        }
+        slot.appendChild(reel);
+      }
+    }
+
+    function setMsg(text) {
+      const el = byId("gameMsg");
+      el.textContent = text;
+      el.classList.remove("hidden");
+    }
+
+    function clearMsg() {
+      byId("gameMsg").classList.add("hidden");
+      byId("gameMsg").textContent = "";
+    }
+
+    async function loadJackpots() {
+      const { data } = await db.from("game_state").select("*").limit(1);
+      if (data && data.length) {
+        jackpots.mini = Number(data[0].mini || 50);
+        jackpots.minor = Number(data[0].minor || 150);
+        jackpots.major = Number(data[0].major || 500);
+        jackpots.mega = Number(data[0].mega || 2000);
+      }
+      byId("miniPot").textContent = jackpots.mini;
+      byId("minorPot").textContent = jackpots.minor;
+      byId("majorPot").textContent = jackpots.major;
+      byId("megaPot").textContent = jackpots.mega;
+    }
+
+    async function saveJackpots() {
+      const { data } = await db.from("game_state").select("id").limit(1);
+      if (!data || !data.length) return;
+      await db.from("game_state").update({
+        mini: jackpots.mini,
+        minor: jackpots.minor,
+        major: jackpots.major,
+        mega: jackpots.mega
+      }).eq("id", data[0].id);
+    }
+
+    async function savePlayer() {
+      await db.from("players").update({ Points: player.Points }).eq("id", player.id);
+    }
+
+    async function login() {
+      const name = byId("name").value.trim();
+      const pin = byId("pin").value.trim();
+      byId("loginMsg").textContent = "";
+
+      if (!name || !pin) {
+        byId("loginMsg").textContent = "Въведи име и PIN.";
+        return;
+      }
+
+      const { data, error } = await db
+        .from("players")
+        .select("*")
+        .eq("Name", name)
+        .eq("Pin", pin)
+        .limit(1);
+
+      if (error || !data || !data.length) {
+        byId("loginMsg").textContent = "Грешно име или PIN.";
+        return;
+      }
+
+      player = data[0];
+      byId("coins").textContent = player.Points || 0;
+      byId("freeSpins").textContent = freeSpins;
+      byId("winValue").textContent = 0;
+      render(randomMatrix());
+      await loadJackpots();
+
+      byId("loginBox").classList.add("hidden");
+      byId("gameBox").classList.remove("hidden");
+    }
+
+    function countScatter(matrix) {
+      let c = 0;
+      for (let r = 0; r < 3; r++) {
+        for (let col = 0; col < 5; col++) {
+          if (matrix[r][col] === scatter) c++;
+        }
+      }
+      return c;
+    }
+
+    function evaluate(matrix) {
+      let reward = 0;
+      for (let r = 0; r < 3; r++) {
+        const row = matrix[r];
+        const first = row[0];
+        if (first === scatter) continue;
+
+        let count = 1;
+        for (let i = 1; i < 5; i++) {
+          if (row[i] === first) count++;
+          else break;
+        }
+
+        if (count >= 3 && payouts[first] && payouts[first][count]) {
+          reward += payouts[first][count];
+        }
+      }
+      return reward;
+    }
+
+    async function spin() {
+      if (!player) return;
+
+      clearMsg();
+      const bet = Number(byId("bet").value);
+
+      if (freeSpins > 0) {
+        freeSpins--;
+      } else {
+        if ((player.Points || 0) < bet) {
+          setMsg("Нямаш coins.");
+          return;
+        }
+        player.Points -= bet;
+
+        jackpots.mini += 1;
+        jackpots.minor += 1;
+        jackpots.major += 1;
+        jackpots.mega += 1;
+        await saveJackpots();
+      }
+
+      byId("coins").textContent = player.Points || 0;
+
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => render(randomMatrix()), i * 90);
+      }
+
+      setTimeout(async () => {
+        const finalMatrix = randomMatrix();
+        render(finalMatrix);
+
+        let reward = evaluate(finalMatrix);
+        let text = "";
+
+        const sc = countScatter(finalMatrix);
+        if (sc === 3) {
+          freeSpins += 8;
+          text += " FREE SPINS +8";
+        } else if (sc === 4) {
+          freeSpins += 12;
+          text += " FREE SPINS +12";
+        } else if (sc >= 5) {
+          freeSpins += 20;
+          text += " FREE SPINS +20";
+        }
+
+        const chance = Math.random();
+        if (jackpots.mini >= 80 && chance < 0.002) {
+          reward += jackpots.mini;
+          jackpots.mini = 50;
+          text += " MINI JACKPOT!";
+        } else if (jackpots.minor >= 250 && chance < 0.0008) {
+          reward += jackpots.minor;
+          jackpots.minor = 150;
+          text += " MINOR JACKPOT!";
+        } else if (jackpots.major >= 900 && chance < 0.00025) {
+          reward += jackpots.major;
+          jackpots.major = 500;
+          text += " MAJOR JACKPOT!";
+        } else if (jackpots.mega >= 3500 && chance < 0.00005) {
+          reward += jackpots.mega;
+          jackpots.mega = 2000;
+          text += " MEGA JACKPOT!";
+        }
+
+        if (reward > 0) {
+          player.Points += reward;
+          setMsg("Печалба: " + reward + text);
+        } else if (text) {
+          setMsg(text.trim());
+        } else {
+          setMsg("Нищо.");
+        }
+
+        await saveJackpots();
+        await savePlayer();
+
+        byId("coins").textContent = player.Points || 0;
+        byId("freeSpins").textContent = freeSpins;
+        byId("winValue").textContent = reward;
+        await loadJackpots();
+      }, 800);
+    }
+
+    function logout() {
+      player = null;
+      freeSpins = 0;
+      byId("name").value = "";
+      byId("pin").value = "";
+      byId("loginMsg").textContent = "";
+      byId("gameBox").classList.add("hidden");
+      byId("loginBox").classList.remove("hidden");
+    }
+
+    byId("loginBtn").addEventListener("click", login);
+    byId("spinBtn").addEventListener("click", spin);
+    byId("logoutBtn").addEventListener("click", logout);
+  </script>
+</body>
+</html>
