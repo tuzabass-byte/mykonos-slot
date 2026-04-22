@@ -1,200 +1,37 @@
-<!DOCTYPE html>
-<html lang="bg">
-<head>
-<meta charset="UTF-8">
-<title>Mykonos Casino</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(#0b3d91,#1e90ff);
-  color:white;
-  text-align:center;
-  padding:20px;
-}
-.box{
-  max-width:800px;
-  margin:auto;
-}
-input,button{
-  padding:12px;
-  margin:8px;
-  border-radius:10px;
-  border:none;
-}
-button{
-  background:gold;
-  font-weight:bold;
-}
-.hidden{display:none;}
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-}
-
-.card{
-  background:rgba(255,255,255,0.1);
-  border-radius:15px;
-  overflow:hidden;
-}
-
-.card img{
-  width:100%;
-  height:120px;
-  object-fit:cover;
-}
-
-.card h3{
-  margin:10px;
-}
-</style>
-</head>
-
-<body>
-
-<div id="loginBox" class="box">
-<h2>Mykonos Casino</h2>
-<input id="name" placeholder="Име"><br>
-<input id="pin" placeholder="PIN"><br>
-<button onclick="login()">Влез</button>
-<p id="msg"></p>
-</div>
-
-<div id="menu" class="box hidden">
-<h2 id="welcome"></h2>
-<p>Coins: <span id="coins"></span></p>
-
-<div class="grid">
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
-<h3>Greek Style</h3>
-<button onclick="startGame('Greek')">Play</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee">
-<h3>Night Style</h3>
-<button onclick="startGame('Night')">Play</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1511512578047-dfb367046420">
-<h3>Burning Hot</h3>
-<button onclick="startGame('Fire')">Play</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1519681393784-d120267933ba">
-<h3>Luxury Gold</h3>
-<button onclick="startGame('Gold')">Play</button>
-</div>
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443">
-<h3>Fruit Classic</h3>
-<button onclick="startGame('Fruit')">Play</button>
-</div>
-
-</div>
-
-<button onclick="logout()">Logout</button>
-</div>
-
-<div id="game" class="hidden box">
-<h2 id="gameTitle"></h2>
-<p>Coins: <span id="points"></span></p>
-
-<div id="reels" style="font-size:40px;">🍒 🍋 ⭐ 🍇 7️⃣</div>
-
-<button onclick="spin()">SPIN</button>
-<p id="gameMsg"></p>
-
-<button onclick="back()">⬅ Back</button>
-</div>
-
 <script>
-const db = supabase.createClient(
-"https://xjcvntplrbjsaozkduqd.supabase.co",
-"sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq"
-);
-
-let player=null;
-
 async function login(){
-let name=nameInput.value;
-let pin=pinInput.value;
+  const name = document.getElementById("name").value.trim();
+  const pin = document.getElementById("pin").value.trim();
+  const msgEl = document.getElementById("msg");
 
-let {data}=await db.from("players").select("*").eq("Name",name).eq("Pin",pin);
+  if(!name || !pin){
+    msgEl.innerText = "Vuvedi ime i PIN";
+    return;
+  }
 
-if(!data||data.length==0){
-msg.innerText="Грешен вход";
-return;
-}
+  let { data, error } = await db
+    .from("players")
+    .select("*")
+    .eq("Name", name)
+    .eq("Pin", pin)
+    .limit(1);
 
-player=data[0];
+  if(error){
+    console.error(error);
+    msgEl.innerText = "Greshka pri vruzkata";
+    return;
+  }
 
-loginBox.classList.add("hidden");
-menu.classList.remove("hidden");
+  if(!data || data.length === 0){
+    msgEl.innerText = "Greshno ime ili PIN";
+    return;
+  }
 
-welcome.innerText="Здрасти "+player.Name;
-coins.innerText=player.Points;
-}
+  player = data[0];
 
-function startGame(type){
-menu.classList.add("hidden");
-game.classList.remove("hidden");
-
-gameTitle.innerText=type+" Slot";
-points.innerText=player.Points;
-}
-
-async function spin(){
-if(player.Points<10){alert("нямаш coins");return;}
-
-player.Points-=10;
-
-let symbols=["🍒","🍋","⭐","🍇","7️⃣"];
-let reels=[];
-
-for(let i=0;i<5;i++){
-reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
-}
-
-document.getElementById("reels").innerText=reels.join(" ");
-
-let win=0;
-
-if(reels[0]==reels[1]&&reels[1]==reels[2]){
-win=30;
-}
-
-if(win>0){
-player.Points+=win;
-gameMsg.innerText="Печалба "+win;
-}else{
-gameMsg.innerText="Нищо";
-}
-
-await db.from("players").update({Points:player.Points}).eq("id",player.id);
-
-points.innerText=player.Points;
-coins.innerText=player.Points;
-}
-
-function back(){
-game.classList.add("hidden");
-menu.classList.remove("hidden");
-}
-
-function logout(){
-location.reload();
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("menu").classList.remove("hidden");
+  document.getElementById("welcome").innerText = "Zdrasti " + player.Name;
+  document.getElementById("coins").innerText = player.Points ?? 0;
 }
 </script>
-
-</body>
-</html>
