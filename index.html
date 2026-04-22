@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mykonos Burning Hot</title>
+  <title>Mykonos Hot</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; }
@@ -11,7 +11,8 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(180deg, #120606, #2b0d0d 40%, #111);
+      background:
+        radial-gradient(circle at top, #1f5f1f 0%, #0f2b0f 35%, #120606 75%, #0a0a0a 100%);
       color: #fff;
       padding: 10px;
     }
@@ -24,36 +25,43 @@
     .hidden { display: none; }
 
     .panel {
-      background: rgba(20, 20, 20, 0.95);
-      border: 2px solid #b8860b;
+      background: rgba(8, 8, 8, 0.94);
+      border: 2px solid #b78b18;
       border-radius: 14px;
-      padding: 10px;
+      padding: 12px;
       margin-bottom: 10px;
+      box-shadow: 0 8px 22px rgba(0,0,0,.35);
     }
 
-    h1, h2, h3, p {
-      margin: 8px 0;
-      text-align: center;
-    }
+    h1, p { margin: 8px 0; }
 
     input, select, button {
       width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      border-radius: 10px;
       border: none;
+      border-radius: 10px;
+      padding: 12px;
       font-size: 16px;
+      margin: 6px 0;
     }
 
     button {
-      background: linear-gradient(180deg, #ffe27a, #d9a400);
+      background: linear-gradient(180deg, #ffe278, #d9a400);
       color: #111;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .secondary {
       background: #fff;
       color: #111;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 800;
+      color: #f7d35a;
+      text-shadow: 0 2px 0 #000, 0 0 16px rgba(80,255,80,.25);
+      margin-bottom: 8px;
     }
 
     .jackpots {
@@ -64,65 +72,76 @@
     }
 
     .jp {
-      background: linear-gradient(180deg, #0d1b3d, #070c1b);
-      border: 2px solid #3558c9;
       border-radius: 12px;
-      padding: 8px;
+      padding: 10px 8px;
       text-align: center;
+      border: 2px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, #0d1f4e, #09142f);
     }
 
     .jp .name {
       font-size: 12px;
-      font-weight: bold;
-      opacity: 0.9;
+      font-weight: 700;
+      letter-spacing: .5px;
     }
 
     .jp .value {
-      font-size: 24px;
-      color: #ffd54a;
-      font-weight: 800;
       margin-top: 4px;
-    }
-
-    .title {
-      text-align: center;
-      font-size: 28px;
-      color: #ffd54a;
+      font-size: 24px;
       font-weight: 800;
-      margin-bottom: 8px;
+      color: #ffd652;
     }
 
-    .slot-area {
-      background: linear-gradient(180deg, #3d1309, #161616);
-      border: 3px solid #d4a04a;
+    .jp.mini .value { color: #88ff77; }
+    .jp.minor .value { color: #ddd; }
+    .jp.major .value { color: #ffb24c; }
+    .jp.mega .value { color: #ff6666; }
+
+    .machine {
+      background:
+        linear-gradient(180deg, rgba(61,17,8,.98), rgba(20,20,20,.98)),
+        linear-gradient(180deg, #274f16, #132710);
+      border: 4px solid #c99925;
       border-radius: 18px;
       padding: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 0 25px rgba(255,180,50,.08);
+    }
+
+    .machine-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffd859;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 0 #000, 0 0 10px rgba(255,200,80,.25);
     }
 
     .slot-grid {
       display: grid;
-      grid-template-columns: 38px 1fr 38px;
+      grid-template-columns: 42px 1fr 42px;
       gap: 6px;
       align-items: stretch;
     }
 
-    .side-lines {
+    .side {
+      background: linear-gradient(180deg, #2b8d35, #14531b);
+      border-radius: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      background: #16752c;
-      border-radius: 10px;
-      font-weight: bold;
-      min-height: 300px;
-      font-size: 14px;
+      color: white;
+      font-weight: 700;
+      min-height: 282px;
+      font-size: 13px;
+      border: 2px solid rgba(255,255,255,.12);
     }
 
     .reels {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 6px;
-      min-height: 300px;
+      min-height: 282px;
     }
 
     .reel {
@@ -132,44 +151,49 @@
     }
 
     .cell {
-      min-height: 92px;
+      min-height: 90px;
       border-radius: 12px;
-      border: 2px solid #d4a04a;
-      background: linear-gradient(180deg, #4a1a0f, #111);
+      border: 3px solid #d3a048;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), transparent 30%),
+        linear-gradient(180deg, #4b1e0f, #0f0f0f);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 34px;
-      font-weight: bold;
-      box-shadow: inset 0 0 12px rgba(255,255,255,0.08);
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      font-weight: 800;
+      color: white;
+      box-shadow: inset 0 0 15px rgba(255,255,255,.05);
+      transition: transform .12s ease, box-shadow .12s ease;
+      overflow: hidden;
     }
 
     .cell.win {
-      box-shadow: 0 0 14px gold, inset 0 0 12px rgba(255,255,255,0.2);
+      box-shadow: 0 0 14px gold, inset 0 0 12px rgba(255,255,255,.16);
       transform: scale(1.04);
     }
 
-    .stats {
+    .bottom {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(4, 1fr);
       gap: 8px;
       margin-top: 10px;
     }
 
-    .stat {
-      background: #000;
+    .boxinfo {
+      background: #080808;
       border-radius: 10px;
       padding: 8px;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,.08);
     }
 
-    .stat b {
+    .boxinfo b {
       display: block;
-      font-size: 20px;
-      color: #ffd54a;
       margin-top: 4px;
+      font-size: 21px;
+      color: #ffd756;
     }
 
     .controls {
@@ -183,27 +207,39 @@
       margin-top: 10px;
       padding: 10px;
       border-radius: 10px;
-      background: linear-gradient(180deg, #8e1f1f, #c22b2b);
+      background: linear-gradient(180deg, #881f1f, #c92c2c);
       text-align: center;
-      font-weight: bold;
+      font-weight: 800;
+      font-size: 18px;
     }
 
-    .login-box {
+    .bonus {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #156d2a, #0e4219);
+      text-align: center;
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .loginBox {
       max-width: 420px;
       margin: 40px auto 0;
     }
 
     @media (max-width: 520px) {
+      .machine-title { font-size: 24px; }
       .cell {
-        min-height: 76px;
-        font-size: 26px;
+        min-height: 72px;
+        font-size: 27px;
       }
-      .side-lines {
-        min-height: 252px;
+      .side {
+        min-height: 228px;
         font-size: 12px;
       }
-      .title {
-        font-size: 24px;
+      .bottom {
+        grid-template-columns: 1fr 1fr;
       }
     }
   </style>
@@ -211,8 +247,8 @@
 <body>
   <div class="wrap">
 
-    <div id="loginBox" class="panel login-box">
-      <h1>Mykonos Burning Hot</h1>
+    <div id="loginBox" class="panel loginBox">
+      <div class="logo">🔥 Mykonos Hot 🔥</div>
       <input id="name" placeholder="Име">
       <input id="pin" placeholder="PIN" type="password">
       <button id="loginBtn" type="button">Влез</button>
@@ -221,454 +257,27 @@
 
     <div id="gameBox" class="hidden">
       <div class="jackpots">
-        <div class="jp"><div class="name">MINI</div><div class="value" id="miniPot">50</div></div>
-        <div class="jp"><div class="name">MINOR</div><div class="value" id="minorPot">150</div></div>
-        <div class="jp"><div class="name">MAJOR</div><div class="value" id="majorPot">500</div></div>
-        <div class="jp"><div class="name">MEGA</div><div class="value" id="megaPot">2000</div></div>
-      </div>
-
-      <div class="panel">
-        <div class="title">🔥 BURNING HOT 🔥</div>
-
-        <div class="slot-area">
-          <div class="slot-grid">
-            <div class="side-lines">
-              <div>5</div>
-              <div>4</div>
-              <div>3</div>
-              <div>2</div>
-              <div>1</div>
-            </div>
-
-            <div class="reels" id="reels"></div>
-
-            <div class="side-lines">
-              <div>1</div>
-              <div>2</div>
-              <div>3</div>
-              <div>4</div>
-              <div>5</div>
-            </div>
-          </div>
-
-          <div class="stats">
-            <div class="stat">COINS<b id="coins">0</b></div>
-            <div class="stat">FREE<b id="freeSpins">0</b></div>
-            <div class="stat">WIN<b id="winValue">0</b></div>
-          </div>
-
-          <div class="controls">
-            <select id="bet">
-              <option value="10">Bet 10</option>
-              <option value="20">Bet 20</option>
-              <option value="50">Bet 50</option>
-              <option value="100">Bet 100</option>
-            </select>
-
-            <select id="lines">
-              <option value="5">Lines 5</option>
-              <option value="10">Lines 10</option>
-              <option value="20">Lines 20</option>
-            </select>
-
-            <button id="spinBtn" type="button">SPIN</button>
-            <button id="logoutBtn" class="secondary" type="button">Logout</button>
-          </div>
+        <div class="jp mini">
+          <div class="name">MINI</div>
+          <div class="value" id="miniPot">50</div>
         </div>
-
-        <div id="gameMsg" class="message hidden"></div>
+        <div class="jp minor">
+          <div class="name">MINOR</div>
+          <div class="value" id="minorPot">150</div>
+        </div>
+        <div class="jp major">
+          <div class="name">MAJOR</div>
+          <div class="value" id="majorPot">500</div>
+        </div>
+        <div class="jp mega">
+          <div class="name">MEGA</div>
+          <div class="value" id="megaPot">2000</div>
+        </div>
       </div>
-    </div>
 
-  </div>
+      <div class="machine">
+        <div class="machine-title">🔥 BURNING HOT 🔥</div>
 
-  <script>
-    const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
-    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const scatter = "💥";
-    const symbols = ["7️⃣", "🔔", "🍒", "🍋", "🍇", "BAR", "💥"];
-
-    const payouts = {
-      "🍋": {3:20,4:50,5:100},
-      "🍒": {3:30,4:70,5:120},
-      "🍇": {3:40,4:80,5:150},
-      "🔔": {3:60,4:120,5:250},
-      "BAR": {3:80,4:180,5:350},
-      "7️⃣": {3:120,4:300,5:600}
-    };
-
-    let player = null;
-    let freeSpins = 0;
-    let jackpots = {
-      mini: 50,
-      minor: 150,
-      major: 500,
-      mega: 2000
-    };
-
-    let audioCtx = null;
-
-    function byId(id) {
-      return document.getElementById(id);
-    }
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
-
-    function beep(freq, duration, type = "sine", volume = 0.03) {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      setTimeout(() => osc.stop(), duration);
-    }
-
-    function playSpinSound() {
-      initAudio();
-      beep(180, 90, "square", 0.025);
-      setTimeout(() => beep(240, 90, "square", 0.025), 120);
-      setTimeout(() => beep(300, 90, "square", 0.025), 240);
-    }
-
-    function playWinSound() {
-      initAudio();
-      beep(520, 120, "triangle", 0.04);
-      setTimeout(() => beep(680, 140, "triangle", 0.04), 140);
-      setTimeout(() => beep(860, 180, "triangle", 0.04), 300);
-    }
-
-    function playFreeSpinSound() {
-      initAudio();
-      beep(700, 120, "triangle", 0.05);
-      setTimeout(() => beep(900, 160, "triangle", 0.05), 160);
-    }
-
-    function playJackpotSound() {
-      initAudio();
-      beep(350, 120, "sawtooth", 0.05);
-      setTimeout(() => beep(520, 150, "sawtooth", 0.05), 140);
-      setTimeout(() => beep(760, 180, "sawtooth", 0.05), 320);
-      setTimeout(() => beep(980, 240, "sawtooth", 0.05), 520);
-    }
-
-    function setMessage(text) {
-      const msg = byId("gameMsg");
-      msg.textContent = text;
-      msg.classList.remove("hidden");
-    }
-
-    function clearMessage() {
-      const msg = byId("gameMsg");
-      msg.textContent = "";
-      msg.classList.add("hidden");
-    }
-
-    function randomSymbol() {
-      const roll = Math.random();
-      if (roll < 0.04) return scatter;
-      const normal = ["7️⃣", "🔔", "🍒", "🍋", "🍇", "BAR"];
-      return normal[Math.floor(Math.random() * normal.length)];
-    }
-
-    function randomMatrix() {
-      const matrix = [];
-      for (let r = 0; r < 3; r++) {
-        const row = [];
-        for (let c = 0; c < 5; c++) {
-          row.push(randomSymbol());
-        }
-        matrix.push(row);
-      }
-      return matrix;
-    }
-
-    function render(matrix, highlightPositions = []) {
-      const reels = byId("reels");
-      reels.innerHTML = "";
-
-      for (let c = 0; c < 5; c++) {
-        const reel = document.createElement("div");
-        reel.className = "reel";
-
-        for (let r = 0; r < 3; r++) {
-          const cell = document.createElement("div");
-          cell.className = "cell";
-          cell.textContent = matrix[r][c];
-
-          const isWin = highlightPositions.some(pos => pos[0] === r && pos[1] === c);
-          if (isWin) cell.classList.add("win");
-
-          reel.appendChild(cell);
-        }
-
-        reels.appendChild(reel);
-      }
-    }
-
-    function getLinesToCheck(lines) {
-      const all = [
-        [[0,0],[0,1],[0,2],[0,3],[0,4]],
-        [[1,0],[1,1],[1,2],[1,3],[1,4]],
-        [[2,0],[2,1],[2,2],[2,3],[2,4]],
-        [[0,0],[1,1],[2,2],[1,3],[0,4]],
-        [[2,0],[1,1],[0,2],[1,3],[2,4]],
-        [[0,0],[0,1],[1,2],[0,3],[0,4]],
-        [[2,0],[2,1],[1,2],[2,3],[2,4]],
-        [[1,0],[0,1],[1,2],[2,3],[1,4]],
-        [[1,0],[2,1],[1,2],[0,3],[1,4]],
-        [[0,0],[1,1],[1,2],[1,3],[0,4]],
-        [[2,0],[1,1],[1,2],[1,3],[2,4]],
-        [[1,0],[1,1],[0,2],[1,3],[1,4]],
-        [[1,0],[1,1],[2,2],[1,3],[1,4]],
-        [[0,0],[1,1],[0,2],[1,3],[0,4]],
-        [[2,0],[1,1],[2,2],[1,3],[2,4]],
-        [[0,0],[0,1],[2,2],[0,3],[0,4]],
-        [[2,0],[2,1],[0,2],[2,3],[2,4]],
-        [[0,0],[2,1],[0,2],[2,3],[0,4]],
-        [[2,0],[0,1],[2,2],[0,3],[2,4]],
-        [[1,0],[0,1],[2,2],[0,3],[1,4]]
-      ];
-      return all.slice(0, lines);
-    }
-
-    function countScatter(matrix) {
-      let count = 0;
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 5; c++) {
-          if (matrix[r][c] === scatter) count++;
-        }
-      }
-      return count;
-    }
-
-    function evaluate(matrix, lines) {
-      let reward = 0;
-      let highlighted = [];
-
-      const bet = Number(byId("bet").value);
-      const activeLines = getLinesToCheck(lines);
-
-      for (const line of activeLines) {
-        const [r0, c0] = line[0];
-        const first = matrix[r0][c0];
-        if (first === scatter) continue;
-
-        let count = 1;
-        const winPositions = [[r0, c0]];
-
-        for (let i = 1; i < line.length; i++) {
-          const [r, c] = line[i];
-          if (matrix[r][c] === first) {
-            count++;
-            winPositions.push([r, c]);
-          } else {
-            break;
-          }
-        }
-
-        if (count >= 3 && payouts[first] && payouts[first][count]) {
-          reward += payouts[first][count] * (bet / 10);
-          highlighted = highlighted.concat(winPositions);
-        }
-      }
-
-      return { reward, highlighted };
-    }
-
-    async function loadJackpots() {
-      const { data } = await db.from("game_state").select("*").limit(1);
-      if (data && data.length) {
-        jackpots.mini = Number(data[0].mini || 50);
-        jackpots.minor = Number(data[0].minor || 150);
-        jackpots.major = Number(data[0].major || 500);
-        jackpots.mega = Number(data[0].mega || 2000);
-      }
-
-      byId("miniPot").textContent = jackpots.mini;
-      byId("minorPot").textContent = jackpots.minor;
-      byId("majorPot").textContent = jackpots.major;
-      byId("megaPot").textContent = jackpots.mega;
-    }
-
-    async function saveJackpots() {
-      const { data } = await db.from("game_state").select("id").limit(1);
-      if (!data || !data.length) return;
-
-      await db.from("game_state").update({
-        mini: jackpots.mini,
-        minor: jackpots.minor,
-        major: jackpots.major,
-        mega: jackpots.mega
-      }).eq("id", data[0].id);
-    }
-
-    async function savePlayer() {
-      await db.from("players").update({ Points: player.Points }).eq("id", player.id);
-    }
-
-    async function login() {
-      initAudio();
-
-      const name = byId("name").value.trim();
-      const pin = byId("pin").value.trim();
-      byId("loginMsg").textContent = "";
-
-      if (!name || !pin) {
-        byId("loginMsg").textContent = "Въведи име и PIN.";
-        return;
-      }
-
-      const { data, error } = await db
-        .from("players")
-        .select("*")
-        .eq("Name", name)
-        .eq("Pin", pin)
-        .limit(1);
-
-      if (error || !data || !data.length) {
-        byId("loginMsg").textContent = "Грешно име или PIN.";
-        return;
-      }
-
-      player = data[0];
-      byId("coins").textContent = player.Points || 0;
-      byId("freeSpins").textContent = freeSpins;
-      byId("winValue").textContent = 0;
-
-      render(randomMatrix());
-      await loadJackpots();
-
-      byId("loginBox").classList.add("hidden");
-      byId("gameBox").classList.remove("hidden");
-    }
-
-    async function spin() {
-      if (!player) return;
-
-      clearMessage();
-      playSpinSound();
-
-      const bet = Number(byId("bet").value);
-      const lines = Number(byId("lines").value);
-
-      if (freeSpins > 0) {
-        freeSpins--;
-      } else {
-        if ((player.Points || 0) < bet) {
-          setMessage("Нямаш coins.");
-          return;
-        }
-
-        player.Points -= bet;
-
-        jackpots.mini += 1;
-        jackpots.minor += 1;
-        jackpots.major += 1;
-        jackpots.mega += 1;
-        await saveJackpots();
-      }
-
-      byId("coins").textContent = player.Points || 0;
-      byId("freeSpins").textContent = freeSpins;
-
-      for (let step = 0; step < 8; step++) {
-        setTimeout(() => {
-          render(randomMatrix());
-        }, step * 90);
-      }
-
-      setTimeout(async () => {
-        const finalMatrix = randomMatrix();
-
-        const scatterCount = countScatter(finalMatrix);
-        if (scatterCount === 3) {
-          freeSpins += 8;
-          playFreeSpinSound();
-        } else if (scatterCount === 4) {
-          freeSpins += 12;
-          playFreeSpinSound();
-        } else if (scatterCount >= 5) {
-          freeSpins += 20;
-          playFreeSpinSound();
-        }
-
-        const { reward, highlighted } = evaluate(finalMatrix, lines);
-
-        let totalWin = reward;
-        let extraText = "";
-
-        const chance = Math.random();
-        if (jackpots.mini >= 80 && chance < 0.002) {
-          totalWin += jackpots.mini;
-          jackpots.mini = 50;
-          extraText = " MINI JACKPOT!";
-          playJackpotSound();
-        } else if (jackpots.minor >= 250 && chance < 0.0008) {
-          totalWin += jackpots.minor;
-          jackpots.minor = 150;
-          extraText = " MINOR JACKPOT!";
-          playJackpotSound();
-        } else if (jackpots.major >= 900 && chance < 0.00025) {
-          totalWin += jackpots.major;
-          jackpots.major = 500;
-          extraText = " MAJOR JACKPOT!";
-          playJackpotSound();
-        } else if (jackpots.mega >= 3500 && chance < 0.00005) {
-          totalWin += jackpots.mega;
-          jackpots.mega = 2000;
-          extraText = " MEGA JACKPOT!";
-          playJackpotSound();
-        }
-
-        if (totalWin > 0) {
-          player.Points += totalWin;
-          playWinSound();
-        }
-
-        render(finalMatrix, highlighted);
-        await saveJackpots();
-        await savePlayer();
-        await loadJackpots();
-
-        byId("coins").textContent = player.Points || 0;
-        byId("freeSpins").textContent = freeSpins;
-        byId("winValue").textContent = totalWin;
-
-        if (scatterCount >= 3 && totalWin > 0) {
-          setMessage("Печалба: " + totalWin + " | FREE SPINS +" + (scatterCount === 3 ? 8 : scatterCount === 4 ? 12 : 20) + extraText);
-        } else if (scatterCount >= 3) {
-          setMessage("FREE SPINS +" + (scatterCount === 3 ? 8 : scatterCount === 4 ? 12 : 20));
-        } else if (totalWin > 0) {
-          setMessage("Печалба: " + totalWin + extraText);
-        } else {
-          setMessage("Нищо.");
-        }
-      }, 820);
-    }
-
-    function logout() {
-      player = null;
-      freeSpins = 0;
-      byId("name").value = "";
-      byId("pin").value = "";
-      byId("loginMsg").textContent = "";
-      byId("gameBox").classList.add("hidden");
-      byId("loginBox").classList.remove("hidden");
-    }
-
-    byId("loginBtn").addEventListener("click", login);
-    byId("spinBtn").addEventListener("click", spin);
-    byId("logoutBtn").addEventListener("click", logout);
-  </script>
-</body>
-</html>
+        <div class="slot-grid">
+          <div class="side">
+            <div>5</
