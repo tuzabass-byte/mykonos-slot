@@ -74,7 +74,7 @@
   <h1>Mykonos Casino</h1>
   <input id="name" placeholder="Име" />
   <input id="pin" placeholder="PIN" type="password" />
-  <button onclick="login()">Влез</button>
+  <button id="loginBtn" type="button">Влез</button>
   <p id="msg"></p>
 </div>
 
@@ -86,35 +86,35 @@
     <div class="card">
       <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800" alt="">
       <h3>Greek Style</h3>
-      <button onclick="startGame('Greek Style')">Play</button>
+      <button type="button" onclick="startGame('Greek Style')">Play</button>
     </div>
 
     <div class="card">
       <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800" alt="">
       <h3>Night Style</h3>
-      <button onclick="startGame('Night Style')">Play</button>
+      <button type="button" onclick="startGame('Night Style')">Play</button>
     </div>
 
     <div class="card">
       <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800" alt="">
       <h3>Burning Hot</h3>
-      <button onclick="startGame('Burning Hot')">Play</button>
+      <button type="button" onclick="startGame('Burning Hot')">Play</button>
     </div>
 
     <div class="card">
       <img src="https://images.unsplash.com/photo-1518546305927-5a555bb7020d?w=800" alt="">
       <h3>Luxury Gold</h3>
-      <button onclick="startGame('Luxury Gold')">Play</button>
+      <button type="button" onclick="startGame('Luxury Gold')">Play</button>
     </div>
 
     <div class="card">
       <img src="https://images.unsplash.com/photo-1506806732259-39c2d0268443?w=800" alt="">
       <h3>Fruit Classic</h3>
-      <button onclick="startGame('Fruit Classic')">Play</button>
+      <button type="button" onclick="startGame('Fruit Classic')">Play</button>
     </div>
   </div>
 
-  <button class="secondary" onclick="logout()">Logout</button>
+  <button class="secondary" type="button" onclick="logout()">Logout</button>
 </div>
 
 <div class="box hidden" id="gameBox">
@@ -144,181 +144,194 @@
 
   <div id="reels">🍒 🍋 ⭐ 🍇 7️⃣</div>
 
-  <button onclick="spin()">SPIN</button>
+  <button type="button" onclick="spin()">SPIN</button>
   <p id="gameMsg"></p>
 
   <div id="winBox" class="hidden">
     <p>Win: <strong id="winAmount">0</strong></p>
-    <button onclick="collectWin()">Collect</button>
+    <button type="button" onclick="collectWin()">Collect</button>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-    <button class="secondary" onclick="backToMenu()">⬅ Back</button>
-    <button class="secondary" onclick="logout()">Logout</button>
+    <button class="secondary" type="button" onclick="backToMenu()">⬅ Back</button>
+    <button class="secondary" type="button" onclick="logout()">Logout</button>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+  const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let player = null;
-let currentGame = "";
-let currentWin = 0;
+  let player = null;
+  let currentGame = "";
+  let currentWin = 0;
 
-function showSection(id){
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("menuBox").classList.add("hidden");
-  document.getElementById("gameBox").classList.add("hidden");
-  document.getElementById(id).classList.remove("hidden");
-}
-
-async function login(){
-  const name = document.getElementById("name").value.trim();
-  const pin = document.getElementById("pin").value.trim();
-  const msg = document.getElementById("msg");
-
-  msg.textContent = "";
-
-  if(!name || !pin){
-    msg.textContent = "Въведи име и PIN.";
-    return;
+  function byId(id){
+    return document.getElementById(id);
   }
 
-  const { data, error } = await db
-    .from("players")
-    .select("*")
-    .eq("Name", name)
-    .eq("Pin", pin)
-    .limit(1);
-
-  if(error){
-    console.error(error);
-    msg.textContent = "Грешка при връзка.";
-    return;
+  function showSection(id){
+    byId("loginBox").classList.add("hidden");
+    byId("menuBox").classList.add("hidden");
+    byId("gameBox").classList.add("hidden");
+    byId(id).classList.remove("hidden");
   }
 
-  if(!data || data.length === 0){
-    msg.textContent = "Грешно име или PIN.";
-    return;
+  async function login(){
+    const name = byId("name").value.trim();
+    const pin = byId("pin").value.trim();
+    const msg = byId("msg");
+
+    msg.textContent = "";
+
+    if(!name || !pin){
+      msg.textContent = "Въведи име и PIN.";
+      return;
+    }
+
+    try {
+      const { data, error } = await db
+        .from("players")
+        .select("*")
+        .eq("Name", name)
+        .eq("Pin", pin)
+        .limit(1);
+
+      if(error){
+        console.error(error);
+        msg.textContent = "Грешка при връзка.";
+        return;
+      }
+
+      if(!data || data.length === 0){
+        msg.textContent = "Грешно име или PIN.";
+        return;
+      }
+
+      player = data[0];
+      byId("welcome").textContent = "Здрасти, " + player.Name;
+      byId("coins").textContent = player.Points ?? 0;
+      showSection("menuBox");
+    } catch (e) {
+      console.error(e);
+      msg.textContent = "Грешка при зареждане.";
+    }
   }
 
-  player = data[0];
-  document.getElementById("welcome").textContent = "Здрасти, " + player.Name;
-  document.getElementById("coins").textContent = player.Points ?? 0;
-  showSection("menuBox");
-}
-
-function startGame(gameName){
-  currentGame = gameName;
-  currentWin = 0;
-  document.getElementById("gameTitle").textContent = gameName;
-  document.getElementById("playerNameView").textContent = player.Name;
-  document.getElementById("points").textContent = player.Points ?? 0;
-  document.getElementById("gameMsg").textContent = "";
-  document.getElementById("winBox").classList.add("hidden");
-  document.getElementById("reels").textContent = "🍒 🍋 ⭐ 🍇 7️⃣";
-  showSection("gameBox");
-}
-
-async function spin(){
-  if(!player) return;
-
-  const bet = Number(document.getElementById("bet").value);
-  const lines = Number(document.getElementById("lines").value);
-  const totalBet = bet * lines;
-
-  if((player.Points ?? 0) < totalBet){
-    document.getElementById("gameMsg").textContent = "Нямаш достатъчно coins.";
-    return;
-  }
-
-  player.Points -= totalBet;
-
-  const symbols = ["🍒","🍋","⭐","🍇","7️⃣"];
-  const reels = [];
-  for(let i=0;i<5;i++){
-    reels.push(symbols[Math.floor(Math.random()*symbols.length)]);
-  }
-
-  document.getElementById("reels").textContent = reels.join(" ");
-
-  let reward = 0;
-  if(reels[0] === reels[1] && reels[1] === reels[2]){
-    reward = bet * 3;
-  }
-  if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3]){
-    reward = bet * 6;
-  }
-  if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3] && reels[3] === reels[4]){
-    reward = bet * 10;
-  }
-
-  const { error } = await db
-    .from("players")
-    .update({ Points: player.Points })
-    .eq("id", player.id);
-
-  if(error){
-    console.error(error);
-    document.getElementById("gameMsg").textContent = "Грешка при запис.";
-    return;
-  }
-
-  if(reward > 0){
-    currentWin = reward;
-    document.getElementById("winAmount").textContent = reward;
-    document.getElementById("winBox").classList.remove("hidden");
-    document.getElementById("gameMsg").textContent = "Печалба: " + reward;
-  } else {
+  function startGame(gameName){
+    currentGame = gameName;
     currentWin = 0;
-    document.getElementById("winBox").classList.add("hidden");
-    document.getElementById("gameMsg").textContent = "Нищо.";
+    byId("gameTitle").textContent = gameName;
+    byId("playerNameView").textContent = player.Name;
+    byId("points").textContent = player.Points ?? 0;
+    byId("gameMsg").textContent = "";
+    byId("winBox").classList.add("hidden");
+    byId("reels").textContent = "🍒 🍋 ⭐ 🍇 7️⃣";
+    showSection("gameBox");
   }
 
-  document.getElementById("points").textContent = player.Points;
-  document.getElementById("coins").textContent = player.Points;
-}
+  async function spin(){
+    if(!player) return;
 
-async function collectWin(){
-  if(!player || currentWin <= 0) return;
+    const bet = Number(byId("bet").value);
+    const lines = Number(byId("lines").value);
+    const totalBet = bet * lines;
 
-  player.Points += currentWin;
+    if((player.Points ?? 0) < totalBet){
+      byId("gameMsg").textContent = "Нямаш достатъчно coins.";
+      return;
+    }
 
-  const { error } = await db
-    .from("players")
-    .update({ Points: player.Points })
-    .eq("id", player.id);
+    player.Points -= totalBet;
 
-  if(error){
-    console.error(error);
-    document.getElementById("gameMsg").textContent = "Грешка при запис.";
-    return;
+    const symbols = ["🍒","🍋","⭐","🍇","7️⃣"];
+    const reels = [];
+    for(let i=0;i<5;i++){
+      reels.push(symbols[Math.floor(Math.random() * symbols.length)]);
+    }
+
+    byId("reels").textContent = reels.join(" ");
+
+    let reward = 0;
+    if(reels[0] === reels[1] && reels[1] === reels[2]){
+      reward = bet * 3;
+    }
+    if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3]){
+      reward = bet * 6;
+    }
+    if(reels[0] === reels[1] && reels[1] === reels[2] && reels[2] === reels[3] && reels[3] === reels[4]){
+      reward = bet * 10;
+    }
+
+    const { error } = await db
+      .from("players")
+      .update({ Points: player.Points })
+      .eq("id", player.id);
+
+    if(error){
+      console.error(error);
+      byId("gameMsg").textContent = "Грешка при запис.";
+      return;
+    }
+
+    if(reward > 0){
+      currentWin = reward;
+      byId("winAmount").textContent = reward;
+      byId("winBox").classList.remove("hidden");
+      byId("gameMsg").textContent = "Печалба: " + reward;
+    } else {
+      currentWin = 0;
+      byId("winBox").classList.add("hidden");
+      byId("gameMsg").textContent = "Нищо.";
+    }
+
+    byId("points").textContent = player.Points;
+    byId("coins").textContent = player.Points;
   }
 
-  document.getElementById("points").textContent = player.Points;
-  document.getElementById("coins").textContent = player.Points;
-  document.getElementById("gameMsg").textContent = "Прибра " + currentWin;
-  currentWin = 0;
-  document.getElementById("winBox").classList.add("hidden");
-}
+  async function collectWin(){
+    if(!player || currentWin <= 0) return;
 
-function backToMenu(){
-  document.getElementById("coins").textContent = player.Points ?? 0;
-  showSection("menuBox");
-}
+    player.Points += currentWin;
 
-function logout(){
-  player = null;
-  currentGame = "";
-  currentWin = 0;
-  document.getElementById("name").value = "";
-  document.getElementById("pin").value = "";
-  document.getElementById("msg").textContent = "";
-  showSection("loginBox");
-}
+    const { error } = await db
+      .from("players")
+      .update({ Points: player.Points })
+      .eq("id", player.id);
+
+    if(error){
+      console.error(error);
+      byId("gameMsg").textContent = "Грешка при запис.";
+      return;
+    }
+
+    byId("points").textContent = player.Points;
+    byId("coins").textContent = player.Points;
+    byId("gameMsg").textContent = "Прибра " + currentWin;
+    currentWin = 0;
+    byId("winBox").classList.add("hidden");
+  }
+
+  function backToMenu(){
+    byId("coins").textContent = player.Points ?? 0;
+    showSection("menuBox");
+  }
+
+  function logout(){
+    player = null;
+    currentGame = "";
+    currentWin = 0;
+    byId("name").value = "";
+    byId("pin").value = "";
+    byId("msg").textContent = "";
+    showSection("loginBox");
+  }
+
+  document.addEventListener("DOMContentLoaded", function(){
+    byId("loginBtn").addEventListener("click", login);
+  });
 </script>
 
 </body>
