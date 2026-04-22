@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mykonos Burning Hot 5x4</title>
+  <title>Mykonos Burning Hot 5x3</title>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -14,16 +14,19 @@
       color: #fff;
       padding: 8px;
     }
+
     .app {
       max-width: 430px;
       margin: 0 auto;
     }
+
     .jackpots {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 6px;
       margin-bottom: 8px;
     }
+
     .jp {
       border-radius: 10px;
       padding: 8px 6px;
@@ -31,22 +34,24 @@
       border: 2px solid rgba(255,255,255,.18);
       box-shadow: inset 0 0 10px rgba(255,255,255,.05);
     }
+
     .jp .label {
       font-size: 12px;
       font-weight: 800;
       letter-spacing: .5px;
     }
+
     .jp .val {
       margin-top: 4px;
       font-size: 22px;
       font-weight: 900;
+      color: #fff;
     }
+
     .grand { background: linear-gradient(180deg, #711515, #310909); }
     .major { background: linear-gradient(180deg, #184818, #0a210a); }
     .minor { background: linear-gradient(180deg, #123a70, #081829); }
     .mini  { background: linear-gradient(180deg, #4c1567, #1a0722); }
-
-    .grand .val, .major .val, .minor .val, .mini .val { color: #fff; }
 
     .logo {
       text-align: center;
@@ -74,12 +79,12 @@
 
     .reel {
       display: grid;
-      grid-template-rows: repeat(4, 1fr);
+      grid-template-rows: repeat(3, 1fr);
       gap: 5px;
     }
 
     .cell {
-      min-height: 76px;
+      min-height: 98px;
       border: 2px solid #d5c14b;
       border-radius: 6px;
       background:
@@ -88,7 +93,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 34px;
       font-weight: 800;
       box-shadow: inset 0 0 8px rgba(255,255,255,.05);
       transition: transform .12s ease, box-shadow .12s ease;
@@ -196,21 +201,13 @@
       min-height: 52px;
       font-size: 16px;
       font-weight: 800;
-      cursor: default;
-    }
-
-    .msg {
-      margin-top: 10px;
-      padding: 10px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #143b12, #0b240a);
-      font-weight: 800;
-      text-align: center;
-      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     @media (max-width: 400px) {
-      .cell { min-height: 66px; font-size: 26px; }
+      .cell { min-height: 82px; font-size: 28px; }
       .spinBtn { min-height: 106px; font-size: 38px; }
       .bets { grid-template-columns: 1fr 1fr; }
     }
@@ -238,7 +235,7 @@
       </div>
     </div>
 
-    <div class="logo">BURNING HOT 5x4</div>
+    <div class="logo">BURNING HOT 5x3</div>
 
     <div class="machine">
       <div class="reels" id="reels"></div>
@@ -271,8 +268,6 @@
         <div class="bottomBtn">ЗАЛОГ: <span id="betView">10</span></div>
         <div class="bottomBtn">FREE: <span id="freeView">0</span></div>
       </div>
-
-      <div class="msg" id="msg">Готово за игра</div>
     </div>
   </div>
 
@@ -352,10 +347,6 @@
       setTimeout(() => beep(1020, 220, "sawtooth", 0.05), 520);
     }
 
-    function setMsg(text) {
-      byId("msg").textContent = text;
-    }
-
     function updateHud() {
       byId("balance").textContent = balance;
       byId("lastWin").textContent = lastWin;
@@ -386,12 +377,12 @@
     }
 
     function blankMatrix() {
-      return Array.from({ length: 4 }, () => Array(5).fill(""));
+      return Array.from({ length: 3 }, () => Array(5).fill(""));
     }
 
     function randomMatrix() {
       const m = blankMatrix();
-      for (let row = 0; row < 4; row++) {
+      for (let row = 0; row < 3; row++) {
         for (let col = 0; col < 5; col++) {
           m[row][col] = randomSymbol();
         }
@@ -407,7 +398,7 @@
         const reel = document.createElement("div");
         reel.className = "reel";
 
-        for (let row = 0; row < 4; row++) {
+        for (let row = 0; row < 3; row++) {
           const cell = document.createElement("div");
           cell.className = "cell";
           cell.textContent = matrix[row][col];
@@ -428,8 +419,8 @@
         [[0,0],[0,1],[0,2],[0,3],[0,4]],
         [[1,0],[1,1],[1,2],[1,3],[1,4]],
         [[2,0],[2,1],[2,2],[2,3],[2,4]],
-        [[3,0],[3,1],[3,2],[3,3],[3,4]],
-        [[0,0],[1,1],[2,2],[1,3],[0,4]]
+        [[0,0],[1,1],[2,2],[1,3],[0,4]],
+        [[2,0],[1,1],[0,2],[1,3],[2,4]]
       ];
     }
 
@@ -453,7 +444,7 @@
       for (let col = 1; col <= 3; col++) {
         let hasWild = false;
 
-        for (let row = 0; row < 4; row++) {
+        for (let row = 0; row < 3; row++) {
           if (matrix[row][col] === SYMBOLS.WILD) {
             hasWild = true;
             break;
@@ -461,7 +452,7 @@
         }
 
         if (hasWild) {
-          for (let row = 0; row < 4; row++) {
+          for (let row = 0; row < 3; row++) {
             if (
               matrix[row][col] !== SYMBOLS.SCATTER_MONEY &&
               matrix[row][col] !== SYMBOLS.SCATTER_STAR
@@ -518,10 +509,9 @@
 
     function evaluateScatters(matrix) {
       let total = 0;
-      let text = "";
 
       let moneyCount = 0;
-      for (let r = 0; r < 4; r++) {
+      for (let r = 0; r < 3; r++) {
         for (let c = 0; c < 5; c++) {
           if (matrix[r][c] === SYMBOLS.SCATTER_MONEY) moneyCount++;
         }
@@ -531,17 +521,18 @@
       else if (moneyCount === 4) total += currentBet * 20;
       else if (moneyCount >= 5) total += currentBet * 100;
 
-      const starOn1 = [0,1,2,3].some(r => matrix[r][0] === SYMBOLS.SCATTER_STAR);
-      const starOn3 = [0,1,2,3].some(r => matrix[r][2] === SYMBOLS.SCATTER_STAR);
-      const starOn5 = [0,1,2,3].some(r => matrix[r][4] === SYMBOLS.SCATTER_STAR);
+      const starOn1 = [0,1,2].some(r => matrix[r][0] === SYMBOLS.SCATTER_STAR);
+      const starOn3 = [0,1,2].some(r => matrix[r][2] === SYMBOLS.SCATTER_STAR);
+      const starOn5 = [0,1,2].some(r => matrix[r][4] === SYMBOLS.SCATTER_STAR);
 
+      let gotStar = false;
       if (starOn1 && starOn3 && starOn5) {
         total += currentBet * 20;
-        text = "⭐ SCATTER";
         freeSpins += 8;
+        gotStar = true;
       }
 
-      return { total, text, moneyCount };
+      return { total, gotStar };
     }
 
     async function spin() {
@@ -555,7 +546,6 @@
         freeSpins--;
       } else {
         if (balance < currentBet) {
-          setMsg("Недостатъчен баланс");
           spinning = false;
           return;
         }
@@ -572,69 +562,56 @@
       const finalMatrix = randomMatrix();
       const temp = blankMatrix();
 
-      for (let col = 0; col < 5; col++) {
+      // ред 1 -> ред 2 -> ред 3
+      for (let row = 0; row < 3; row++) {
         for (let loop = 0; loop < 8; loop++) {
-          for (let row = 0; row < 4; row++) {
+          for (let col = 0; col < 5; col++) {
             temp[row][col] = randomSymbol();
           }
           draw(temp.map(r => [...r]));
-          await new Promise(res => setTimeout(res, 70));
+          await new Promise(res => setTimeout(res, 75));
         }
 
-        for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 5; col++) {
           temp[row][col] = finalMatrix[row][col];
         }
 
         draw(temp.map(r => [...r]));
-        await new Promise(res => setTimeout(res, 95));
+        await new Promise(res => setTimeout(res, 110));
       }
 
       const lineRes = evaluateLines(finalMatrix);
       const scatterRes = evaluateScatters(finalMatrix);
 
       let win = lineRes.total + scatterRes.total;
-      let msg = "Нищо";
-
-      if (scatterRes.text) {
-        msg = scatterRes.text + " + FREE SPINS";
-        freeSound();
-      }
 
       const chance = Math.random();
-      let jpText = "";
-
       if (jackpots.mini >= 20 && chance < 0.002) {
         win += jackpots.mini;
         jackpots.mini = 10;
-        jpText = " MINI!";
         jackpotSound();
       } else if (jackpots.minor >= 80 && chance < 0.0008) {
         win += jackpots.minor;
         jackpots.minor = 50;
-        jpText = " MINOR!";
         jackpotSound();
       } else if (jackpots.major >= 600 && chance < 0.00025) {
         win += jackpots.major;
         jackpots.major = 500;
-        jpText = " MAJOR!";
         jackpotSound();
       } else if (jackpots.grand >= 26000 && chance < 0.00005) {
         win += jackpots.grand;
         jackpots.grand = 25807;
-        jpText = " GRAND!";
         jackpotSound();
+      }
+
+      if (scatterRes.gotStar) {
+        freeSound();
       }
 
       if (win > 0) {
         balance += win;
         lastWin = win;
         winSound();
-
-        if (jpText) {
-          msg = "Печалба " + win + jpText;
-        } else if (!scatterRes.text) {
-          msg = "Печалба " + win;
-        }
       } else {
         lastWin = 0;
       }
@@ -642,11 +619,6 @@
       draw(lineRes.expanded, lineRes.highlights);
       updateHud();
 
-      if (freeSpins > 0) {
-        msg += " | Free: " + freeSpins;
-      }
-
-      setMsg(msg);
       spinning = false;
 
       if (autoSpin) {
