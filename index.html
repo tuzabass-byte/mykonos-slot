@@ -5,281 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mykonos Hot 5</title>
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body {
+    html, body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #2d7a2d 0%, #123112 35%, #120707 72%, #090909 100%);
-      color: #fff;
-      padding: 10px;
-    }
-    .app {
-      max-width: 430px;
-      margin: 0 auto;
-    }
-    .topbar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-    .jp {
-      background: linear-gradient(180deg, #10224e, #09101f);
-      border: 2px solid rgba(255,255,255,.14);
-      border-radius: 10px;
-      text-align: center;
-      padding: 6px 4px;
-    }
-    .jp .name {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .5px;
-    }
-    .jp .val {
-      margin-top: 3px;
-      font-size: 20px;
-      font-weight: 800;
-      color: #ffd54a;
-    }
-    .jp.mini .val { color: #78ff76; }
-    .jp.minor .val { color: #e6e6e6; }
-    .jp.major .val { color: #ffb34b; }
-    .jp.mega .val { color: #ff6a6a; }
-
-    .machine {
-      background:
-        linear-gradient(180deg, rgba(78,28,14,.96), rgba(12,12,12,.98)),
-        linear-gradient(180deg, #234d18, #13250d);
-      border: 4px solid #c99622;
-      border-radius: 16px;
-      padding: 10px;
-      box-shadow: 0 14px 28px rgba(0,0,0,.35);
-    }
-    .title {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 900;
-      color: #ffd85a;
-      text-shadow: 0 2px 0 #000, 0 0 12px rgba(255,220,100,.25);
-      margin: 0 0 8px;
-    }
-
-    .slot-wrap {
-      display: grid;
-      grid-template-columns: 34px 1fr 34px;
-      gap: 6px;
-      align-items: stretch;
-    }
-    .lines {
-      background: linear-gradient(180deg, #218736, #135120);
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: center;
-      font-weight: 700;
-      font-size: 12px;
-      min-height: 248px;
-      border: 2px solid rgba(255,255,255,.10);
-    }
-
-    .reels {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-      min-height: 248px;
-    }
-    .reel {
-      display: grid;
-      grid-template-rows: repeat(3, 1fr);
-      gap: 6px;
-    }
-    .cell {
-      min-height: 78px;
-      border-radius: 10px;
-      border: 3px solid #d3a048;
-      background:
-        radial-gradient(circle at 50% 18%, rgba(255,255,255,.08), transparent 28%),
-        linear-gradient(180deg, #4a1d10, #111);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: 800;
-      box-shadow: inset 0 0 12px rgba(255,255,255,.05);
-      transition: transform .12s ease, box-shadow .12s ease;
+      padding: 0;
+      background: #0b0b0b;
       overflow: hidden;
-    }
-    .cell.win {
-      box-shadow: 0 0 14px gold, inset 0 0 10px rgba(255,255,255,.18);
-      transform: scale(1.04);
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .stat {
-      background: #090909;
-      border-radius: 10px;
-      padding: 6px;
-      text-align: center;
-      font-size: 11px;
-      border: 1px solid rgba(255,255,255,.08);
-    }
-    .stat b {
-      display: block;
-      margin-top: 3px;
-      color: #ffd85a;
-      font-size: 18px;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    select, button {
       width: 100%;
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      font-size: 16px;
+      height: 100%;
     }
-    button {
-      background: linear-gradient(180deg, #ffe278, #d9a400);
-      color: #111;
-      font-weight: 900;
-    }
-
-    .msg, .bonusbar {
-      margin-top: 8px;
-      padding: 10px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 800;
-      min-height: 42px;
-    }
-    .msg {
-      background: linear-gradient(180deg, #861f1f, #c82d2d);
-    }
-    .bonusbar {
-      background: linear-gradient(180deg, #167129, #0d4618);
-    }
-
-    @media (max-width: 400px) {
-      .cell { min-height: 70px; font-size: 26px; }
-      .lines { min-height: 224px; }
-      .title { font-size: 24px; }
+    #game {
+      width: 100vw;
+      height: 100vh;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <div class="topbar">
-      <div class="jp mini"><div class="name">MINI</div><div class="val" id="miniPot">50</div></div>
-      <div class="jp minor"><div class="name">MINOR</div><div class="val" id="minorPot">150</div></div>
-      <div class="jp major"><div class="name">MAJOR</div><div class="val" id="majorPot">500</div></div>
-      <div class="jp mega"><div class="name">MEGA</div><div class="val" id="megaPot">2000</div></div>
-    </div>
+  <div id="game"></div>
 
-    <div class="machine">
-      <div class="title">🔥 MYKONOS HOT 5 🔥</div>
-
-      <div class="slot-wrap">
-        <div class="lines"><div>5</div><div>4</div><div>3</div><div>2</div><div>1</div></div>
-        <div class="reels" id="reels"></div>
-        <div class="lines"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div></div>
-      </div>
-
-      <div class="stats">
-        <div class="stat">COINS<b id="coins">1000</b></div>
-        <div class="stat">BET<b id="betView">10</b></div>
-        <div class="stat">FREE<b id="freeView">0</b></div>
-        <div class="stat">WIN<b id="winView">0</b></div>
-      </div>
-
-      <div class="controls">
-        <select id="bet">
-          <option value="10">Bet 10</option>
-          <option value="20">Bet 20</option>
-          <option value="50">Bet 50</option>
-          <option value="100">Bet 100</option>
-        </select>
-        <button id="spinBtn">SPIN</button>
-      </div>
-
-      <div id="bonusBar" class="bonusbar">Готово за игра</div>
-      <div id="msg" class="msg">5 fixed lines</div>
-    </div>
-  </div>
-
-  <script>
-    const SYMBOLS = ["7️⃣", "BAR", "🔔", "🍒", "🍋", "🍇", "🍉", "💥"];
-    const SCATTER = "💥";
-
-    const PAY = {
-      "🍋": {3: 2, 4: 5, 5: 10},
-      "🍒": {3: 3, 4: 7, 5: 12},
-      "🍇": {3: 4, 4: 8, 5: 15},
-      "🍉": {3: 5, 4: 10, 5: 18},
-      "🔔": {3: 8, 4: 15, 5: 25},
-      "BAR": {3: 12, 4: 25, 5: 40},
-      "7️⃣": {3: 20, 4: 40, 5: 80}
-    };
-
-    let coins = 1000;
-    let freeSpins = 0;
-    let jackpots = { mini: 50, minor: 150, major: 500, mega: 2000 };
-    let audioCtx = null;
-
-    const byId = id => document.getElementById(id);
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
+  <script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/phaser.min.js"></script>
+  <script src="./game.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mykonos Hot 5</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #0b0b0b;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
     }
-
-    function beep(freq, duration, type = "square", volume = 0.03) {
-      if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      setTimeout(() => osc.stop(), duration);
+    #game {
+      width: 100vw;
+      height: 100vh;
     }
+  </style>
+</head>
+<body>
+  <div id="game"></div>
 
-    function spinSound() {
-      initAudio();
-      beep(170, 70);
-      setTimeout(() => beep(220, 70), 90);
-      setTimeout(() => beep(280, 90), 180);
-    }
-
-    function winSound() {
-      initAudio();
-      beep(520, 100, "triangle", 0.05);
-      setTimeout(() => beep(700, 120, "triangle", 0.05), 130);
-      setTimeout(() => beep(920, 160, "triangle", 0.05), 280);
-    }
-
-    function freeSound() {
-      initAudio();
-      beep(700, 110, "triangle", 0.05);
-      setTimeout(() => beep(950, 150, "triangle", 0.05), 150);
-    }
-
-    function jackpotSound() {
-      initAudio();
-      beep(380, 130, "sawtooth", 0.05);
-      setTimeout(() => beep(560, 150, "sawtooth
+  <script src="https://cdn.jsdelivr.net/npm/[email protected]/dist/phaser.min.js"></script>
+  <script src="./game.js"></script>
+</body>
+</html>
