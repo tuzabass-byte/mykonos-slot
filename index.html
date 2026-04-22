@@ -1,147 +1,303 @@
 <!DOCTYPE html>
-<html>
+<html lang="bg">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mykonos Hot</title>
-
-<style>
-body{font-family:Arial;background:#111;color:#fff;text-align:center;}
-.wrap{max-width:400px;margin:auto;padding:10px;}
-
-input,button,select{
-width:100%;padding:10px;margin:5px 0;border-radius:8px;border:none;
-}
-
-button{background:gold;font-weight:bold;}
-
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;}
-.reel{display:grid;grid-template-rows:repeat(3,70px);gap:5px;}
-.cell{background:#000;border:2px solid gold;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:24px;}
-
-.hidden{display:none;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mykonos Hot</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #1d5f1d 0%, #111 65%);
+      color: white;
+      padding: 10px;
+    }
+    .wrap {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .title {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 800;
+      color: #ffd54a;
+      margin: 10px 0;
+      text-shadow: 0 2px 0 #000;
+    }
+    .machine {
+      background: linear-gradient(180deg, #3d140b, #111);
+      border: 3px solid #d4a04a;
+      border-radius: 16px;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.35);
+    }
+    .slot {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .reel {
+      display: grid;
+      grid-template-rows: repeat(3, 78px);
+      gap: 6px;
+    }
+    .cell {
+      border: 2px solid #d4a04a;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #4b1f12, #111);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      min-height: 78px;
+      box-shadow: inset 0 0 10px rgba(255,255,255,.06);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .stat {
+      background: #000;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .stat b {
+      display: block;
+      color: #ffd54a;
+      font-size: 20px;
+      margin-top: 4px;
+    }
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      background: linear-gradient(180deg, #ffe278, #d9a400);
+      color: #111;
+      font-weight: 800;
+    }
+    .msg {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      background: #8b1e1e;
+      text-align: center;
+      font-weight: 700;
+      min-height: 44px;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="title">🔥 MYKONOS HOT 🔥</div>
 
-<div class="wrap">
+    <div class="machine">
+      <div id="slot" class="slot"></div>
 
-<div id="login">
-<h2>🔥 Mykonos Hot 🔥</h2>
-<input id="name" placeholder="Име">
-<button onclick="login()">Вход</button>
-</div>
+      <div class="stats">
+        <div class="stat">COINS<b id="coins">1000</b></div>
+        <div class="stat">FREE<b id="free">0</b></div>
+        <div class="stat">WIN<b id="win">0</b></div>
+      </div>
 
-<div id="game" class="hidden">
+      <select id="bet">
+        <option value="10">Bet 10</option>
+        <option value="20">Bet 20</option>
+        <option value="50">Bet 50</option>
+        <option value="100">Bet 100</option>
+      </select>
 
-<div id="coins"></div>
-<div id="free"></div>
+      <button id="spinBtn">SPIN</button>
 
-<select id="bet">
-<option value="10">10</option>
-<option value="20">20</option>
-<option value="50">50</option>
-</select>
+      <div id="msg" class="msg">Готово за игра</div>
+    </div>
+  </div>
 
-<button onclick="spin()">SPIN</button>
+  <script>
+    const symbols = ["7️⃣","🔔","🍒","🍋","🍇","BAR","💥"];
+    const scatter = "💥";
 
-<div class="reels" id="reels"></div>
+    let coins = 1000;
+    let free = 0;
 
-<div id="msg"></div>
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+    function beep(freq, duration, type = "square", volume = 0.03) {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      setTimeout(() => osc.stop(), duration);
+    }
+    function playSpinSound() {
+      initAudio();
+      beep(180, 80);
+      setTimeout(() => beep(240, 80), 90);
+      setTimeout(() => beep(300, 100), 180);
+    }
+    function playWinSound() {
+      initAudio();
+      beep(520, 100, "triangle", 0.05);
+      setTimeout(() => beep(700, 120, "triangle", 0.05), 120);
+      setTimeout(() => beep(900, 150, "triangle", 0.05), 260);
+    }
+    function playFreeSound() {
+      initAudio();
+      beep(700, 100, "triangle", 0.05);
+      setTimeout(() => beep(950, 150, "triangle", 0.05), 150);
+    }
 
-</div>
+    function randomSymbol() {
+      const r = Math.random();
+      if (r < 0.05) return scatter;
+      return symbols[Math.floor(Math.random() * 6)];
+    }
 
-</div>
+    function randomMatrix() {
+      const m = [];
+      for (let r = 0; r < 3; r++) {
+        const row = [];
+        for (let c = 0; c < 5; c++) row.push(randomSymbol());
+        m.push(row);
+      }
+      return m;
+    }
 
-<script>
+    function draw(matrix) {
+      const slot = document.getElementById("slot");
+      slot.innerHTML = "";
+      for (let c = 0; c < 5; c++) {
+        const reel = document.createElement("div");
+        reel.className = "reel";
+        for (let r = 0; r < 3; r++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.textContent = matrix[r][c];
+          reel.appendChild(cell);
+        }
+        slot.appendChild(reel);
+      }
+    }
 
-let coins=1000;
-let free=0;
-let player="";
+    function countScatter(matrix) {
+      let count = 0;
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 5; c++) {
+          if (matrix[r][c] === scatter) count++;
+        }
+      }
+      return count;
+    }
 
-const symbols=["7️⃣","🍒","🍋","🍇","🔔","BAR","💥"];
+    function rowWin(row, bet) {
+      const first = row[0];
+      if (first === scatter) return 0;
 
-function login(){
-player=document.getElementById("name").value;
-if(!player)return;
+      let count = 1;
+      for (let i = 1; i < 5; i++) {
+        if (row[i] === first) count++;
+        else break;
+      }
 
-let saved=localStorage.getItem(player);
+      if (count < 3) return 0;
 
-if(saved) coins=parseInt(saved);
+      const pay = {
+        "🍋": {3: 2, 4: 5, 5: 10},
+        "🍒": {3: 3, 4: 7, 5: 12},
+        "🍇": {3: 4, 4: 8, 5: 15},
+        "🔔": {3: 6, 4: 12, 5: 20},
+        "BAR": {3: 8, 4: 18, 5: 30},
+        "7️⃣": {3: 12, 4: 25, 5: 50}
+      };
 
-document.getElementById("login").classList.add("hidden");
-document.getElementById("game").classList.remove("hidden");
+      return (pay[first] && pay[first][count]) ? pay[first][count] * bet : 0;
+    }
 
-update();
-draw(random());
-}
+    function updateUI(win = 0, text = "") {
+      document.getElementById("coins").textContent = coins;
+      document.getElementById("free").textContent = free;
+      document.getElementById("win").textContent = win;
+      document.getElementById("msg").textContent = text;
+    }
 
-function update(){
-coinsEl.textContent="Coins: "+coins;
-freeEl.textContent="Free: "+free;
-}
+    async function spin() {
+      playSpinSound();
 
-function random(){
-let m=[];
-for(let r=0;r<3;r++){
-let row=[];
-for(let c=0;c<5;c++){
-row.push(symbols[Math.floor(Math.random()*symbols.length)]);
-}
-m.push(row);
-}
-return m;
-}
+      const bet = Number(document.getElementById("bet").value);
 
-function draw(m){
-reels.innerHTML="";
-for(let c=0;c<5;c++){
-let reel=document.createElement("div");
-reel.className="reel";
-for(let r=0;r<3;r++){
-let cell=document.createElement("div");
-cell.className="cell";
-cell.textContent=m[r][c];
-reel.appendChild(cell);
-}
-reels.appendChild(reel);
-}
-}
+      if (free > 0) {
+        free--;
+      } else {
+        if (coins < bet) {
+          updateUI(0, "Нямаш coins");
+          return;
+        }
+        coins -= bet;
+      }
 
-function spin(){
+      for (let i = 0; i < 8; i++) {
+        setTimeout(() => draw(randomMatrix()), i * 90);
+      }
 
-let bet=+betEl.value;
+      setTimeout(() => {
+        const matrix = randomMatrix();
+        draw(matrix);
 
-if(free>0) free--;
-else{
-if(coins<bet){msg("Нямаш coins");return;}
-coins-=bet;
-}
+        let totalWin = 0;
+        totalWin += rowWin(matrix[0], bet);
+        totalWin += rowWin(matrix[1], bet);
+        totalWin += rowWin(matrix[2], bet);
 
-let m=random();
-draw(m);
+        const scatters = countScatter(matrix);
+        let text = "Нищо";
 
-let win=Math.floor(Math.random()*100);
+        if (scatters === 3) {
+          free += 8;
+          playFreeSound();
+          text = "FREE SPINS +8";
+        } else if (scatters === 4) {
+          free += 12;
+          playFreeSound();
+          text = "FREE SPINS +12";
+        } else if (scatters >= 5) {
+          free += 20;
+          playFreeSound();
+          text = "FREE SPINS +20";
+        }
 
-if(win>50){
-coins+=win;
-msg("Печалба "+win);
-} else msg("Нищо");
+        if (totalWin > 0) {
+          coins += totalWin;
+          playWinSound();
+          text = "Печалба " + totalWin + (scatters >= 3 ? " + бонус" : "");
+        }
 
-if(Math.random()<0.2){
-free+=5;
-msg("FREE SPINS +5");
-}
+        updateUI(totalWin, text);
+      }, 820);
+    }
 
-localStorage.setItem(player,coins);
-update();
-}
+    document.getElementById("spinBtn").addEventListener("click", spin);
 
-function msg(t){
-msgEl.textContent=t;
-}
-
-</script>
-
+    draw(randomMatrix());
+    updateUI(0, "Готово за игра");
+  </script>
 </body>
 </html>
