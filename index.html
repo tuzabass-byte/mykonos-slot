@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
-<title>Mykonos Slot V3</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Vasa Fortune V4</title>
 
 <style>
 *{box-sizing:border-box}
-
 body{
   margin:0;
   font-family:Arial,sans-serif;
@@ -15,70 +14,61 @@ body{
   color:white;
   min-height:100vh;
 }
-
 .app{
   max-width:430px;
   margin:0 auto;
   min-height:100vh;
-  padding:28px 12px 105px;
+  padding:22px 12px 105px;
 }
-
 .logo{
   text-align:center;
-  font-size:32px;
+  font-size:30px;
   font-weight:900;
-  letter-spacing:5px;
+  letter-spacing:3px;
   color:#36f3ff;
   text-shadow:0 0 20px #00eaff;
 }
-
 .subtitle{
   text-align:center;
   color:#ffd35a;
-  font-size:17px;
-  margin:8px 0 22px;
+  font-size:15px;
+  margin:7px 0 18px;
 }
-
 .jackpots{
   display:flex;
   flex-direction:column;
-  gap:10px;
-  margin-bottom:18px;
+  gap:9px;
+  margin-bottom:16px;
 }
-
 .jackpot{
-  height:62px;
+  height:58px;
   border:3px solid #36f1ff;
-  border-radius:15px;
+  border-radius:14px;
   background:rgba(0,10,35,.78);
   box-shadow:0 0 17px #00eaff,inset 0 0 20px rgba(0,234,255,.18);
   position:relative;
   overflow:hidden;
 }
-
 .jackpot .num{
-  width:100%;
   height:100%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:31px;
+  font-size:28px;
   font-weight:900;
-  letter-spacing:3px;
-  padding-right:82px;
+  letter-spacing:2px;
+  padding-right:80px;
 }
-
 .jackpot .name{
   position:absolute;
-  right:22px;
+  right:20px;
   top:50%;
   transform:translateY(-50%);
-  font-size:23px;
+  font-size:22px;
   font-style:italic;
   color:#39f6ff;
-  opacity:.8;
+  opacity:.85;
 }
-
 .mega .num{color:#ff4ee6;text-shadow:0 0 15px #ff00c8}
 .maxi .num{color:#54ff65;text-shadow:0 0 15px #00ff37}
 .mini .num{color:#c9f7ff;text-shadow:0 0 15px #00eaff}
@@ -90,18 +80,16 @@ body{
   background:#21001b;
   box-shadow:0 0 24px rgba(255,208,40,.75);
 }
-
 .machine-title{
   background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);
   text-align:center;
-  padding:12px 4px;
-  font-size:25px;
+  padding:11px 4px;
+  font-size:23px;
   font-weight:900;
   color:#ffe15a;
   text-shadow:0 0 12px #ff0000;
   border-bottom:3px solid #ffd23c;
 }
-
 .reels{
   display:grid;
   grid-template-columns:repeat(5,1fr);
@@ -110,13 +98,11 @@ body{
   background:#280023;
   border-bottom:3px solid #ffd23c;
 }
-
 .reel{
   display:grid;
-  grid-template-rows:repeat(3,74px);
+  grid-template-rows:repeat(3,72px);
   gap:3px;
 }
-
 .cell{
   border:1px solid #ffd85a;
   background:radial-gradient(circle,#884311 0%,#310033 48%,#120013 100%);
@@ -125,71 +111,64 @@ body{
   justify-content:center;
   overflow:hidden;
 }
-
 .symbol{
   font-weight:900;
-  filter:drop-shadow(0 0 9px white);
-  transform:translateZ(0);
+  filter:drop-shadow(0 0 8px white);
 }
-
-.seven{
-  font-size:58px;
-  color:#ff2020;
-  text-shadow:0 0 12px red,0 0 4px white;
-}
-
+.seven{font-size:55px;color:#ff2020;text-shadow:0 0 12px red,0 0 4px white}
 .bar{
-  font-size:25px;
+  font-size:23px;
   color:#8fe3ff;
   background:linear-gradient(#111,#444);
   border:3px solid #aaa;
   border-radius:6px;
   padding:4px 7px;
-  text-shadow:0 0 8px #00c8ff;
 }
-
-.diamond{font-size:43px}
-.cherry{font-size:42px}
-.bell{font-size:42px}
-.horse{font-size:42px;color:#ffd25a}
-
-.spinning .symbol{
-  animation:spinBlur .08s linear infinite;
+.diamond,.cherry,.bell,.horse,.wild,.scatter{font-size:40px}
+.horse{color:#ffd25a}
+.wild{
+  color:#37ff5e;
+  font-size:31px;
+  text-shadow:0 0 12px #00ff37;
 }
-
+.scatter{
+  color:#ffec3d;
+  font-size:30px;
+  text-shadow:0 0 12px #ffe600;
+}
+.spinning .symbol{animation:spinBlur .08s linear infinite}
 @keyframes spinBlur{
   from{transform:translateY(-12px);filter:blur(2px)}
   to{transform:translateY(12px);filter:blur(2px)}
 }
-
-.winCell{
-  animation:winFlash .35s infinite alternate;
-}
-
+.winCell{animation:winFlash .35s infinite alternate}
 @keyframes winFlash{
   from{box-shadow:inset 0 0 8px #fff000;filter:brightness(1)}
   to{box-shadow:inset 0 0 28px #fff000;filter:brightness(1.75)}
 }
-
 .info{
-  padding:12px 10px 14px;
+  padding:11px 10px 13px;
   background:linear-gradient(#12000d,#05020b);
 }
-
 .status{
   text-align:center;
   min-height:30px;
-  font-size:21px;
+  font-size:19px;
   font-weight:900;
 }
-
+.free{
+  text-align:center;
+  color:#54ff65;
+  font-size:14px;
+  font-weight:900;
+  margin-top:2px;
+}
 .stats{
-  margin-top:10px;
+  margin-top:9px;
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:8px;
 }
-
 .stat{
   border:1px solid #6e7490;
   border-radius:8px;
@@ -197,66 +176,50 @@ body{
   text-align:center;
   padding:8px 3px;
 }
-
-.stat small{
-  display:block;
-  color:#ddd;
-  font-size:12px;
-}
-
-.stat strong{
-  font-size:24px;
-}
-
+.stat small{display:block;color:#ddd;font-size:12px}
+.stat strong{font-size:22px}
 .controls{
-  margin-top:18px;
+  margin-top:17px;
   display:flex;
   align-items:center;
   justify-content:space-around;
 }
-
 button{
   border:none;
   cursor:pointer;
   color:white;
   font-weight:900;
 }
-
 button:active{transform:scale(.94)}
-
 .betBtn{
-  width:70px;
-  height:70px;
+  width:68px;
+  height:68px;
   border-radius:50%;
   border:4px solid white;
   background:radial-gradient(circle,#16f2ff,#003b88);
   box-shadow:0 0 18px #00eaff;
 }
-
 .spinBtn{
-  width:110px;
-  height:110px;
+  width:106px;
+  height:106px;
   border-radius:50%;
   border:6px solid white;
   background:radial-gradient(circle,#ff2020,#790000);
-  font-size:20px;
+  font-size:19px;
   box-shadow:0 0 24px red;
 }
-
 .extra{
   margin-top:12px;
   display:flex;
   gap:8px;
   justify-content:center;
 }
-
 .smallBtn{
-  padding:10px 15px;
+  padding:10px 13px;
   border-radius:8px;
   background:#112a67;
   border:1px solid #37eaff;
 }
-
 .bottom{
   position:fixed;
   bottom:0;
@@ -270,19 +233,13 @@ button:active{transform:scale(.94)}
   grid-template-columns:repeat(5,1fr);
   border-top:1px solid rgba(255,255,255,.18);
 }
-
 .nav{
   text-align:center;
   color:#c5cdec;
   font-size:12px;
   padding-top:8px;
 }
-
-.nav div{
-  font-size:25px;
-  margin-bottom:3px;
-}
-
+.nav div{font-size:25px;margin-bottom:3px}
 .deposit{
   margin:14px 7px;
   border-radius:10px;
@@ -291,8 +248,43 @@ button:active{transform:scale(.94)}
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:16px;
+  font-size:15px;
   font-weight:900;
+}
+
+#gamesScreen{display:none}
+.gamesTitle{
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+  color:#36f3ff;
+  text-shadow:0 0 18px #00eaff;
+  margin-bottom:18px;
+}
+.gameCard{
+  border:2px solid #36f1ff;
+  border-radius:15px;
+  background:linear-gradient(135deg,#081331,#29104f);
+  padding:16px;
+  margin-bottom:13px;
+  box-shadow:0 0 15px rgba(0,234,255,.35);
+}
+.gameCard h3{
+  margin:0 0 6px;
+  color:#ffd35a;
+  font-size:22px;
+}
+.gameCard p{
+  margin:0;
+  color:#d9e4ff;
+  font-size:14px;
+}
+.backBtn{
+  width:100%;
+  padding:13px;
+  border-radius:10px;
+  background:#ff2020;
+  margin-top:8px;
 }
 
 .modal{
@@ -305,7 +297,6 @@ button:active{transform:scale(.94)}
   justify-content:center;
   padding:18px;
 }
-
 .modalBox{
   max-width:390px;
   width:100%;
@@ -315,12 +306,7 @@ button:active{transform:scale(.94)}
   padding:16px;
   box-shadow:0 0 22px #00eaff;
 }
-
-.modalBox h2{
-  margin-top:0;
-  color:#34f3ff;
-}
-
+.modalBox h2{margin-top:0;color:#34f3ff}
 .payrow{
   display:grid;
   grid-template-columns:1fr 1fr 1fr 1fr;
@@ -329,7 +315,6 @@ button:active{transform:scale(.94)}
   border-bottom:1px solid rgba(255,255,255,.15);
   font-size:13px;
 }
-
 .close{
   margin-top:14px;
   width:100%;
@@ -344,68 +329,83 @@ button:active{transform:scale(.94)}
 
 <div class="app">
 
-  <div class="logo">MYKONOS SLOT</div>
-  <div class="subtitle">Diamond Island Jackpot</div>
+  <div id="slotScreen">
+    <div class="logo" id="gameLogo">VASA FORTUNE</div>
+    <div class="subtitle" id="gameSub">Wild Island Free Spins</div>
 
-  <div class="jackpots">
-    <div class="jackpot mega">
-      <div class="num" id="mega">12928.65</div>
-      <div class="name">Mega</div>
+    <div class="jackpots">
+      <div class="jackpot mega"><div class="num" id="mega">12928.65</div><div class="name">Mega</div></div>
+      <div class="jackpot maxi"><div class="num" id="maxi">647.45</div><div class="name">Maxi</div></div>
+      <div class="jackpot mini"><div class="num" id="mini">42.66</div><div class="name">Mini</div></div>
     </div>
-    <div class="jackpot maxi">
-      <div class="num" id="maxi">647.45</div>
-      <div class="name">Maxi</div>
-    </div>
-    <div class="jackpot mini">
-      <div class="num" id="mini">42.66</div>
-      <div class="name">Mini</div>
-    </div>
-  </div>
 
-  <div class="machine" id="machine">
-    <div class="machine-title">💎 7 E MYKONOS 💎</div>
+    <div class="machine">
+      <div class="machine-title" id="machineTitle">⚡ VASA FORTUNE ⚡</div>
+      <div class="reels" id="reels"></div>
 
-    <div class="reels" id="reels"></div>
+      <div class="info">
+        <div class="status" id="status">ОПИТАЙ ПАК</div>
+        <div class="free" id="freeInfo"></div>
 
-    <div class="info">
-      <div class="status" id="status">ОПИТАЙ ПАК</div>
-
-      <div class="stats">
-        <div class="stat">
-          <small>ПЕЧАЛБА</small>
-          <strong id="win">0.00 €</strong>
-        </div>
-        <div class="stat">
-          <small>ЗАЛОГ</small>
-          <strong id="bet">0.10 €</strong>
-        </div>
-        <div class="stat">
-          <small>БАЛАНС</small>
-          <strong id="balance">50.00 €</strong>
+        <div class="stats">
+          <div class="stat"><small>ПЕЧАЛБА</small><strong id="win">0.00 €</strong></div>
+          <div class="stat"><small>ЗАЛОГ</small><strong id="bet">0.10 €</strong></div>
+          <div class="stat"><small>БАЛАНС</small><strong id="balance">50.00 €</strong></div>
         </div>
       </div>
     </div>
+
+    <div class="controls">
+      <button class="betBtn" id="betMinus">BET -</button>
+      <button class="spinBtn" id="spinBtn">SPIN</button>
+      <button class="betBtn" id="betPlus">BET +</button>
+    </div>
+
+    <div class="extra">
+      <button class="smallBtn" id="payBtn">PAYTABLE</button>
+      <button class="smallBtn" id="soundBtn">SOUND ON</button>
+    </div>
   </div>
 
-  <div class="controls">
-    <button class="betBtn" id="betMinus">BET -</button>
-    <button class="spinBtn" id="spinBtn">SPIN</button>
-    <button class="betBtn" id="betPlus">BET +</button>
-  </div>
+  <div id="gamesScreen">
+    <div class="gamesTitle">ИЗБЕРИ ИГРА</div>
 
-  <div class="extra">
-    <button class="smallBtn" id="payBtn">PAYTABLE</button>
-    <button class="smallBtn" id="soundBtn">SOUND ON</button>
+    <div class="gameCard" onclick="selectGame(0)">
+      <h3>Vasa Fortune</h3>
+      <p>Основна игра. 3 Scatter дават Free Spins с повече Wild.</p>
+    </div>
+
+    <div class="gameCard" onclick="selectGame(1)">
+      <h3>Mariana Diamonds</h3>
+      <p>В бонуса диамантите имат по-голям шанс и плащат силно.</p>
+    </div>
+
+    <div class="gameCard" onclick="selectGame(2)">
+      <h3>Marian Cherry Storm</h3>
+      <p>В Free Spins черешите могат да станат expanding символ.</p>
+    </div>
+
+    <div class="gameCard" onclick="selectGame(3)">
+      <h3>Stefan Full Reel</h3>
+      <p>В бонуса има шанс цял reel да стане Wild.</p>
+    </div>
+
+    <div class="gameCard" onclick="selectGame(4)">
+      <h3>Yanko Jackpot Hold</h3>
+      <p>Повече шанс за Mini jackpot и jackpot усещане.</p>
+    </div>
+
+    <button class="backBtn" onclick="showSlot()">НАЗАД КЪМ ИГРАТА</button>
   </div>
 
 </div>
 
 <div class="bottom">
-  <div class="nav" id="homeBtn"><div>🏝️</div>Начало</div>
-  <div class="nav" id="gamesBtn"><div>▦</div>Игри</div>
-  <div class="nav" id="bonusBtn"><div>🎁</div>Бонуси</div>
-  <div class="nav" id="favBtn"><div>♡</div>Любими</div>
-  <div class="deposit" id="depositBtn">Депозит</div>
+  <div class="nav" onclick="showSlot()"><div>🏝️</div>Начало</div>
+  <div class="nav" onclick="showGames()"><div>▦</div>Игри</div>
+  <div class="nav" onclick="bonus()"><div>🎁</div>Бонуси</div>
+  <div class="nav" onclick="favorite()"><div>♡</div>Любими</div>
+  <div class="deposit" onclick="deposit()">Депозит</div>
 </div>
 
 <div class="modal" id="payModal">
@@ -416,386 +416,36 @@ button:active{transform:scale(.94)}
     <div class="payrow"><span>BAR</span><span>5x</span><span>15x</span><span>60x</span></div>
     <div class="payrow"><span>💎</span><span>4x</span><span>12x</span><span>45x</span></div>
     <div class="payrow"><span>🍒</span><span>2x</span><span>6x</span><span>20x</span></div>
-    <div class="payrow"><span>🔔</span><span>1.5x</span><span>4x</span><span>12x</span></div>
+    <div class="payrow"><span>WILD</span><span colspan="3">замества символи</span></div>
+    <div class="payrow"><span>SCATTER</span><span colspan="3">3x = 8 Free Spins</span></div>
     <br>
-    <small>Demo режим: всички стойности са виртуални кредити, не реални пари.</small>
-    <button class="close" id="closePay">Затвори</button>
+    <small>Demo режим: виртуални кредити, не реални пари.</small>
+    <button class="close" onclick="closePaytable()">Затвори</button>
   </div>
 </div>
 
 <script>
-const reelsEl = document.getElementById("reels");
-const machine = document.getElementById("machine");
-const statusEl = document.getElementById("status");
-const winEl = document.getElementById("win");
-const betEl = document.getElementById("bet");
-const balanceEl = document.getElementById("balance");
-
-let balance = 50.00;
-let bets = [0.10,0.20,0.50,1,2,5,10];
-let betIndex = 0;
-let spinning = false;
-let soundOn = true;
-let bonusUsed = false;
-let favoriteSaved = false;
-
-let jackpot = {
-  mega:12928.65,
-  maxi:647.45,
-  mini:42.66
-};
-
-const symbols = [
-  {id:"7", html:"7", cls:"seven", weight:5, pay:{3:8,4:25,5:120}},
-  {id:"BAR", html:"BAR", cls:"bar", weight:9, pay:{3:5,4:15,5:60}},
-  {id:"DIAMOND", html:"💎", cls:"diamond", weight:10, pay:{3:4,4:12,5:45}},
-  {id:"CHERRY", html:"🍒", cls:"cherry", weight:18, pay:{3:2,4:6,5:20}},
-  {id:"BELL", html:"🔔", cls:"bell", weight:14, pay:{3:1.5,4:4,5:12}},
-  {id:"HORSE", html:"♞", cls:"horse", weight:12, pay:{3:1.2,4:3,5:10}}
-];
-
-const paylines = [
-  [0,0,0,0,0],
-  [1,1,1,1,1],
-  [2,2,2,2,2],
-  [0,1,2,1,0],
-  [2,1,0,1,2],
-  [0,0,1,2,2],
-  [2,2,1,0,0],
-  [1,0,1,2,1],
-  [1,2,1,0,1],
-  [0,1,1,1,2]
-];
-
-function money(v){
-  return Number(v).toFixed(2) + " €";
-}
-
-function audio(freq,duration,type="sine",gain=.04){
-  if(!soundOn) return;
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ctx.createOscillator();
-  const g = ctx.createGain();
-
-  osc.type = type;
-  osc.frequency.value = freq;
-  g.gain.value = gain;
-
-  osc.connect(g);
-  g.connect(ctx.destination);
-
-  osc.start();
-  osc.stop(ctx.currentTime + duration);
-}
-
-function clickSound(){ audio(650,.05,"square",.025); }
-function spinSound(){ audio(120,.18,"sawtooth",.035); }
-function stopSound(){ audio(360,.07,"square",.03); }
-function loseSound(){ audio(170,.12,"sawtooth",.035); }
-
-function winSound(){
-  audio(780,.12,"triangle",.06);
-  setTimeout(()=>audio(980,.14,"triangle",.06),120);
-}
-
-function bigWinSound(){
-  [500,700,900,1200,1500].forEach((f,i)=>{
-    setTimeout(()=>audio(f,.12,"triangle",.07),i*120);
-  });
-}
-
-function randomSymbol(){
-  const total = symbols.reduce((sum,s)=>sum+s.weight,0);
-  let r = Math.random() * total;
-
-  for(const s of symbols){
-    r -= s.weight;
-    if(r <= 0) return s;
-  }
-
-  return symbols[0];
-}
-
-function setCell(cell,sym){
-  cell.innerHTML = `<span class="symbol ${sym.cls}">${sym.html}</span>`;
-  cell.dataset.id = sym.id;
-}
-
-function createBoard(){
-  reelsEl.innerHTML = "";
-
-  for(let col=0; col<5; col++){
-    const reel = document.createElement("div");
-    reel.className = "reel";
-
-    for(let row=0; row<3; row++){
-      const cell = document.createElement("div");
-      cell.className = "cell";
-      setCell(cell, randomSymbol());
-      reel.appendChild(cell);
-    }
-
-    reelsEl.appendChild(reel);
-  }
-}
-
-function updateUI(){
-  betEl.textContent = money(bets[betIndex]);
-  balanceEl.textContent = money(balance);
-
-  document.getElementById("mega").textContent = jackpot.mega.toFixed(2);
-  document.getElementById("maxi").textContent = jackpot.maxi.toFixed(2);
-  document.getElementById("mini").textContent = jackpot.mini.toFixed(2);
-}
-
-function clearWins(){
-  document.querySelectorAll(".cell").forEach(c=>c.classList.remove("winCell"));
-}
-
-function changeBet(dir){
-  if(spinning) return;
-  clickSound();
-
-  betIndex += dir;
-
-  if(betIndex < 0) betIndex = 0;
-  if(betIndex >= bets.length) betIndex = bets.length - 1;
-
-  updateUI();
-}
-
-function spin(){
-  if(spinning) return;
-
-  const bet = bets[betIndex];
-
-  if(balance < bet){
-    statusEl.textContent = "НЕДОСТАТЪЧЕН БАЛАНС";
-    loseSound();
-    return;
-  }
-
-  spinning = true;
-  balance -= bet;
-  winEl.textContent = money(0);
-  statusEl.textContent = "ВЪРТИ...";
-  clearWins();
-  updateUI();
-  spinSound();
-
-  const reels = [...document.querySelectorAll(".reel")];
-  let stopped = 0;
-
-  reels.forEach((reel, index)=>{
-    reel.classList.add("spinning");
-
-    const timer = setInterval(()=>{
-      [...reel.children].forEach(cell=>{
-        setCell(cell, randomSymbol());
-      });
-    },70);
-
-    setTimeout(()=>{
-      clearInterval(timer);
-
-      [...reel.children].forEach(cell=>{
-        setCell(cell, randomSymbol());
-      });
-
-      reel.classList.remove("spinning");
-      stopSound();
-
-      stopped++;
-
-      if(stopped === reels.length){
-        setTimeout(()=>{
-          calculateWin();
-          growJackpots(bet);
-          spinning = false;
-        },180);
-      }
-    },800 + index * 320);
-  });
-}
-
-function getBoard(){
-  const reels = [...document.querySelectorAll(".reel")];
-  const board = [[],[],[]];
-
-  reels.forEach((reel,col)=>{
-    [...reel.children].forEach((cell,row)=>{
-      board[row][col] = cell;
-    });
-  });
-
-  return board;
-}
-
-function calculateWin(){
-  const board = getBoard();
-  const bet = bets[betIndex];
-
-  let totalWin = 0;
-  let winningCells = [];
-
-  paylines.forEach(line=>{
-    const firstCell = board[line[0]][0];
-    const firstId = firstCell.dataset.id;
-    let count = 1;
-
-    for(let col=1; col<5; col++){
-      const cell = board[line[col]][col];
-
-      if(cell.dataset.id === firstId){
-        count++;
-      } else {
-        break;
-      }
-    }
-
-    if(count >= 3){
-      const sym = symbols.find(s=>s.id === firstId);
-      const multiplier = sym.pay[count];
-      const amount = bet * multiplier;
-
-      totalWin += amount;
-
-      for(let col=0; col<count; col++){
-        winningCells.push(board[line[col]][col]);
-      }
-    }
-  });
-
-  const jackpotWin = checkJackpot(board);
-  totalWin += jackpotWin.amount;
-
-  if(totalWin > 0){
-    balance += totalWin;
-    winEl.textContent = money(totalWin);
-
-    if(jackpotWin.name){
-      statusEl.textContent = jackpotWin.name + " JACKPOT " + money(jackpotWin.amount);
-    } else {
-      statusEl.textContent = "ПЕЧАЛБА " + money(totalWin);
-    }
-
-    winningCells.forEach(cell=>cell.classList.add("winCell"));
-
-    if(totalWin >= bet * 30 || jackpotWin.amount > 0){
-      bigWinSound();
-    } else {
-      winSound();
-    }
-  } else {
-    statusEl.textContent = "ОПИТАЙ ПАК";
-    loseSound();
-  }
-
-  updateUI();
-}
-
-function checkJackpot(board){
-  const middle = board[1].map(cell=>cell.dataset.id);
-  const fiveDiamonds = middle.every(x=>x === "DIAMOND");
-  const fiveSevens = middle.every(x=>x === "7");
-
-  if(fiveSevens && Math.random() < 0.10){
-    const amount = jackpot.mega;
-    jackpot.mega = 12000 + Math.random() * 1500;
-    return {name:"MEGA", amount};
-  }
-
-  if(fiveDiamonds && Math.random() < 0.18){
-    const amount = jackpot.maxi;
-    jackpot.maxi = 500 + Math.random() * 180;
-    return {name:"MAXI", amount};
-  }
-
-  if(Math.random() < 0.003){
-    const amount = jackpot.mini;
-    jackpot.mini = 35 + Math.random() * 25;
-    return {name:"MINI", amount};
-  }
-
-  return {name:null, amount:0};
-}
-
-function growJackpots(bet){
-  jackpot.mega += bet * 0.025;
-  jackpot.maxi += bet * 0.012;
-  jackpot.mini += bet * 0.006;
-  updateUI();
-}
-
-function openPaytable(){
-  clickSound();
-  document.getElementById("payModal").style.display = "flex";
-}
-
-function closePaytable(){
-  clickSound();
-  document.getElementById("payModal").style.display = "none";
-}
-
-function toggleSound(){
-  soundOn = !soundOn;
-  document.getElementById("soundBtn").textContent = soundOn ? "SOUND ON" : "SOUND OFF";
-  clickSound();
-}
-
-function home(){
-  clickSound();
-  statusEl.textContent = "НАЧАЛО: MYKONOS SLOT";
-}
-
-function games(){
-  clickSound();
-  statusEl.textContent = "ИГРИ: Mariana, Marian, Stefan, Vasa, Yanko";
-}
-
-function bonus(){
-  clickSound();
-
-  if(!bonusUsed){
-    balance += 5;
-    bonusUsed = true;
-    statusEl.textContent = "БОНУС +5.00 €";
-    winSound();
-  } else {
-    statusEl.textContent = "БОНУСЪТ Е ВЗЕТ";
-  }
-
-  updateUI();
-}
-
-function favorite(){
-  clickSound();
-  favoriteSaved = !favoriteSaved;
-  statusEl.textContent = favoriteSaved ? "ДОБАВЕНО В ЛЮБИМИ" : "ПРЕМАХНАТО ОТ ЛЮБИМИ";
-}
-
-function deposit(){
-  clickSound();
-  statusEl.textContent = "ЗАЯВКА ЗА ВИРТУАЛЕН ДЕПОЗИТ";
-  alert("Demo режим: заявка за виртуални кредити. Това не са реални пари.");
-}
-
-document.getElementById("spinBtn").addEventListener("click", spin);
-document.getElementById("betMinus").addEventListener("click", ()=>changeBet(-1));
-document.getElementById("betPlus").addEventListener("click", ()=>changeBet(1));
-document.getElementById("payBtn").addEventListener("click", openPaytable);
-document.getElementById("closePay").addEventListener("click", closePaytable);
-document.getElementById("soundBtn").addEventListener("click", toggleSound);
-
-document.getElementById("homeBtn").addEventListener("click", home);
-document.getElementById("gamesBtn").addEventListener("click", games);
-document.getElementById("bonusBtn").addEventListener("click", bonus);
-document.getElementById("favBtn").addEventListener("click", favorite);
-document.getElementById("depositBtn").addEventListener("click", deposit);
-
-createBoard();
-updateUI();
-</script>
-
-</body>
-</html>
+const reelsEl=document.getElementById("reels");
+const statusEl=document.getElementById("status");
+const winEl=document.getElementById("win");
+const betEl=document.getElementById("bet");
+const balanceEl=document.getElementById("balance");
+const freeInfo=document.getElementById("freeInfo");
+
+let balance=50;
+let bets=[0.10,0.20,0.50,1,2,5,10];
+let betIndex=0;
+let spinning=false;
+let soundOn=true;
+let bonusUsed=false;
+let favoriteSaved=false;
+let freeSpins=0;
+let lastBet=0.10;
+let currentGame=0;
+
+let jackpot={mega:12928.65,maxi:647.45,mini:42.66};
+
+const games=[
+  {name:"Vasa Fortune",sub:"Wild Island Free Spins",title:"⚡ VASA FORTUNE ⚡",feature:"wild"},
+  {name:"Mariana Diamonds",sub:"Diamond Bonus Power",title:"💎 MARIANA DIAMONDS 💎",feature:"diamond"},
+  {name:"Mar
