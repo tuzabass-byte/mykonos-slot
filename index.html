@@ -1,692 +1,98 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mykonos Burning Hot 5x3</title>
-  <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, #2e7d32 0%, #0d2b12 35%, #060606 80%);
-      color: #fff;
-    }
+<meta charset="UTF-8">
+<title>Slot Demo</title>
+<style>
+body {
+    margin: 0;
+    background: #0b1a3a;
+    font-family: Arial;
+    color: white;
+    text-align: center;
+}
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
-    }
+.container {
+    padding: 20px;
+}
 
-    .app {
-      width: min(100vw, 430px);
-      height: 100vh;
-      padding: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+.jackpot {
+    font-size: 30px;
+    margin: 10px;
+}
 
-    .jackpots {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      flex: 0 0 auto;
-    }
+.slot {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
 
-    .jp {
-      border-radius: 10px;
-      padding: 6px 4px;
-      text-align: center;
-      border: 2px solid rgba(255,255,255,.18);
-      box-shadow: inset 0 0 10px rgba(255,255,255,.05);
-    }
+.reel {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    background: black;
+    border: 3px solid gold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
 
-    .jp .label {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .4px;
-    }
-
-    .jp .val {
-      margin-top: 2px;
-      font-size: 18px;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1.1;
-    }
-
-    .grand { background: linear-gradient(180deg, #711515, #310909); }
-    .major { background: linear-gradient(180deg, #184818, #0a210a); }
-    .minor { background: linear-gradient(180deg, #123a70, #081829); }
-    .mini  { background: linear-gradient(180deg, #4c1567, #1a0722); }
-
-    .logo {
-      text-align: center;
-      font-size: clamp(20px, 3.8vh, 28px);
-      font-weight: 900;
-      color: #f1d35a;
-      text-shadow: 0 2px 0 #000, 0 0 10px rgba(255,215,90,.3);
-      line-height: 1.05;
-      flex: 0 0 auto;
-    }
-
-    .machine {
-      background: linear-gradient(180deg, #143911, #0b140b);
-      border: 3px solid #d8c255;
-      border-radius: 14px;
-      padding: 6px;
-      box-shadow: 0 10px 25px rgba(0,0,0,.35);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    .reels {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
-      flex: 1 1 auto;
-      min-height: 0;
-    }
-
-    .reel {
-      display: grid;
-      grid-template-rows: repeat(3, 1fr);
-      gap: 5px;
-      min-height: 0;
-    }
-
-    .cell {
-      border: 2px solid #d5c14b;
-      border-radius: 6px;
-      background:
-        radial-gradient(circle at 50% 18%, rgba(255,255,255,.08), transparent 30%),
-        linear-gradient(180deg, #0f3d16, #062109);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(22px, 4.3vh, 34px);
-      font-weight: 800;
-      box-shadow: inset 0 0 8px rgba(255,255,255,.05);
-      transition: transform .12s ease, box-shadow .12s ease;
-      min-height: 0;
-      aspect-ratio: 1 / 1.08;
-    }
-
-    .cell.win {
-      box-shadow: 0 0 14px gold, inset 0 0 12px rgba(255,255,255,.18);
-      transform: scale(1.03);
-    }
-
-    .midbar {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      flex: 0 0 auto;
-    }
-
-    .panel {
-      background: #050505;
-      border-radius: 10px;
-      padding: 8px 4px;
-      text-align: center;
-    }
-
-    .panel .small {
-      font-size: 11px;
-      font-weight: 700;
-      opacity: .95;
-    }
-
-    .panel .big {
-      font-size: clamp(18px, 3.2vh, 24px);
-      font-weight: 900;
-      color: #fff;
-      margin-top: 2px;
-      line-height: 1.1;
-    }
-
-    .bets {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      flex: 0 0 auto;
-    }
-
-    .betBtn {
-      background: linear-gradient(180deg, #2c2c2c, #141414);
-      border: 2px solid #666;
-      color: #fff;
-      border-radius: 10px;
-      padding: 8px 2px;
-      font-weight: 800;
-      font-size: 13px;
-      cursor: pointer;
-      min-height: 44px;
-    }
-
-    .betBtn.active {
-      background: linear-gradient(180deg, #6f8f2a, #365313);
-      border-color: #b8de58;
-      color: #fff46d;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1.35fr 1fr;
-      gap: 8px;
-      align-items: center;
-      flex: 0 0 auto;
-    }
-
-    .smallBtn, .spinBtn {
-      border: none;
-      border-radius: 999px;
-      font-weight: 900;
-      cursor: pointer;
-    }
-
-    .smallBtn {
-      min-height: 68px;
-      background: #0e0e0e;
-      color: #fff;
-      border: 2px solid rgba(255,255,255,.15);
-      font-size: 13px;
-    }
-
-    .spinBtn {
-      min-height: 92px;
-      background: radial-gradient(circle, #2d2d2d 0%, #111 65%);
-      border: 3px solid rgba(255,255,255,.18);
-      color: #fff;
-      font-size: 40px;
-      line-height: 1;
-    }
-
-    .bottomBar {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      flex: 0 0 auto;
-    }
-
-    .bottomBtn {
-      background: #0a0a0a;
-      border: 2px solid rgba(255,255,255,.12);
-      color: #fff;
-      border-radius: 10px;
-      min-height: 42px;
-      font-size: 14px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 4px;
-    }
-
-    @media (max-height: 760px) {
-      .jp .val { font-size: 16px; }
-      .smallBtn { min-height: 60px; font-size: 12px; }
-      .spinBtn { min-height: 82px; font-size: 34px; }
-      .betBtn { min-height: 40px; font-size: 12px; }
-      .bottomBtn { min-height: 38px; font-size: 13px; }
-    }
-  </style>
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+</style>
 </head>
 <body>
-  <div class="app">
 
-    <div class="jackpots">
-      <div class="jp grand">
-        <div class="label">GRAND</div>
-        <div class="val" id="grandVal">25807</div>
-      </div>
-      <div class="jp major">
-        <div class="label">MAJOR</div>
-        <div class="val" id="majorVal">4388</div>
-      </div>
-      <div class="jp minor">
-        <div class="label">MINOR</div>
-        <div class="val" id="minorVal">50</div>
-      </div>
-      <div class="jp mini">
-        <div class="label">MINI</div>
-        <div class="val" id="miniVal">10</div>
-      </div>
-    </div>
+<div class="container">
 
-    <div class="logo">BURNING HOT 5x3</div>
+<div class="jackpot">💎 Mega: 12928.23</div>
+<div class="jackpot" style="color:lime;">Maxi: 647.31</div>
+<div class="jackpot" style="color:lightblue;">Mini: 42.52</div>
 
-    <div class="machine">
-      <div class="reels" id="reels"></div>
+<div class="slot" id="slot">
+    <div class="reel">🍒</div>
+    <div class="reel">🍋</div>
+    <div class="reel">🍇</div>
+    <div class="reel">🔔</div>
+    <div class="reel">7️⃣</div>
+</div>
 
-      <div class="midbar">
-        <div class="panel">
-          <div class="small">БАЛАНС</div>
-          <div class="big" id="balance">1000</div>
-        </div>
-        <div class="panel">
-          <div class="small">ПОСЛЕДНА ПЕЧАЛБА</div>
-          <div class="big" id="lastWin">0</div>
-        </div>
-      </div>
+<button onclick="spin()">SPIN</button>
 
-      <div class="bets">
-        <button class="betBtn active" data-bet="10">10</button>
-        <button class="betBtn" data-bet="20">20</button>
-        <button class="betBtn" data-bet="50">50</button>
-        <button class="betBtn" data-bet="100">100</button>
-      </div>
+<h2 id="result"></h2>
 
-      <div class="controls">
-        <button class="smallBtn" id="autoBtn">⟲<br>AUTO</button>
-        <button class="spinBtn" id="spinBtn">↻</button>
-        <button class="smallBtn" id="soundBtn">🔊<br>SOUND</button>
-      </div>
+</div>
 
-      <div class="bottomBar">
-        <div class="bottomBtn">ЗАЛОГ: <span id="betView">10</span></div>
-        <div class="bottomBtn">FREE: <span id="freeView">0</span></div>
-      </div>
-    </div>
-  </div>
+<script>
+const symbols = ["🍒","🍋","🍇","🔔","7️⃣","💎"];
 
-  <script>
-    const SYMBOLS = {
-      TOP: "7️⃣",
-      BELL: "🔔",
-      GRAPE: "🍇",
-      WATERMELON: "🍉",
-      LOW_A: "🍊",
-      LOW_B: "🍒",
-      WILD: "🔥",
-      SCATTER_MONEY: "💲",
-      SCATTER_STAR: "⭐"
-    };
+function spin() {
+    let reels = document.querySelectorAll(".reel");
+    let result = [];
 
-    let balance = 1000;
-    let lastWin = 0;
-    let freeSpins = 0;
-    let currentBet = 10;
-    let spinning = false;
-    let autoSpin = false;
-    let soundOn = true;
-    let audioCtx = null;
-
-    let jackpots = {
-      grand: 25807,
-      major: 4388,
-      minor: 50,
-      mini: 10
-    };
-
-    const byId = id => document.getElementById(id);
-
-    function initAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
-
-    function beep(freq, duration, type = "square", volume = 0.03) {
-      if (!soundOn) return;
-      if (!audioCtx) initAudio();
-
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      setTimeout(() => osc.stop(), duration);
-    }
-
-    function spinSound() {
-      beep(180, 70);
-      setTimeout(() => beep(230, 70), 90);
-      setTimeout(() => beep(290, 90), 180);
-    }
-
-    function winSound() {
-      beep(560, 100, "triangle", 0.05);
-      setTimeout(() => beep(760, 120, "triangle", 0.05), 130);
-      setTimeout(() => beep(980, 160, "triangle", 0.05), 280);
-    }
-
-    function freeSound() {
-      beep(740, 100, "triangle", 0.05);
-      setTimeout(() => beep(960, 150, "triangle", 0.05), 150);
-    }
-
-    function jackpotSound() {
-      beep(350, 120, "sawtooth", 0.05);
-      setTimeout(() => beep(520, 140, "sawtooth", 0.05), 140);
-      setTimeout(() => beep(760, 180, "sawtooth", 0.05), 300);
-      setTimeout(() => beep(1020, 220, "sawtooth", 0.05), 520);
-    }
-
-    function updateHud() {
-      byId("balance").textContent = balance;
-      byId("lastWin").textContent = lastWin;
-      byId("betView").textContent = currentBet;
-      byId("freeView").textContent = freeSpins;
-      byId("grandVal").textContent = jackpots.grand;
-      byId("majorVal").textContent = jackpots.major;
-      byId("minorVal").textContent = jackpots.minor;
-      byId("miniVal").textContent = jackpots.mini;
-    }
-
-    function randomSymbol() {
-      const r = Math.random();
-      if (r < 0.02) return SYMBOLS.SCATTER_STAR;
-      if (r < 0.05) return SYMBOLS.SCATTER_MONEY;
-      if (r < 0.11) return SYMBOLS.WILD;
-
-      const base = [
-        SYMBOLS.TOP,
-        SYMBOLS.BELL,
-        SYMBOLS.GRAPE,
-        SYMBOLS.WATERMELON,
-        SYMBOLS.LOW_A,
-        SYMBOLS.LOW_B
-      ];
-
-      return base[Math.floor(Math.random() * base.length)];
-    }
-
-    function blankMatrix() {
-      return Array.from({ length: 3 }, () => Array(5).fill(""));
-    }
-
-    function randomMatrix() {
-      const m = blankMatrix();
-      for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 5; col++) {
-          m[row][col] = randomSymbol();
-        }
-      }
-      return m;
-    }
-
-    function draw(matrix, highlights = []) {
-      const reels = byId("reels");
-      reels.innerHTML = "";
-
-      for (let col = 0; col < 5; col++) {
-        const reel = document.createElement("div");
-        reel.className = "reel";
-
-        for (let row = 0; row < 3; row++) {
-          const cell = document.createElement("div");
-          cell.className = "cell";
-          cell.textContent = matrix[row][col];
-
-          if (highlights.some(([r, c]) => r === row && c === col)) {
-            cell.classList.add("win");
-          }
-
-          reel.appendChild(cell);
-        }
-
-        reels.appendChild(reel);
-      }
-    }
-
-    function paylines() {
-      return [
-        [[0,0],[0,1],[0,2],[0,3],[0,4]],
-        [[1,0],[1,1],[1,2],[1,3],[1,4]],
-        [[2,0],[2,1],[2,2],[2,3],[2,4]],
-        [[0,0],[1,1],[2,2],[1,3],[0,4]],
-        [[2,0],[1,1],[0,2],[1,3],[2,4]]
-      ];
-    }
-
-    const PAYTABLE = {
-      [SYMBOLS.TOP]:         {2: 2,  3: 10, 4: 40, 5: 600},
-      [SYMBOLS.WATERMELON]:  {3: 8,  4: 20, 5: 100},
-      [SYMBOLS.GRAPE]:       {3: 8,  4: 20, 5: 100},
-      [SYMBOLS.BELL]:        {3: 4,  4: 10, 5: 40},
-      [SYMBOLS.LOW_A]:       {3: 2,  4: 6,  5: 20},
-      [SYMBOLS.LOW_B]:       {3: 2,  4: 6,  5: 20}
-    };
-
-    function payoutFor(symbol, count) {
-      if (!PAYTABLE[symbol] || !PAYTABLE[symbol][count]) return 0;
-      return PAYTABLE[symbol][count] * currentBet;
-    }
-
-    function expandWilds(matrix) {
-      const expanded = matrix.map(row => [...row]);
-
-      for (let col = 1; col <= 3; col++) {
-        let hasWild = false;
-
-        for (let row = 0; row < 3; row++) {
-          if (matrix[row][col] === SYMBOLS.WILD) {
-            hasWild = true;
-            break;
-          }
-        }
-
-        if (hasWild) {
-          for (let row = 0; row < 3; row++) {
-            if (
-              matrix[row][col] !== SYMBOLS.SCATTER_MONEY &&
-              matrix[row][col] !== SYMBOLS.SCATTER_STAR
-            ) {
-              expanded[row][col] = SYMBOLS.WILD;
-            }
-          }
-        }
-      }
-
-      return expanded;
-    }
-
-    function evaluateLines(matrix) {
-      const expanded = expandWilds(matrix);
-      let total = 0;
-      let highlights = [];
-
-      for (const line of paylines()) {
-        const [r0, c0] = line[0];
-        let base = expanded[r0][c0];
-
-        if (base === SYMBOLS.SCATTER_MONEY || base === SYMBOLS.SCATTER_STAR) continue;
-
-        let count = 1;
-        const local = [[r0, c0]];
-
-        for (let i = 1; i < line.length; i++) {
-          const [r, c] = line[i];
-          const cur = expanded[r][c];
-
-          if (cur === base || cur === SYMBOLS.WILD || base === SYMBOLS.WILD) {
-            if (base === SYMBOLS.WILD && cur !== SYMBOLS.WILD) {
-              base = cur;
-            }
-            count++;
-            local.push([r, c]);
-          } else {
-            break;
-          }
-        }
-
-        if (base !== SYMBOLS.WILD) {
-          const lineWin = payoutFor(base, count);
-          if (lineWin > 0) {
-            total += lineWin;
-            highlights = highlights.concat(local);
-          }
-        }
-      }
-
-      return { total, highlights, expanded };
-    }
-
-    function evaluateScatters(matrix) {
-      let total = 0;
-
-      let moneyCount = 0;
-      for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 5; c++) {
-          if (matrix[r][c] === SYMBOLS.SCATTER_MONEY) moneyCount++;
-        }
-      }
-
-      if (moneyCount === 3) total += currentBet * 3;
-      else if (moneyCount === 4) total += currentBet * 20;
-      else if (moneyCount >= 5) total += currentBet * 100;
-
-      const starOn1 = [0,1,2].some(r => matrix[r][0] === SYMBOLS.SCATTER_STAR);
-      const starOn3 = [0,1,2].some(r => matrix[r][2] === SYMBOLS.SCATTER_STAR);
-      const starOn5 = [0,1,2].some(r => matrix[r][4] === SYMBOLS.SCATTER_STAR);
-
-      let gotStar = false;
-      if (starOn1 && starOn3 && starOn5) {
-        total += currentBet * 20;
-        freeSpins += 8;
-        gotStar = true;
-      }
-
-      return { total, gotStar };
-    }
-
-    async function spin() {
-      if (spinning) return;
-      spinning = true;
-
-      initAudio();
-      spinSound();
-
-      if (freeSpins > 0) {
-        freeSpins--;
-      } else {
-        if (balance < currentBet) {
-          spinning = false;
-          return;
-        }
-        balance -= currentBet;
-        jackpots.grand += 2;
-        jackpots.major += 1;
-        jackpots.minor += 1;
-        jackpots.mini += 1;
-      }
-
-      updateHud();
-
-      const finalMatrix = randomMatrix();
-      const temp = blankMatrix();
-
-      // REEL 1 -> REEL 2 -> REEL 3 -> REEL 4 -> REEL 5
-      // всеки рил е цял блок 1x3 и "пада" заедно
-      for (let col = 0; col < 5; col++) {
-        for (let loop = 0; loop < 9; loop++) {
-          for (let row = 0; row < 3; row++) {
-            temp[row][col] = randomSymbol();
-          }
-          draw(temp.map(r => [...r]));
-          await new Promise(res => setTimeout(res, 70));
-        }
-
-        // малък ефект на падане отгоре надолу в рамките на рила
-        temp[0][col] = finalMatrix[0][col];
-        draw(temp.map(r => [...r]));
-        await new Promise(res => setTimeout(res, 70));
-
-        temp[1][col] = finalMatrix[1][col];
-        draw(temp.map(r => [...r]));
-        await new Promise(res => setTimeout(res, 70));
-
-        temp[2][col] = finalMatrix[2][col];
-        draw(temp.map(r => [...r]));
-        await new Promise(res => setTimeout(res, 90));
-      }
-
-      const lineRes = evaluateLines(finalMatrix);
-      const scatterRes = evaluateScatters(finalMatrix);
-
-      let win = lineRes.total + scatterRes.total;
-
-      const chance = Math.random();
-      if (jackpots.mini >= 20 && chance < 0.002) {
-        win += jackpots.mini;
-        jackpots.mini = 10;
-        jackpotSound();
-      } else if (jackpots.minor >= 80 && chance < 0.0008) {
-        win += jackpots.minor;
-        jackpots.minor = 50;
-        jackpotSound();
-      } else if (jackpots.major >= 600 && chance < 0.00025) {
-        win += jackpots.major;
-        jackpots.major = 500;
-        jackpotSound();
-      } else if (jackpots.grand >= 26000 && chance < 0.00005) {
-        win += jackpots.grand;
-        jackpots.grand = 25807;
-        jackpotSound();
-      }
-
-      if (scatterRes.gotStar) {
-        freeSound();
-      }
-
-      if (win > 0) {
-        balance += win;
-        lastWin = win;
-        winSound();
-      } else {
-        lastWin = 0;
-      }
-
-      draw(lineRes.expanded, lineRes.highlights);
-      updateHud();
-      spinning = false;
-
-      if (autoSpin) {
-        setTimeout(() => spin(), 500);
-      }
-    }
-
-    document.querySelectorAll(".betBtn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".betBtn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        currentBet = Number(btn.dataset.bet);
-        updateHud();
-      });
+    reels.forEach(reel => {
+        let rand = symbols[Math.floor(Math.random() * symbols.length)];
+        reel.textContent = rand;
+        result.push(rand);
     });
 
-    byId("spinBtn").addEventListener("click", () => {
-      initAudio();
-      spin();
-    });
+    checkWin(result);
+}
 
-    byId("autoBtn").addEventListener("click", () => {
-      autoSpin = !autoSpin;
-      byId("autoBtn").style.borderColor = autoSpin ? "#78ff76" : "rgba(255,255,255,.15)";
-      byId("autoBtn").style.color = autoSpin ? "#78ff76" : "#fff";
-      if (autoSpin && !spinning) spin();
-    });
+function checkWin(res) {
+    let win = res.every(v => v === res[0]);
+    document.getElementById("result").textContent = win ? "🎉 WIN!" : "";
+}
+</script>
 
-    byId("soundBtn").addEventListener("click", () => {
-      soundOn = !soundOn;
-      byId("soundBtn").innerHTML = soundOn ? "🔊<br>SOUND" : "🔇<br>SOUND";
-    });
-
-    draw(randomMatrix());
-    updateHud();
-  </script>
 </body>
 </html>
