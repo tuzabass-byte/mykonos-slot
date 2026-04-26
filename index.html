@@ -3,78 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Mitko Koch Bells v2</title>
+<title>Mitko Koch Bells</title>
 
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:radial-gradient(circle,#5b1d00,#1b0900);color:#fff}
+body{margin:0;font-family:Arial;background:#1b0900;color:#fff;text-align:center}
 .app{max-width:420px;margin:auto;padding:10px}
-.logo{text-align:center;font-size:26px;font-weight:900;color:#ffcc3d}
-
-.machine{border:3px solid #ffcc3d;border-radius:15px;background:#1a0800;padding:10px}
 .reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
-.reel{display:grid;grid-template-rows:repeat(3,70px);gap:3px}
-.cell{border:1px solid #ffcc3d;background:#2a0a00;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900}
-
-.bell small{display:block;background:#fff;color:#000;border-radius:6px;font-size:11px;padding:2px}
-
-.controls{text-align:center;margin-top:10px}
-button{padding:10px 20px;border:0;border-radius:8px;font-weight:900}
-.spin{background:#ff4b1f;color:white}
-
-.status{text-align:center;margin:10px;font-weight:900}
-
-.boil{animation:boil .15s infinite alternate}
-@keyframes boil{
-from{transform:translateX(-2px)}
-to{transform:translateX(2px)}
-}
+.cell{height:70px;border:1px solid gold;display:flex;align-items:center;justify-content:center;font-size:26px;background:#2a0a00}
+.controls{margin-top:10px}
+button{padding:10px 15px;margin:5px;font-weight:900}
 </style>
 </head>
 
 <body>
 
 <div class="app">
-<div class="logo">👨‍🍳 MITKO BELLS 🔔</div>
 
-<div class="machine" id="machine">
+<h2>👨‍🍳 MITKO BELLS 🔔</h2>
+
+<div>Баланс: <span id="bal">20</span>€</div>
+<div>Залог: <span id="bet">1</span>€</div>
+
 <div class="reels" id="reels"></div>
-</div>
-
-<div class="status" id="status">ГОТОВ</div>
 
 <div class="controls">
-<button class="spin" onclick="spin()">SPIN</button>
+<button onclick="changeBet(-1)">-</button>
+<button onclick="spin()">SPIN</button>
+<button onclick="changeBet(1)">+</button>
 </div>
+
+<div id="status"></div>
 
 </div>
 
 <script>
 
 let balance=20;
+let bets=[0.5,1,2,5];
+let bi=1;
+
 let inBonus=false;
 let respins=0;
 let total=0;
 
-const symbols=["🍲","🔪","🥩","🧂","🔥"];
+const baseSymbols=["🍲","🔪","🥩","🧂","🔥"];
+
+function update(){
+bal.innerText=balance.toFixed(2);
+bet.innerText=bets[bi];
+}
+
+function changeBet(d){
+bi=Math.max(0,Math.min(bets.length-1,bi+d));
+update();
+}
 
 function randBell(){
-let vals=[0.2,0.5,1,2,3,5];
-return vals[Math.floor(Math.random()*vals.length)];
+let v=[0.2,0.5,1,2,3,5];
+return v[Math.floor(Math.random()*v.length)];
 }
 
 function makeBoard(){
 let b=[];
-for(let r=0;r<3;r++){
-b[r]=[];
-for(let c=0;c<5;c++){
-
-if(Math.random()<0.15){
-b[r][c]={id:"BELL",v:randBell()};
+for(let i=0;i<15;i++){
+if(Math.random()<0.2){
+b.push({t:"B",v:randBell()});
 }else{
-b[r][c]={id:"SYM",v:0};
-}
-
+b.push({t:"S",v:0});
 }
 }
 return b;
@@ -82,67 +77,41 @@ return b;
 
 function draw(b){
 reels.innerHTML="";
-for(let c=0;c<5;c++){
-let reel=document.createElement("div");
-reel.className="reel";
+b.forEach(x=>{
+let d=document.createElement("div");
+d.className="cell";
 
-for(let r=0;r<3;r++){
-let cell=document.createElement("div");
-cell.className="cell";
-
-let obj=b[r][c];
-
-if(obj.id==="BELL"){
-cell.innerHTML=`<div class="bell">🔔<small>${obj.v}€</small></div>`;
+if(x.t==="B"){
+d.innerHTML="🔔<br>"+x.v+"€";
 }else{
-cell.innerHTML=symbols[Math.floor(Math.random()*symbols.length)];
+d.innerHTML=baseSymbols[Math.floor(Math.random()*baseSymbols.length)];
 }
 
-reel.appendChild(cell);
-}
-reels.appendChild(reel);
-}
+reels.appendChild(d);
+});
 }
 
 function countBells(b){
-let n=0;
-for(let r=0;r<3;r++)for(let c=0;c<5;c++)if(b[r][c].id==="BELL")n++;
-return n;
+return b.filter(x=>x.t==="B").length;
 }
 
 function collect(b){
 let got=0;
-
-for(let r=0;r<3;r++){
-for(let c=0;c<5;c++){
-if(b[r][c].id==="BELL"){
-total+=b[r][c].v;
+b.forEach(x=>{
+if(x.t==="B"){
+total+=x.v;
 got++;
-kitchenDing();
 }
-}
-}
-
+});
 return got;
 }
 
-function kitchenDing(){
-beep(1200,.05,"triangle");
-setTimeout(()=>beep(1500,.05,"triangle"),80);
-}
-
-function beep(f,d,t){
-let c=new (window.AudioContext||window.webkitAudioContext)();
-let o=c.createOscillator(),g=c.createGain();
-o.type=t;
-o.frequency.value=f;
-g.gain.value=.05;
-o.connect(g);g.connect(c.destination);
-o.start();
-o.stop(c.currentTime+d);
-}
-
 function spin(){
+
+if(!inBonus && balance<bets[bi]){
+status.innerText="Няма баланс";
+return;
+}
 
 let b=makeBoard();
 draw(b);
@@ -150,26 +119,28 @@ draw(b);
 if(inBonus){
 
 respins--;
-let got=collect(b);
 
-if(got>0){
+let g=collect(b);
+
+if(g>0){
 respins=3;
-machine.classList.add("boil");
-setTimeout(()=>machine.classList.remove("boil"),500);
-status.innerText="🔔 МИТКО ДОБАВИ КАМБАНИ!";
+status.innerText="🔔 +"+g+" камбани!";
 }else{
-status.innerText="НЯМА КАМБАНА...";
+status.innerText="няма камбани...";
 }
 
 if(respins<=0){
 inBonus=false;
-status.innerText="🍲 ОБЩО: "+total+"€";
 balance+=total;
+status.innerText="💰 общо: "+total+"€";
 total=0;
 }
 
+update();
 return;
 }
+
+balance-=bets[bi];
 
 let bells=countBells(b);
 
@@ -180,16 +151,16 @@ total=0;
 
 collect(b);
 
-machine.classList.add("boil");
-setTimeout(()=>machine.classList.remove("boil"),1200);
-
-status.innerText="🔥 БОНУС! СЪБИРАЙ КАМБАНИ!";
+status.innerText="🔥 BONUS!";
+update();
 return;
 }
 
-status.innerText="СПИН...";
+status.innerText="spin...";
+update();
 }
 
+update();
 draw(makeBoard());
 
 </script>
