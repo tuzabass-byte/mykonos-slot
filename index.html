@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V19 FINAL</title>
+<title>Vasa Fortune V20</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -102,6 +102,7 @@ const HELP_BALANCE=10;
 const SOFT_LIMIT=65;
 const DRAIN_LIMIT=70;
 const HARD_LIMIT=85;
+const MAX_FREE_WIN=30;
 
 let balance=START_BALANCE;
 let bets=[0.10,0.20,0.50,1,2,5,10];
@@ -166,24 +167,15 @@ let bell=a.find(x=>x.id=="B");
 let horse=a.find(x=>x.id=="H");
 let cherry=a.find(x=>x.id=="C");
 
-/* Помощ при нисък баланс */
 if(balance<=HELP_BALANCE){
-sc.w=4.8;
-w.w=2.2;
-seven.w=3.5;
-bar.w=6;
-dia.w=6;
-cherry.w=22;
-horse.w=16;
-bell.w=15;
+sc.w=4.8; w.w=2.2; seven.w=3.5; bar.w=6; dia.w=6;
+cherry.w=22; horse.w=16; bell.w=15;
 }
 
-/* Нормален контрол */
 if(balance>=40){sc.w=1.6}
 if(balance>=55){sc.w=.8}
 if(balance>=SOFT_LIMIT){sc.w=.25}
 
-/* По-висок залог = по-сухо */
 if(currentBet>=1){
 seven.w=2.4;bar.w=5;dia.w=5.5;w.w=1.2;sc.w=Math.min(sc.w,1.5);
 cherry.w=24;horse.w=17;bell.w=15;
@@ -199,19 +191,11 @@ seven.w=.35;bar.w=1;dia.w=1;w.w=.2;sc.w=.18;
 cherry.w=42;horse.w=30;bell.w=28;
 }
 
-/* V19: DRAIN MODE след 70€ */
 if(balance>=DRAIN_LIMIT || coolingSpins>0){
-seven.w=.05;
-bar.w=.10;
-dia.w=.10;
-w.w=.03;
-sc.w=.02;
-cherry.w=55;
-horse.w=40;
-bell.w=38;
+seven.w=.05;bar.w=.10;dia.w=.10;w.w=.03;sc.w=.02;
+cherry.w=55;horse.w=40;bell.w=38;
 }
 
-/* Free Spins — контролирани */
 if(inFree){
 w.w=bets[bi]>=5?.25:.9;
 sc.w=bets[bi]>=5?.08:.22;
@@ -302,19 +286,15 @@ return Math.min(amount,room);
 
 function maxSpinWin(amount,isFree){
 let betv=lastBet;
-let cap=isFree?betv*5:betv*12;
 
 if(isFree){
-cap=Math.min(cap,20);
+return amount;
 }
 
-if(isFree && totalFree>30){
-cap=Math.min(betv*7,22);
-}
+let cap=betv*12;
 
-/* V19: след 70€ печалбата на врътка е максимум 0.50€ */
 if(balance>=DRAIN_LIMIT || coolingSpins>0){
-cap=0.5;
+cap=Math.min(0.5,betv*0.5);
 }
 
 return Math.min(amount,cap);
@@ -476,6 +456,12 @@ beep(1000,.2,"triangle");
 }
 
 total=maxSpinWin(total,isFree);
+
+if(isFree){
+let allowedFree=Math.max(0,MAX_FREE_WIN-freeWin);
+total=Math.min(total,allowedFree);
+}
+
 total=limitWin(total);
 
 if(total>0){
