@@ -3,161 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V8</title>
+<title>Vasa Fortune V9</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:white}
-.app{max-width:430px;margin:auto;padding:20px 12px 100px}
-.logo{text-align:center;font-size:30px;font-weight:900;color:#36f3ff;text-shadow:0 0 18px #00eaff}
-.sub{text-align:center;color:#ffd35a;margin:8px 0 12px}
-.freeBox{display:none;background:#ffe15a;color:#111;text-align:center;font-weight:900;padding:9px;border-radius:10px;margin-bottom:10px}
-.jackpot{height:52px;border:3px solid #36f1ff;border-radius:14px;background:#031632;margin:8px 0;display:flex;justify-content:space-between;align-items:center;padding:0 18px;font-size:22px;font-weight:900;box-shadow:0 0 15px #00eaff}
-.machine{border:3px solid #ffd23c;border-radius:15px;overflow:hidden;background:#21001b;box-shadow:0 0 22px rgba(255,208,40,.75)}
-.title{background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);padding:12px;text-align:center;color:#ffe15a;font-size:24px;font-weight:900;border-bottom:3px solid #ffd23c}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:7px;background:#280023;border-bottom:3px solid #ffd23c}
-.reel{display:grid;grid-template-rows:repeat(3,72px);gap:3px}
-.cell{border:1px solid #ffd85a;background:radial-gradient(circle,#884311,#310033 52%,#120013);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900}
-.cell.win{background:gold;color:#111;animation:flash .35s infinite alternate}
-.cell.scatter{background:radial-gradient(circle,#fff700,#ff9900);color:#111;font-size:24px}
-.spin .cell{animation:blur .08s linear infinite}
-@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
-@keyframes flash{to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}}
-.info{background:#080611;padding:11px}
-.status{text-align:center;font-size:19px;font-weight:900;min-height:30px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
-.stat{border:1px solid #6e7490;border-radius:8px;background:#090814;text-align:center;padding:7px 2px}
-.stat small{display:block;color:#ccc;font-size:11px}.stat b{font-size:20px}
-.controls{display:flex;justify-content:space-around;align-items:center;margin-top:16px}
-button{border:0;color:white;font-weight:900;cursor:pointer}
-button:active{transform:scale(.94)}
-.betBtn{width:68px;height:68px;border-radius:50%;border:4px solid white;background:radial-gradient(circle,#16f2ff,#003b88)}
-.spinBtn{width:108px;height:108px;border-radius:50%;border:6px solid white;background:radial-gradient(circle,#ff2020,#790000);font-size:19px;box-shadow:0 0 24px red}
-.extra{text-align:center;margin-top:10px}
-.small{padding:10px 13px;border-radius:8px;background:#112a67;border:1px solid #37eaff;margin:3px}
-.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:78px;background:#071b50;display:grid;grid-template-columns:repeat(5,1fr)}
-.nav{text-align:center;font-size:12px;padding-top:8px;color:#c5cdec}.nav div{font-size:24px}
-.deposit{margin:14px 6px;border-radius:10px;background:#2cf5f2;color:#061943;display:flex;align-items:center;justify-content:center;font-weight:900}
+body{margin:0;font-family:Arial;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
+.app{max-width:430px;margin:auto;padding:20px}
+.logo{text-align:center;font-size:28px;font-weight:900;color:#36f3ff}
+.freeBox{display:none;background:#ffe15a;color:#111;padding:8px;border-radius:10px;text-align:center;font-weight:900;margin:8px 0}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;background:#200020}
+.reel{display:grid;grid-template-rows:repeat(3,70px);gap:3px}
+.cell{border:1px solid gold;display:flex;align-items:center;justify-content:center;font-size:32px;background:#300020}
+.cell.win{background:gold;color:#111}
+.cell.scatter{background:orange;color:#000}
+.controls{text-align:center;margin-top:15px}
+button{padding:12px 18px;margin:5px;font-weight:900}
 </style>
 </head>
-<body>
 
+<body>
 <div class="app">
 <div class="logo">VASA FORTUNE</div>
-<div class="sub">Demo баланс · 5 линии · 30 Free Spins</div>
-<div class="freeBox" id="freeBox"></div>
+<div id="freeBox" class="freeBox"></div>
 
-<div class="jackpot"><span style="color:#ff4ee6">Mega</span><span id="mega">12928.65 €</span></div>
-<div class="jackpot"><span style="color:#54ff65">Maxi</span><span id="maxi">647.45 €</span></div>
-<div class="jackpot"><span style="color:#c9f7ff">Mini</span><span id="mini">42.66 €</span></div>
-
-<div class="machine">
-<div class="title">🔥 VASA FORTUNE 🔥</div>
 <div class="reels" id="reels"></div>
-<div class="info">
-<div class="status" id="status">ГОТОВ</div>
-<div class="stats">
-<div class="stat"><small>ПЕЧАЛБА</small><b id="win">0.00 €</b></div>
-<div class="stat"><small>ЗАЛОГ</small><b id="bet">0.10 €</b></div>
-<div class="stat"><small>БАЛАНС</small><b id="bal">20.00 €</b></div>
-</div>
-</div>
+
+<div id="status" style="text-align:center;font-weight:900;margin:10px">ГОТОВ</div>
+
+<div style="display:flex;justify-content:space-around">
+<div>ПЕЧАЛБА<br><b id="win">0.00 €</b></div>
+<div>ЗАЛОГ<br><b id="bet">0.50 €</b></div>
+<div>БАЛАНС<br><b id="bal">20.00 €</b></div>
 </div>
 
 <div class="controls">
-<button class="betBtn" onclick="changeBet(-1)">BET -</button>
-<button class="spinBtn" id="spinButton" onclick="spin()">SPIN</button>
-<button class="betBtn" onclick="changeBet(1)">BET +</button>
+<button onclick="spin()">SPIN</button>
 </div>
-
-<div class="extra">
-<button class="small" onclick="alert('SC = Scatter. 3 SC дават 30 Free Spins. W = Wild, но не започва линия сам. Demo credits, не реални пари.')">PAYTABLE</button>
-<button class="small" id="soundBtn" onclick="toggleSound()">SOUND ON</button>
-</div>
-</div>
-
-<div class="bottom">
-<div class="nav"><div>🏝️</div>Начало</div>
-<div class="nav"><div>▦</div>Игри</div>
-<div class="nav" onclick="bonus()"><div>🎁</div>Бонуси</div>
-<div class="nav"><div>♡</div>Любими</div>
-<div class="deposit" onclick="deposit()">Депозит</div>
 </div>
 
 <script>
-const START_BALANCE = 20;
-const MAX_PROFIT = 60;
-const MAX_BALANCE = START_BALANCE + MAX_PROFIT;
-
-let balance=START_BALANCE,bets=[.1,.2,.5,1,2,5,10],bi=0,spinning=false,snd=true;
-let free=0,totalFree=0,freeWin=0,inFree=false,lastBet=.1;
-let jp={mega:12928.65,maxi:647.45,mini:42.66};
+let balance=20,bet=0.5;
+let inFree=false,free=0,totalFree=0,freeWin=0;
 
 const symbols=[
-{id:"7",h:"7",w:5,p:{3:4,4:12,5:60}},
-{id:"BAR",h:"BAR",w:8,p:{3:2.5,4:8,5:30}},
-{id:"D",h:"💎",w:10,p:{3:1.8,4:5,5:18}},
-{id:"C",h:"🍒",w:18,p:{3:.8,4:2.5,5:9}},
-{id:"B",h:"🔔",w:14,p:{3:.6,4:1.8,5:6}},
-{id:"H",h:"♞",w:12,p:{3:.4,4:1.2,5:4}},
-{id:"W",h:"W",w:2,p:{3:0,4:0,5:0}},
-{id:"S",h:"SC",w:3,p:{3:0,4:0,5:0}}
+{id:"7",h:"7",w:5,p:{3:5,4:15,5:50}},
+{id:"BAR",h:"BAR",w:8,p:{3:4,4:10,5:25}},
+{id:"D",h:"💎",w:10,p:{3:3,4:7,5:20}},
+{id:"C",h:"🍒",w:18,p:{3:2,4:5,5:12}},
+{id:"B",h:"🔔",w:14,p:{3:1.5,4:4,5:10}},
+{id:"H",h:"♞",w:12,p:{3:1,4:3,5:8}},
+{id:"W",h:"W",w:3},
+{id:"S",h:"SC",w:3}
 ];
 
-const lines=[
-[0,0,0,0,0],
-[1,1,1,1,1],
-[2,2,2,2,2],
-[0,1,2,1,0],
-[2,1,0,1,2]
-];
-
-function m(v){return Number(v).toFixed(2)+" €"}
-
-function beep(f,d=.07,t="sine"){
-if(!snd)return;
-let c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();
-o.frequency.value=f;o.type=t;g.gain.value=.04;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)
-}
-
-function currentProfit(){return balance-START_BALANCE+(inFree?freeWin:0)}
-
-function limitWin(amount){
-let room=MAX_BALANCE-balance;
-if(inFree) room=MAX_BALANCE-balance-freeWin;
-if(room<=0)return 0;
-return Math.min(amount,room);
-}
-
-function getSymbols(){
-let a=JSON.parse(JSON.stringify(symbols));
-let profit=balance-START_BALANCE;
-
-let scatter=a.find(x=>x.id=="S");
-let wild=a.find(x=>x.id=="W");
-
-if(profit<5) scatter.w=4;
-if(profit>=20) scatter.w=2;
-if(profit>=40) scatter.w=1;
-if(profit>=55) scatter.w=0.5;
-
-if(inFree){
-wild.w=4;
-scatter.w=1.5;
-}
-
-return a;
-}
+function m(v){return v.toFixed(2)+" €"}
 
 function rs(){
-let a=getSymbols(),sum=a.reduce((s,x)=>s+x.w,0),r=Math.random()*sum;
-for(let x of a){r-=x.w;if(r<=0)return x}
-return a[0]
-}
-
-function setCell(c,s){
-c.innerHTML=s.h;
-c.dataset.id=s.id;
-c.classList.toggle("scatter",s.id=="S")
+let sum=symbols.reduce((a,b)=>a+b.w,0);
+let r=Math.random()*sum;
+for(let s of symbols){r-=s.w;if(r<=0)return s}
+return symbols[0];
 }
 
 function draw(){
@@ -166,197 +69,127 @@ for(let c=0;c<5;c++){
 let reel=document.createElement("div");
 reel.className="reel";
 for(let r=0;r<3;r++){
-let d=document.createElement("div");
-d.className="cell";
-setCell(d,rs());
-reel.appendChild(d)
+let cell=document.createElement("div");
+cell.className="cell";
+let s=rs();
+cell.innerHTML=s.h;
+cell.dataset.id=s.id;
+if(s.id=="S")cell.classList.add("scatter");
+reel.appendChild(cell);
 }
-reels.appendChild(reel)
+reels.appendChild(reel);
 }
-}
-
-function ui(){
-bet.innerText=m(bets[bi]);
-bal.innerText=m(balance);
-mega.innerText=m(jp.mega);
-maxi.innerText=m(jp.maxi);
-mini.innerText=m(jp.mini);
-freeBox.style.display=inFree?"block":"none";
-freeBox.innerText=inFree?`FREE SPINS: ${totalFree-free}/${totalFree} · FREE WIN: ${m(freeWin)}`:"";
-spinButton.innerText=inFree?"FREE SPIN":"SPIN";
 }
 
 function board(){
 let b=[[],[],[]];
-[...document.querySelectorAll(".reel")].forEach((reel,c)=>[...reel.children].forEach((x,r)=>b[r][c]=x));
-return b
+[...document.querySelectorAll(".reel")].forEach((r,c)=>{
+[...r.children].forEach((cell,i)=>b[i][c]=cell);
+});
+return b;
 }
 
-function changeBet(d){
-if(spinning||inFree)return;
-bi=Math.max(0,Math.min(bets.length-1,bi+d));
-ui()
+function spin(){
+if(!inFree && balance<bet){status.innerText="НЯМА ПАРИ";return}
+
+if(inFree){
+free--;
+status.innerText="FREE SPIN "+(totalFree-free)+"/"+totalFree;
+}else{
+balance-=bet;
 }
 
-function startFree(){
+draw();
+setTimeout(()=>calc(),200);
+}
+
+function calc(){
+let b=board();
+let total=0;
+let sc=0;
+
+b.flat().forEach(c=>{if(c.dataset.id=="S")sc++});
+
+if(sc>=3 && !inFree){
 inFree=true;
 free=30;
 totalFree=30;
 freeWin=0;
-lastBet=bets[bi];
-status.innerText="🎉 ПОЗДРАВЛЕНИЯ! ПЕЧЕЛИТЕ 30 FREE SPINS!";
-beep(900,.25,"triangle");
-ui()
+status.innerText="🎉 30 FREE SPINS!";
+return;
 }
 
-function endFree(){
-inFree=false;
-balance+=freeWin;
-status.innerText="🎉 ПЕЧАЛБА ОТ БЕЗПЛАТНИ ИГРИ: "+m(freeWin);
-win.innerText=m(freeWin);
-free=0;totalFree=0;freeWin=0;
-beep(1200,.25,"triangle");
-ui()
+for(let r=0;r<3;r++){
+let row=b[r];
+
+let base=null;
+let count=0;
+
+for(let i=0;i<5;i++){
+let id=row[i].dataset.id;
+
+if(!base && id!="W" && id!="S"){
+base=id;
 }
 
-function spin(){
-if(spinning)return;
-let betv=bets[bi],isFree=inFree;
-
-if(!isFree&&balance<betv){
-status.innerText="НЕДОСТАТЪЧЕН БАЛАНС";
-return
+if(id==base || id=="W"){
+count++;
+}else break;
 }
 
-if(!isFree&&balance>=MAX_BALANCE){
-status.innerText="ДОСТИГНАТ Е МАКСИМАЛЕН DEMO БАЛАНС";
-return
-}
-
-spinning=true;
-win.innerText=m(0);
-document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
-
-if(isFree){
-free--;
-status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
-}else{
-balance-=betv;
-lastBet=betv;
-status.innerText="ВЪРТИ...";
-}
-
-ui();
-beep(120,.15,"sawtooth");
-
-let reelsA=[...document.querySelectorAll(".reel")],stopped=0;
-reelsA.forEach((reel,i)=>{
-reel.classList.add("spin");
-let t=setInterval(()=>[...reel.children].forEach(c=>setCell(c,rs())),65);
-setTimeout(()=>{
-clearInterval(t);
-[...reel.children].forEach(c=>setCell(c,rs()));
-reel.classList.remove("spin");
-beep(360,.05,"square");
-stopped++;
-if(stopped==5)setTimeout(()=>{calc(isFree);grow(betv);spinning=false},150)
-},750+i*300)
-})
-}
-
-function calc(isFree){
-let b=board(),betv=lastBet,total=0,wins=[],sc=0;
-b.flat().forEach(c=>{if(c.dataset.id=="S")sc++});
-
-if(sc>=3&&!isFree){
-startFree();
-return
-}
-
-for(let line of lines){
-let first=b[line[0]][0].dataset.id;
-if(first=="S"||first=="W")continue;
-
-let count=1;
-for(let col=1;col<5;col++){
-let id=b[line[col]][col].dataset.id;
-if(id==first||id=="W")count++;
-else break
-}
-
-if(count>=3){
-let sym=symbols.find(x=>x.id==first);
-let amount=betv*sym.p[count];
-total+=amount;
-for(let col=0;col<count;col++)wins.push(b[line[col]][col])
+if(base && count>=3){
+let sym=symbols.find(s=>s.id==base);
+let win=bet*sym.p[count];
+total+=win;
+for(let i=0;i<count;i++)row[i].classList.add("win");
 }
 }
 
-if(sc>=3&&isFree){
-free+=10;
-totalFree+=10;
-status.innerText="⭐ RETRIGGER +10 FREE SPINS!";
-beep(1000,.2,"triangle")
+// expanding wild във free spins
+if(inFree){
+for(let c=0;c<5;c++){
+let col=[b[0][c],b[1][c],b[2][c]];
+if(col.some(x=>x.dataset.id=="W") && Math.random()<0.4){
+col.forEach(x=>{
+x.dataset.id="W";
+x.innerHTML="W";
+});
+status.innerText="🔥 EXPANDING WILD!";
 }
-
-total=limitWin(total);
+}
+}
 
 if(total>0){
-wins.forEach(c=>c.classList.add("win"));
-win.innerText=m(total);
-
-if(isFree){
+if(inFree){
 freeWin+=total;
-status.innerText="FREE WIN "+m(total)
+status.innerText="FREE WIN "+m(total);
 }else{
 balance+=total;
-status.innerText="ПЕЧАЛБА "+m(total)
-}
-
-beep(total>=betv*15?1200:780,.15,"triangle")
-}else{
-status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК"
-}
-
-ui();
-
-if(isFree&&free<=0){
-setTimeout(endFree,900)
+status.innerText="ПЕЧАЛБА "+m(total);
 }
 }
 
-function grow(b){
-jp.mega+=b*.01;
-jp.maxi+=b*.006;
-jp.mini+=b*.003;
-ui()
+if(inFree && free<=0){
+inFree=false;
+balance+=freeWin;
+status.innerText="🎉 СПЕЧЕЛИХТЕ "+m(freeWin)+" ОТ FREE SPINS!";
+freeBox.style.display="none";
+freeWin=0;
 }
 
-function bonus(){
-if(balance<START_BALANCE){
-balance+=5;
-if(balance>START_BALANCE)balance=START_BALANCE;
-status.innerText="БОНУС +5.00 €";
-}else{
-status.innerText="БОНУСЪТ Е ДОСТЪПЕН САМО ПРИ НИСЪК БАЛАНС";
-}
-ui()
+update();
 }
 
-function deposit(){
-balance=START_BALANCE;
-free=0;totalFree=0;freeWin=0;inFree=false;
-status.innerText="DEMO ДЕПОЗИТ: БАЛАНСЪТ Е 20.00 €";
-ui()
-}
-
-function toggleSound(){
-snd=!snd;
-soundBtn.innerText=snd?"SOUND ON":"SOUND OFF"
+function update(){
+win.innerText=m(inFree?freeWin:0);
+bal.innerText=m(balance);
+freeBox.style.display=inFree?"block":"none";
+freeBox.innerText="FREE SPINS "+(totalFree-free)+"/"+totalFree+" · "+m(freeWin);
 }
 
 draw();
-ui();
+update();
 </script>
+
 </body>
 </html>
