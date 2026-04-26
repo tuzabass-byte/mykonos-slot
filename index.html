@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V22</title>
+<title>Vasa Fortune V23 Clean RNG</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -102,7 +102,6 @@ const HELP_BALANCE=10;
 const SOFT_LIMIT=65;
 const DRAIN_LIMIT=70;
 const HARD_LIMIT=85;
-const MAX_FREE_WIN=30;
 
 let balance=START_BALANCE;
 let bets=[0.10,0.20,0.50,1,2,5,10];
@@ -167,15 +166,18 @@ let bell=a.find(x=>x.id=="B");
 let horse=a.find(x=>x.id=="H");
 let cherry=a.find(x=>x.id=="C");
 
-if(balance<=HELP_BALANCE){
+/* нисък баланс: дава шанс за заигравка */
+if(balance<=HELP_BALANCE && !inFree){
 sc.w=4.8; w.w=2.2; seven.w=3.5; bar.w=6; dia.w=6;
 cherry.w=22; horse.w=16; bell.w=15;
 }
 
+/* нормална игра */
 if(balance>=40){sc.w=1.6}
 if(balance>=55){sc.w=.8}
 if(balance>=SOFT_LIMIT){sc.w=.25}
 
+/* висок залог = по-сухо */
 if(currentBet>=1){
 seven.w=2.4;bar.w=5;dia.w=5.5;w.w=1.2;sc.w=Math.min(sc.w,1.5);
 cherry.w=24;horse.w=17;bell.w=15;
@@ -191,25 +193,33 @@ seven.w=.35;bar.w=1;dia.w=1;w.w=.2;sc.w=.18;
 cherry.w=42;horse.w=30;bell.w=28;
 }
 
+/* drain mode след 70€ */
 if(balance>=DRAIN_LIMIT || coolingSpins>0){
 seven.w=.05;bar.w=.10;dia.w=.10;w.w=.03;sc.w=.02;
 cherry.w=55;horse.w=40;bell.w=38;
 }
 
+/* FREE SPINS: сухотата е в символите, не в скрито зануляване */
 if(inFree){
-w.w=bets[bi]>=5?.25:.9;
-sc.w=bets[bi]>=5?.08:.22;
-seven.w=bets[bi]>=5?.2:.45;
-bar.w=bets[bi]>=5?.45:1.1;
-dia.w=bets[bi]>=5?.45:1.1;
-cherry.w=bets[bi]>=5?46:38;
-horse.w=bets[bi]>=5?36:30;
-bell.w=bets[bi]>=5?34:28;
-
-if(freeWin>=MAX_FREE_WIN*0.75){
-w.w=.08;sc.w=.03;seven.w=.05;bar.w=.12;dia.w=.12;
-cherry.w=55;horse.w=42;bell.w=40;
+w.w=bets[bi]>=5?.18:.65;
+sc.w=bets[bi]>=5?.05:.14;
+seven.w=bets[bi]>=5?.12:.28;
+bar.w=bets[bi]>=5?.25:.70;
+dia.w=bets[bi]>=5?.25:.70;
+cherry.w=bets[bi]>=5?50:42;
+horse.w=bets[bi]>=5?42:34;
+bell.w=bets[bi]>=5?40:32;
 }
+
+/* ако Free Win вече е добър, бонусът става още по-сух ПРЕДИ символите */
+if(inFree && freeWin>=20){
+w.w=.05;sc.w=.02;seven.w=.03;bar.w=.06;dia.w=.06;
+cherry.w=60;horse.w=46;bell.w=44;
+}
+
+if(inFree && freeWin>=30){
+w.w=.01;sc.w=.005;seven.w=.01;bar.w=.02;dia.w=.02;
+cherry.w=70;horse.w=52;bell.w=50;
 }
 
 return a;
@@ -282,10 +292,9 @@ beep(900,.25,"triangle");
 update();
 }
 
-function limitWin(amount){
+function limitWinNormal(amount){
+if(balance>=HARD_LIMIT)return 0;
 let room=HARD_LIMIT-balance;
-if(inFree)room=HARD_LIMIT-balance-freeWin;
-if(room<=0)return 0;
 return Math.min(amount,room);
 }
 
@@ -305,11 +314,6 @@ cap=Math.min(0.5,betv*0.5);
 return Math.min(amount,cap);
 }
 
-function capFreeWin(total){
-let allowed=Math.max(0,MAX_FREE_WIN-freeWin);
-return Math.min(total,allowed);
-}
-
 function activateCooling(){
 if(balance>=DRAIN_LIMIT){
 coolingSpins=35;
@@ -319,17 +323,18 @@ coolingSpins=35;
 function endFree(){
 inFree=false;
 
-let add=limitWin(freeWin);
-balance+=add;
+balance+=freeWin;
+if(balance>HARD_LIMIT)balance=HARD_LIMIT;
+
 activateCooling();
 
-if(add>0){
-status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(add)+" ОТ FREE SPINS!";
-popupMsg("🎉 БРАВО!","Спечелихте "+m(add)+" от FREE SPINS!");
-win.innerText=m(add);
+if(freeWin>0){
+status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(freeWin)+" ОТ FREE SPINS!";
+popupMsg("🎉 БРАВО!","Спечелихте "+m(freeWin)+" от FREE SPINS!");
+win.innerText=m(freeWin);
 }else{
 status.innerText="FREE SPINS ПРИКЛЮЧИХА";
-popupMsg("FREE SPINS","Бонусът приключи без добавена печалба.");
+popupMsg("FREE SPINS","Бонусът приключи без печалба.");
 win.innerText=m(0);
 }
 
@@ -389,8 +394,8 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=bets[bi]>=5?.02:.035;
-if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance && freeWin < MAX_FREE_WIN*0.65){
+let chance=bets[bi]>=5?.015:.025;
+if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance&&freeWin<20){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
 }
@@ -457,7 +462,7 @@ for(let i=0;i<res.count;i++)winners.push(cells[i]);
 }
 }
 
-if(sc>=3&&isFree && freeWin < MAX_FREE_WIN*0.5){
+if(sc>=3&&isFree&&freeWin<15){
 free+=10;
 totalFree+=10;
 status.innerText="⭐ RETRIGGER +10 FREE SPINS!";
@@ -467,11 +472,9 @@ beep(1000,.2,"triangle");
 
 total=maxSpinWin(total,isFree);
 
-if(isFree){
-total=capFreeWin(total);
+if(!isFree){
+total=limitWinNormal(total);
 }
-
-total=limitWin(total);
 
 if(total>0){
 winners.forEach(c=>c.classList.add("win"));
@@ -491,7 +494,7 @@ beep(total>=lastBet*20?1200:780,.15,"triangle");
 status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
 }
 
-if(!isFree && coolingSpins>0)coolingSpins--;
+if(!isFree&&coolingSpins>0)coolingSpins--;
 
 update();
 
