@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V14</title>
+<title>Vasa Fortune V15</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -189,12 +189,16 @@ seven.w=.4;bar.w=1.2;dia.w=1.2;w.w=.25;sc.w=.2;
 cherry.w=38;horse.w=28;bell.w=26;
 }
 
+/* V15: Free Spins са по-сухи */
 if(inFree){
-w.w=bets[bi]>=5?1.5:3.5;
-sc.w=bets[bi]>=5?.4:1.2;
-seven.w=bets[bi]>=5?1:2.5;
-bar.w=bets[bi]>=5?2:5;
-dia.w=bets[bi]>=5?2:5;
+w.w=bets[bi]>=5?1.0:2.2;
+sc.w=bets[bi]>=5?.25:.7;
+seven.w=bets[bi]>=5?.8:1.6;
+bar.w=bets[bi]>=5?1.5:3.2;
+dia.w=bets[bi]>=5?1.5:3.2;
+cherry.w=bets[bi]>=5?36:28;
+horse.w=bets[bi]>=5?28:22;
+bell.w=bets[bi]>=5?26:20;
 }
 
 return a;
@@ -277,34 +281,45 @@ return Math.min(amount,room);
 
 function maxSpinWin(amount,isFree){
 let betv=lastBet;
-let cap=isFree?betv*35:betv*14;
+let cap=isFree?betv*18:betv*14;
 
-if(isFree && totalFree>30) cap=betv*50;
-if(balance>SOFT_LIMIT || coolingSpins>0) cap=betv*6;
+/* Retrigger дава малко повече, но не прекалено */
+if(isFree && totalFree>30) cap=betv*28;
+
+/* Ако балансът е висок, става сухо */
+if(balance>SOFT_LIMIT || coolingSpins>0) cap=betv*5;
+
 if(amount>cap)return cap;
-
 return amount;
 }
 
 function activateCooling(){
 if(balance>SOFT_LIMIT){
-coolingSpins=15;
+coolingSpins=20;
 }
 }
 
 function endFree(){
 inFree=false;
+
 let add=limitWin(freeWin);
 balance+=add;
 activateCooling();
 
+if(add>0){
 status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(add)+" ОТ FREE SPINS!";
-win.innerText=m(add);
 popupMsg("🎉 БРАВО!","Спечелихте "+m(add)+" от FREE SPINS!");
+win.innerText=m(add);
+}else{
+status.innerText="FREE SPINS ПРИКЛЮЧИХА";
+popupMsg("FREE SPINS","Бонусът приключи без добавена печалба.");
+win.innerText=m(0);
+}
 
 free=0;
 totalFree=0;
 freeWin=0;
+
 beep(1400,.3,"triangle");
 update();
 }
@@ -330,7 +345,7 @@ status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
 }else{
 balance-=betv;
 lastBet=betv;
-status.innerText=coolingSpins>0?"ВЪРТИ...":"ВЪРТИ...";
+status.innerText="ВЪРТИ...";
 }
 
 update();
@@ -350,7 +365,7 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=bets[bi]>=5?.15:.32;
+let chance=bets[bi]>=5?.08:.16;
 if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
