@@ -325,21 +325,18 @@ color:white;
 </div><script>
 
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="ТВОЯТ KEY"; // сложи твоя ключ тук
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXJhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
 let user=null;
 
-// 👉 генерира чист referral код
 function makeRefCode(name){
 return name.replace(/\s+/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
 }
 
-// 👉 прави линк
 function getInviteLink(){
 return location.origin + location.pathname + "?ref=" + user.ref_code;
 }
 
-// load players
 loadPlayers();
 
 async function loadPlayers(){
@@ -355,7 +352,6 @@ playerSelect.appendChild(o);
 });
 }
 
-// LOGIN
 async function login(){
 
 let r=await fetch(URL+"players?Name=eq."+playerSelect.value,{headers:{apikey:KEY}});
@@ -368,7 +364,6 @@ return;
 
 user=d[0];
 
-// 🔥 автоматичен ref_code ако няма
 if(!user.ref_code){
 user.ref_code=makeRefCode(user.Name);
 
@@ -384,8 +379,6 @@ lobbyBox.classList.remove("hidden");
 
 welcomeText.innerText="Здравей, "+user.Name;
 balanceText.innerText=user.Points+"€";
-
-// 🔗 показва линк
 myLink.innerText=getInviteLink();
 
 loadChat();
