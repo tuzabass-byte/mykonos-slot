@@ -3,324 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Mitko Koch Bells PRO</title>
+<title>Mykonos Casino</title>
 
 <style>
-*{box-sizing:border-box}
-
 body{
 margin:0;
-font-family:Arial,sans-serif;
-background:radial-gradient(circle at top,#6b2a00,#1b0900 45%,#050000);
-color:#fff;
-}
-
-.app{
-max-width:430px;
-margin:auto;
-padding:12px 10px 92px;
-}
-
-.logo{
-text-align:center;
-font-size:28px;
-font-weight:900;
-color:#ffcc3d;
-text-shadow:0 0 18px #ff5a00;
-margin-top:8px;
-}
-
-.sub{
-text-align:center;
-color:#ffdca0;
-margin:4px 0 8px;
-font-size:13px;
-font-weight:900;
-}
-
-.jackpot{
-height:42px;
-border:2px solid #ffcc3d;
-border-radius:12px;
-background:#160800;
-margin:5px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 14px;
-font-size:18px;
-font-weight:900;
-box-shadow:0 0 12px #ff5a00;
-}
-
-.bonusBox{
-display:none;
-background:#ffcc3d;
-color:#111;
-text-align:center;
-font-weight:900;
-padding:8px;
-border-radius:9px;
-margin:7px 0;
-}
-
-.machine{
-border:3px solid #ffcc3d;
-border-radius:15px;
-overflow:hidden;
-background:#1a0800;
-box-shadow:0 0 22px rgba(255,100,0,.75);
-}
-
-.title{
-background:linear-gradient(90deg,#3b0c00,#d94b00,#3b0c00);
-padding:10px;
-text-align:center;
-color:#fff3a0;
-font-size:22px;
-font-weight:900;
-border-bottom:3px solid #ffcc3d;
-}
-
-.reels{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:3px;
-padding:6px;
-background:#140700;
-border-bottom:3px solid #ffcc3d;
-}
-
-.reel{
-display:grid;
-grid-template-rows:repeat(3,66px);
-gap:3px;
-}
-
-.cell{
-border:1px solid #ffcc3d;
-background:radial-gradient(circle,#6b2600,#2a0a00 58%,#080000);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-font-weight:900;
-position:relative;
-overflow:hidden;
-}
-
-.cell.win{
-background:#ffcc3d;
-color:#111;
-animation:flash .35s infinite alternate;
-}
-
-.cell.loseShake{
-animation:loseShake .22s;
-}
-
-.bell{
-font-size:27px;
-line-height:1;
-text-align:center;
-}
-
-.bell small{
-display:block;
-background:#fff;
-color:#111;
-border-radius:8px;
-padding:2px 4px;
-font-size:11px;
-margin-top:3px;
-border:2px solid #ffcc3d;
-}
-
-.spin .cell{
-animation:spinBlur .08s linear infinite;
-}
-
-.boil{
-animation:boil .15s infinite alternate;
-box-shadow:0 0 35px #ffcc3d!important;
-}
-
-@keyframes spinBlur{
-from{filter:blur(2px);transform:translateY(-8px)}
-to{filter:blur(2px);transform:translateY(8px)}
-}
-
-@keyframes flash{
-to{box-shadow:inset 0 0 28px white;filter:brightness(1.8)}
-}
-
-@keyframes boil{
-from{transform:translateX(-2px) rotate(-.5deg)}
-to{transform:translateX(2px) rotate(.5deg)}
-}
-
-@keyframes loseShake{
-0%{transform:translateX(0)}
-25%{transform:translateX(-4px)}
-50%{transform:translateX(4px)}
-75%{transform:translateX(-3px)}
-100%{transform:translateX(0)}
-}
-
-.info{
-background:#0c0500;
-padding:9px;
-}
-
-.status{
-text-align:center;
-font-size:17px;
-font-weight:900;
-min-height:28px;
-color:#ffdf77;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:7px;
-margin-top:7px;
-}
-
-.stat{
-border:1px solid #ffcc3d;
-border-radius:8px;
-background:#160800;
-text-align:center;
-padding:6px 2px;
-}
-
-.stat small{
-display:block;
-color:#ddd;
-font-size:10px;
-}
-
-.stat b{
-font-size:18px;
-}
-
-.controls{
-display:flex;
-justify-content:space-around;
-align-items:center;
-margin-top:13px;
-}
-
-button{
-border:0;
+font-family:Arial;
+background:#0a0a0a;
 color:white;
+text-align:center;
+}
+.box{
+max-width:420px;
+margin:auto;
+padding:20px;
+}
+input,button{
+padding:10px;
+margin:5px;
+border-radius:8px;
+border:none;
+}
+button{
+background:#ffcc00;
 font-weight:900;
-cursor:pointer;
 }
-
-button:active{
-transform:scale(.94);
+.chat{
+height:200px;
+overflow:auto;
+border:1px solid #555;
+margin:10px 0;
+padding:5px;
+text-align:left;
 }
-
-.betBtn{
-width:62px;
-height:62px;
-border-radius:50%;
-border:4px solid white;
-background:radial-gradient(circle,#ffcc3d,#9d3a00);
-color:#111;
+.msg{
+font-size:13px;
+margin:3px 0;
 }
-
-.spinBtn{
-width:96px;
-height:96px;
-border-radius:50%;
-border:6px solid white;
-background:radial-gradient(circle,#ff4b1f,#7a1200);
-font-size:18px;
-box-shadow:0 0 24px #ff4b1f;
-}
-
-.extra{
-text-align:center;
-margin-top:8px;
-}
-
-.small{
-padding:9px 12px;
-border-radius:8px;
-background:#2a0a00;
-border:1px solid #ffcc3d;
-margin:3px;
-}
-
-.popup{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.78);
-z-index:50;
-align-items:center;
-justify-content:center;
-padding:20px;
-}
-
-.popupBox{
-background:#160800;
-border:3px solid #ffcc3d;
-border-radius:16px;
-padding:20px;
-text-align:center;
-box-shadow:0 0 25px #ff4b1f;
-max-width:360px;
-}
-
-.popupBox h2{
-color:#ffcc3d;
-margin:0 0 12px;
-}
-
-.popupBox button{
-background:#e34b00;
-border-radius:8px;
-padding:12px 25px;
-margin-top:15px;
-}
-
-.bottom{
-position:fixed;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-max-width:430px;
-width:100%;
-height:74px;
-background:#160800;
-display:grid;
-grid-template-columns:repeat(5,1fr);
-border-top:2px solid #ffcc3d;
-}
-
-.nav{
-text-align:center;
-font-size:11px;
-padding-top:7px;
-color:#eee;
-}
-
-.nav div{
-font-size:22px;
-}
-
-.deposit{
-margin:13px 5px;
-border-radius:10px;
-background:#ffcc3d;
-color:#111;
-display:flex;
-align-items:center;
-justify-content:center;
+.name{
+color:#ffcc00;
 font-weight:900;
 }
 </style>
@@ -328,622 +49,137 @@ font-weight:900;
 
 <body>
 
-<div class="app">
-  <div class="logo">👨‍🍳 MITKO KOCH BELLS 🔔</div>
-  <div class="sub">Кухненски слот · 5 линии · Bell Collect Bonus</div>
+<div class="box">
 
-  <div class="jackpot"><span style="color:#ff4ee6">Chef Jackpot</span><span id="mega">12928.65 €</span></div>
-  <div class="jackpot"><span style="color:#54ff65">Big Soup</span><span id="maxi">647.45 €</span></div>
-  <div class="jackpot"><span style="color:#c9f7ff">Small Tip</span><span id="mini">42.66 €</span></div>
+<h2>🎰 MYKONOS CASINO</h2>
 
-  <div class="bonusBox" id="bonusBox"></div>
+<div id="loginBox">
+<select id="name">
+<option>Mariana</option>
+<option>Marian</option>
+<option>Yanko</option>
+<option>Stoianka</option>
+<option>Mitko</option>
+<option>Vasilka</option>
+</select>
 
-  <div class="machine" id="machine">
-    <div class="title">🍲 СУПАТА ЗАВРЯ! 🔔</div>
-    <div class="reels" id="reels"></div>
+<br>
 
-    <div class="info">
-      <div class="status" id="status">ГОТОВ</div>
+<input id="pin" placeholder="PIN">
 
-      <div class="stats">
-        <div class="stat"><small>ПЕЧАЛБА</small><b id="win">0.00 €</b></div>
-        <div class="stat"><small>ЗАЛОГ</small><b id="bet">0.50 €</b></div>
-        <div class="stat"><small>БАЛАНС</small><b id="bal">20.00 €</b></div>
-      </div>
-    </div>
-  </div>
+<br>
 
-  <div class="controls">
-    <button class="betBtn" onclick="changeBet(-1)">BET -</button>
-    <button class="spinBtn" id="spinButton" onclick="spin()">SPIN</button>
-    <button class="betBtn" onclick="changeBet(1)">BET +</button>
-  </div>
-
-  <div class="extra">
-    <button class="small" onclick="paytable()">ТАБЛИЦА</button>
-    <button class="small" id="soundBtn" onclick="toggleSound()">ЗВУК ON</button>
-  </div>
+<button onclick="login()">ВЛЕЗ</button>
 </div>
 
-<div class="bottom">
-  <div class="nav"><div>🍲</div>Начало</div>
-  <div class="nav"><div>🔔</div>Игри</div>
-  <div class="nav"><div>🎁</div>Бонус</div>
-  <div class="nav"><div>⭐</div>Любими</div>
-  <div class="deposit" onclick="deposit()">Депозит</div>
+<div id="game" style="display:none">
+
+<h3 id="welcome"></h3>
+
+<div>Баланс: <span id="bal">0</span>€</div>
+
+<hr>
+
+<h3>💬 ЧАТ</h3>
+
+<div class="chat" id="chat"></div>
+
+<input id="msg" placeholder="напиши...">
+<button onclick="sendMsg()">SEND</button>
+
 </div>
 
-<div class="popup" id="popup">
-  <div class="popupBox">
-    <h2 id="popupTitle">БРАВО!</h2>
-    <div id="popupText"></div>
-    <button onclick="closePopup()">OK</button>
-  </div>
 </div>
 
-<script>let balance=20;
-let bets=[0.10,0.20,0.50,1,2,5,10];
-let bi=2;
-let lastBet=bets[bi];
+<script>
 
-let spinning=false;
-let snd=true;
+const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
-let inBonus=false;
-let bonusSpins=0;
-let bonusWin=0;
-let collectedBells=[];
+let user=null;
 
-let jp={mega:12928.65,maxi:647.45,mini:42.66};
+async function login(){
 
-const pay={
-"POT":{3:2,4:6,5:20},
-"SALT":{3:2,4:5,5:15},
-"KNIFE":{3:4,4:10,5:30},
-"CHEF":{3:6,4:15,5:50},
-"MEAT":{3:8,4:20,5:100},
-"FIRE":{3:10,4:40,5:600}
-};
+let name=document.getElementById("name").value;
+let pin=document.getElementById("pin").value;
 
-const display={
-"POT":"🍲",
-"SALT":"🧂",
-"KNIFE":"🔪",
-"CHEF":"👨‍🍳",
-"MEAT":"🥩",
-"FIRE":"🔥",
-"W":"⭐",
-"BELL":"🔔"
-};
-
-const lines=[
-[0,0,0,0,0],
-[1,1,1,1,1],
-[2,2,2,2,2],
-[0,1,2,1,0],
-[2,1,0,1,2]
-];
-
-function m(v){return Number(v).toFixed(2)+" €"}
-
-function sound(type){
-if(!snd)return;
-
-let ctx=new (window.AudioContext||window.webkitAudioContext)();
-
-function play(f,d,type="sine",vol=0.08){
-let o=ctx.createOscillator();
-let g=ctx.createGain();
-o.type=type;
-o.frequency.value=f;
-g.gain.value=vol;
-o.connect(g);
-g.connect(ctx.destination);
-o.start();
-o.stop(ctx.currentTime+d);
-}
-
-// SPIN
-if(type==="spin"){
-play(180,.05,"sawtooth");
-setTimeout(()=>play(250,.05,"sawtooth"),60);
-}
-
-// WIN (WOW)
-if(type==="win"){
-play(500,.1,"triangle");
-setTimeout(()=>play(700,.1,"triangle"),100);
-setTimeout(()=>play(1000,.12,"triangle"),200);
-}
-
-// LOSE (смях ефект)
-if(type==="lose"){
-play(180,.08,"square");
-setTimeout(()=>play(140,.08,"square"),120);
-setTimeout(()=>play(180,.08,"square"),240);
-setTimeout(()=>play(120,.1,"square"),360);
-}
-
-// BELL
-if(type==="bell"){
-play(1200,.06,"triangle");
-setTimeout(()=>play(1600,.07,"triangle"),90);
-}
-}
-
-function popupMsg(title,text){
-popupTitle.innerText=title;
-popupText.innerText=text;
-popup.style.display="flex";
-}
-
-function closePopup(){
-popup.style.display="none";
-}
-
-function weightedPick(arr){
-let sum=arr.reduce((s,x)=>s+x.w,0);
-let r=Math.random()*sum;
-for(let x of arr){
-r-=x.w;
-if(r<=0)return x.id;
-}
-return arr[0].id;
-}
-
-function randBellValue(){
-let r=Math.random();
-if(r<.35)return .20;
-if(r<.55)return .30;
-if(r<.72)return .50;
-if(r<.84)return .70;
-if(r<.92)return 1;
-if(r<.97)return 1.50;
-if(r<.99)return 2;
-return Math.random()<.7?3:5;
-}
-
-function weights(){
-let w=[
-{id:"POT",w:40},
-{id:"SALT",w:35},
-{id:"KNIFE",w:25},
-{id:"CHEF",w:10},
-{id:"MEAT",w:5},
-{id:"FIRE",w:1},
-{id:"W",w:.5},
-{id:"BELL",w:5}
-];
-
-if(balance<8&&!inBonus) w.find(x=>x.id==="BELL").w=8;
-if(balance>60&&!inBonus) w.find(x=>x.id==="BELL").w=2.5;
-
-if(inBonus){
-w.find(x=>x.id==="BELL").w=8;
-if(bonusWin>10) w.find(x=>x.id==="BELL").w=3;
-}
-
-return w;
-}
-
-function makeRandomBoard(){
-let b=[[],[],[]];
-let w=weights();
-
-for(let r=0;r<3;r++){
-for(let c=0;c<5;c++){
-let id=weightedPick(w);
-b[r][c]={id,value:id==="BELL"?randBellValue():0};
-}
-}
-return b;
-}function countBells(b){
-let n=0;
-for(let r=0;r<3;r++){
-for(let c=0;c<5;c++){
-if(b[r][c].id==="BELL")n++;
-}
-}
-return n;
-}
-
-function evalLine(b,line){
-let base=null,count=0,cells=[];
-
-for(let c=0;c<5;c++){
-let r=line[c];
-let id=b[r][c].id;
-
-if(id==="BELL")break;
-
-if(base===null){
-if(id==="W"){
-count++;
-cells.push([r,c]);
-continue;
-}
-base=id;
-count++;
-cells.push([r,c]);
-continue;
-}
-
-if(id===base||id==="W"){
-count++;
-cells.push([r,c]);
-}else{
-break;
-}
-}
-
-if(!base||count<3||!pay[base])return null;
-
-return {
-amount:lastBet*pay[base][count],
-cells:cells
-};
-}
-
-function evalBoard(b){
-let total=0;
-let winners=[];
-
-for(let line of lines){
-let res=evalLine(b,line);
-if(res){
-total+=res.amount;
-winners.push(...res.cells);
-}
-}
-
-return {total,winners};
-}
-
-function makeLoseBoard(){
-for(let i=0;i<400;i++){
-let b=makeRandomBoard();
-if(evalBoard(b).total===0 && countBells(b)<5)return b;
-}
-return makeRandomBoard();
-}
-
-function makeWinBoard(){
-for(let i=0;i<200;i++){
-let b=makeLoseBoard();
-let syms=["POT","SALT","KNIFE","CHEF"];
-let sym=syms[Math.floor(Math.random()*syms.length)];
-let line=lines[Math.floor(Math.random()*lines.length)];
-let count=Math.random()<.88?3:4;
-
-for(let c=0;c<count;c++){
-b[line[c]][c]={id:sym,value:0};
-}
-
-let e=evalBoard(b);
-if(e.total>0 && e.total<=lastBet*8)return b;
-}
-
-return makeLoseBoard();
-}
-
-function makeBonusBoard(){
-let b=makeLoseBoard();
-let spots=[];
-
-for(let r=0;r<3;r++){
-for(let c=0;c<5;c++){
-spots.push([r,c]);
-}
-}
-
-spots.sort(()=>Math.random()-.5);
-
-for(let i=0;i<5;i++){
-let [r,c]=spots[i];
-b[r][c]={id:"BELL",value:randBellValue()};
-}
-
-return b;
-}
-
-function nextBoard(){
-if(inBonus)return makeRandomBoard();
-
-let r=Math.random();
-
-if(balance<8 && r<.10)return makeBonusBoard();
-if(r<.035)return makeBonusBoard();
-if(r<.20)return makeWinBoard();
-
-return makeLoseBoard();
-}
-
-function setCell(cell,obj){
-cell.dataset.id=obj.id;
-cell.dataset.value=obj.value||0;
-cell.className="cell";
-
-if(obj.id==="BELL"){
-cell.innerHTML=`<div class="bell">🔔<small>${m(obj.value)}</small></div>`;
-}else{
-cell.innerHTML=display[obj.id]||obj.id;
-}
-}
-
-function drawBoard(b){
-reels.innerHTML="";
-
-for(let c=0;c<5;c++){
-let reel=document.createElement("div");
-reel.className="reel";
-
-for(let r=0;r<3;r++){
-let cell=document.createElement("div");
-setCell(cell,b[r][c]);
-reel.appendChild(cell);
-}
-
-reels.appendChild(reel);
-}
-}
-
-function readBoard(){
-let b=[[],[],[]];
-
-document.querySelectorAll(".reel").forEach((reel,c)=>{
-[...reel.children].forEach((cell,r)=>{
-b[r][c]={
-id:cell.dataset.id,
-value:Number(cell.dataset.value||0)
-};
-});
+let r=await fetch(URL+"players?Name=eq."+name,{
+headers:{apikey:KEY}
 });
 
-return b;
-}
+let data=await r.json();
 
-function mark(winners){
-let cells=document.querySelectorAll(".cell");
-
-winners.forEach(([r,c])=>{
-let idx=c*3+r;
-if(cells[idx])cells[idx].classList.add("win");
-});
-}
-
-function loseEffect(){
-let cells=document.querySelectorAll(".cell");
-cells.forEach(c=>c.classList.add("loseShake"));
-setTimeout(()=>{
-cells.forEach(c=>c.classList.remove("loseShake"));
-},260);
-}
-
-function update(){
-bet.innerText=m(bets[bi]);
-bal.innerText=m(balance);
-mega.innerText=m(jp.mega);
-maxi.innerText=m(jp.maxi);
-mini.innerText=m(jp.mini);
-
-spinButton.innerText=inBonus?"СЪБИРАЙ":"SPIN";
-
-bonusBox.style.display=inBonus?"block":"none";
-bonusBox.innerText=inBonus
-?`BELL BONUS · ОСТАВАТ: ${bonusSpins} · КАМБАНИ: ${collectedBells.length} · СБОР: ${m(bonusWin)}`
-:"";
-}
-
-function changeBet(d){
-if(spinning||inBonus)return;
-bi=Math.max(0,Math.min(bets.length-1,bi+d));
-lastBet=bets[bi];
-sound("bell");
-update();
-}
-
-function collectBells(b){
-let got=0;
-
-for(let r=0;r<3;r++){
-for(let c=0;c<5;c++){
-if(b[r][c].id==="BELL"){
-bonusWin+=b[r][c].value;
-collectedBells.push(b[r][c].value);
-got++;
-sound("bell");
-}
-}
-}
-
-return got;
-}
-
-function startBonus(b){
-inBonus=true;
-bonusSpins=3;
-bonusWin=0;
-collectedBells=[];
-
-collectBells(b);
-
-machine.classList.add("boil");
-setTimeout(()=>machine.classList.remove("boil"),1200);
-
-popupMsg("🍲 МИТКО УДАРИ ЧЕРПАКА!","Събиране на камбани започва!");
-status.innerText="🔔 BELL COLLECT BONUS!";
-
-sound("win");
-update();
-}
-
-function endBonus(){
-inBonus=false;
-balance+=bonusWin;
-
-popupMsg("🍲 ВЕЧЕРЯТА Е СЕРВИРАНА!",`Събра ${collectedBells.length} камбани за ${m(bonusWin)}!`);
-status.innerText=`СЪБРА ${collectedBells.length} КАМБАНИ · ${m(bonusWin)}`;
-win.innerText=m(bonusWin);
-
-bonusSpins=0;
-bonusWin=0;
-collectedBells=[];
-
-sound("win");
-update();
-}
-
-function spin(){
-if(spinning)return;
-
-if(!inBonus && balance<lastBet){
-status.innerText="НЯМА ПАРИ ЗА ТЕНДЖЕРАТА 😄";
-sound("lose");
-loseEffect();
+if(!data[0] || String(data[0].Pin)!==pin){
+alert("Грешен PIN");
 return;
 }
 
-spinning=true;
+user=data[0];
 
-document.querySelectorAll(".cell").forEach(x=>{
-x.classList.remove("win");
-x.classList.remove("loseShake");
-});
+document.getElementById("loginBox").style.display="none";
+document.getElementById("game").style.display="block";
 
-if(inBonus){
-bonusSpins--;
-status.innerText=`СЪБИРАМЕ КАМБАНИ... ОСТАВАТ ${bonusSpins}`;
-}else{
-balance-=lastBet;
-status.innerText="МИТКО ГОТВИ...";
+document.getElementById("welcome").innerText="Здравей, "+user.Name;
+document.getElementById("bal").innerText=user.Points;
+
+sendSystem(user.Name+" влезе в казиното 🎰");
+
+loadChat();
+setInterval(loadChat,2000);
 }
 
-update();
-sound("spin");
+async function sendMsg(){
 
-let finalBoard=nextBoard();
-let reelsA=[...document.querySelectorAll(".reel")];
-let stopped=0;
+let text=document.getElementById("msg").value;
+if(!text)return;
 
-reelsA.forEach((reel,i)=>{
-reel.classList.add("spin");
-
-let timer=setInterval(()=>{
-[...reel.children].forEach(c=>{
-let id=weightedPick(weights());
-setCell(c,{id,value:id==="BELL"?randBellValue():0});
-});
-},65);
-
-setTimeout(()=>{
-clearInterval(timer);
-
-[...reel.children].forEach((cell,r)=>{
-setCell(cell,finalBoard[r][i]);
+await fetch(URL+"chat_messages",{
+method:"POST",
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+player_name:user.Name,
+message:text
+})
 });
 
-reel.classList.remove("spin");
-sound("bell");
-stopped++;
-
-if(stopped===5){
-setTimeout(()=>{
-calc();
-grow(lastBet);
-spinning=false;
-},160);
+document.getElementById("msg").value="";
 }
 
-},720+i*280);
+async function sendSystem(t){
+await fetch(URL+"chat_messages",{
+method:"POST",
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+player_name:"SYSTEM",
+message:t
+})
 });
 }
 
-function calc(){
-let b=readBoard();
+async function loadChat(){
 
-if(inBonus){
-let got=collectBells(b);
+let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{
+headers:{apikey:KEY}
+});
 
-if(got>0){
-bonusSpins=3;
-status.innerText=`🔔 МИТКО СЪБРА ${got} КАМБАНИ! РЕСПИН ДО 3!`;
-machine.classList.add("boil");
-setTimeout(()=>machine.classList.remove("boil"),600);
-}else{
-status.innerText="НЯМА КАМБАНА... СУПАТА ИЗСТИВА 😄";
-sound("lose");
-loseEffect();
+let data=await r.json();
+
+let html="";
+
+data.reverse().forEach(x=>{
+html+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
+});
+
+document.getElementById("chat").innerHTML=html;
 }
 
-update();
-
-if(bonusSpins<=0){
-setTimeout(endBonus,800);
-}
-
-return;
-}
-
-let bells=countBells(b);
-
-if(bells>=5){
-startBonus(b);
-return;
-}
-
-let e=evalBoard(b);
-let total=e.total;
-
-if(balance>80){
-total=Math.min(total,lastBet*.5);
-}
-
-if(total>0){
-mark(e.winners);
-balance+=total;
-win.innerText=m(total);
-status.innerText="УАУ! ПЕЧАЛБА "+m(total);
-sound("win");
-}else{
-win.innerText=m(0);
-status.innerText="МИТКО ИЗГОРИ МАНДЖАТА 😄";
-sound("lose");
-loseEffect();
-}
-
-update();
-}
-
-function grow(b){
-jp.mega+=b*.01;
-jp.maxi+=b*.006;
-jp.mini+=b*.003;
-update();
-}
-
-function toggleSound(){
-snd=!snd;
-soundBtn.innerText=snd?"ЗВУК ON":"ЗВУК OFF";
-}
-
-function paytable(){
-alert("MITKO KOCH BELLS:\\n🔔 5 камбани = Bell Collect Bonus\\nВ бонуса всяка камбана има цена и се събира.\\nНова камбана връща респиновете на 3.\\n⭐ Wild замества символите.\\n🔥 е най-скъп символ.");
-}
-
-function deposit(){
-balance=20;
-inBonus=false;
-bonusSpins=0;
-bonusWin=0;
-collectedBells=[];
-win.innerText=m(0);
-status.innerText="ДЕПОЗИТ: 20.00 €";
-drawBoard(makeLoseBoard());
-update();
-}
-
-drawBoard(makeLoseBoard());
-update();
 </script>
+
 </body>
 </html>
