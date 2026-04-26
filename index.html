@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DIDI BLITZ PRO</title>
+<title>DIDI BLITZ PRO v2</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#3a2d00,#111 45%,#000);color:#fff}
@@ -19,6 +19,7 @@ body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at 
 .cell{border:1px solid #ffdd25;background:radial-gradient(circle,#333,#160000 58%,#050505);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
 .cell.win{background:#ffdd25;color:#111;animation:flash .35s infinite alternate}
 .cell.scatter{background:radial-gradient(circle,#fff700,#ff0000);color:#111;font-size:28px}
+.sign{width:44px;height:44px;border-radius:50%;border:4px solid red;background:white;color:black;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
 .spin .cell{animation:blur .08s linear infinite}
 @keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
 @keyframes flash{to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}}
@@ -26,8 +27,7 @@ body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at 
 .status{text-align:center;font-size:18px;font-weight:900;min-height:28px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
 .stat{border:1px solid #ffdd25;border-radius:8px;background:#111;text-align:center;padding:6px 2px}
-.stat small{display:block;color:#ccc;font-size:10px}
-.stat b{font-size:18px}
+.stat small{display:block;color:#ccc;font-size:10px}.stat b{font-size:18px}
 .controls{display:flex;justify-content:space-around;align-items:center;margin-top:13px}
 button{border:0;color:white;font-weight:900;cursor:pointer}
 button:active{transform:scale(.94)}
@@ -48,16 +48,16 @@ button:active{transform:scale(.94)}
 
 <div class="app">
   <div class="logo">🚨 DIDI BLITZ 🚨</div>
-  <div class="sub">Speed Camera Demo · 5 линии · 30 Free Spins</div>
+  <div class="sub">Радар демо · 5 линии · 30 безплатни</div>
 
-  <div class="jackpot"><span style="color:#ff4ee6">Mega Blitz</span><span id="mega">12928.65 €</span></div>
-  <div class="jackpot"><span style="color:#54ff65">Maxi Radar</span><span id="maxi">647.45 €</span></div>
-  <div class="jackpot"><span style="color:#c9f7ff">Mini Ticket</span><span id="mini">42.66 €</span></div>
+  <div class="jackpot"><span style="color:#ff4ee6">Голям акт</span><span id="mega">12928.65 €</span></div>
+  <div class="jackpot"><span style="color:#54ff65">Средна глоба</span><span id="maxi">647.45 €</span></div>
+  <div class="jackpot"><span style="color:#c9f7ff">Малък фиш</span><span id="mini">42.66 €</span></div>
 
   <div class="freeBox" id="freeBox"></div>
 
   <div class="machine">
-    <div class="title">📸 CAUGHT BY RADAR 📸</div>
+    <div class="title">📸 НЕ НАТИСКАЙ ГАЗТА 📸</div>
     <div class="reels" id="reels"></div>
     <div class="info">
       <div class="status" id="status">ГОТОВ</div>
@@ -76,8 +76,8 @@ button:active{transform:scale(.94)}
   </div>
 
   <div class="extra">
-    <button class="small" onclick="paytable()">PAYTABLE</button>
-    <button class="small" id="soundBtn" onclick="toggleSound()">SOUND ON</button>
+    <button class="small" onclick="paytable()">ТАБЛИЦА</button>
+    <button class="small" id="soundBtn" onclick="toggleSound()">ЗВУК ON</button>
   </div>
 </div>
 
@@ -146,6 +146,14 @@ const lines=[
 [2,2,2,2,2],
 [0,1,2,1,0],
 [2,1,0,1,2]
+];
+
+const jokes=[
+"БЕГАЙ! КАТ Е ЗАД ТЕБ!",
+"НЕ НАТИСКАЙ ГАЗТА!",
+"ПАК ЩЕ ПЛАЩАШ 😄",
+"РАДАРЪТ НЕ СПИ!",
+"ТЕЗИ КАМЕРИ СА НАВСЯКЪДЕ!"
 ];
 
 function m(v){return Number(v).toFixed(2)+" €"}
@@ -217,14 +225,14 @@ if(inFree){
 w=[
 {id:"30",w:82},{id:"50",w:64},{id:"100",w:58},
 {id:"CAM",w:.08},{id:"EURO",w:.08},{id:"FLASH",w:.02},
-{id:"W",w:.03},{id:"S",w:.02}
+{id:"W",w:.18},{id:"S",w:.02}
 ];
 
 if(freeWin>=8){
 w=[
 {id:"30",w:95},{id:"50",w:78},{id:"100",w:72},
 {id:"CAM",w:.01},{id:"EURO",w:.01},{id:"FLASH",w:.005},
-{id:"W",w:.005},{id:"S",w:.003}
+{id:"W",w:.02},{id:"S",w:.003}
 ];
 }
 }
@@ -332,7 +340,7 @@ return b;
 function chooseOutcome(){
 if(inFree){
 if(freeWin>=8)return "lose";
-return Math.random()<.07?"win":"lose";
+return Math.random()<.08?"win":"lose";
 }
 
 if(balance>=SOFT_LIMIT||dryMode){
@@ -360,7 +368,11 @@ return makeLoseBoard();
 }
 
 function setCell(cell,id){
+if(id==="30"||id==="50"||id==="100"){
+cell.innerHTML='<div class="sign">'+id+'</div>';
+}else{
 cell.innerHTML=display[id];
+}
 cell.dataset.id=id;
 cell.className="cell";
 if(id=="S")cell.classList.add("scatter");
@@ -402,9 +414,9 @@ bal.innerText=m(balance);
 mega.innerText=m(jp.mega);
 maxi.innerText=m(jp.maxi);
 mini.innerText=m(jp.mini);
-spinButton.innerText=inFree?"FREE SPIN":"SPIN";
+spinButton.innerText=inFree?"БЕЗПЛАТНО":"SPIN";
 freeBox.style.display=inFree?"block":"none";
-freeBox.innerText=inFree?`CAUGHT BY RADAR: ${totalFree-free}/${totalFree} · BONUS WIN: ${m(freeWin)}`:"";
+freeBox.innerText=inFree?`РАДАР БОНУС: ${totalFree-free}/${totalFree} · СПЕЧЕЛЕНО: ${m(freeWin)}`:"";
 }
 
 function changeBet(d){
@@ -420,8 +432,8 @@ free=30;
 totalFree=30;
 freeWin=0;
 lastBet=bets[bi];
-status.innerText="📸 CAUGHT BY RADAR! ПЕЧЕЛИТЕ 30 FREE SPINS!";
-popupMsg("📸 CAUGHT BY RADAR!","Печелите 30 Free Spins!");
+status.innerText="📸 ХВАНАХА ТЕ С РАДАР! 30 БЕЗПЛАТНИ!";
+popupMsg("📸 ХВАНАХА ТЕ С РАДАР!","Печелите 30 безплатни врътки! Не натискай газта 😄");
 beep(900,.25,"triangle");
 update();
 }
@@ -433,8 +445,8 @@ if(spinCounter>=40 && !miniPaid){
 miniPaid=true;
 let prize=5;
 balance+=prize;
-status.innerText="🎉 ЧЕСТИТО! MINI TICKET "+m(prize);
-popupMsg("🎉 MINI TICKET!","Честито! Спечелихте Mini Ticket "+m(prize));
+status.innerText="🎉 ЧЕСТИТО! ВЗЕ МАЛЪК ФИШ "+m(prize);
+popupMsg("🎉 МАЛЪК ФИШ!","Честито! Спечели малък фиш "+m(prize));
 beep(1200,.25,"triangle");
 update();
 return true;
@@ -444,8 +456,8 @@ if(spinCounter>=70 && !maxiPaid){
 maxiPaid=true;
 let prize=10;
 balance+=prize;
-status.innerText="🎉 ЧЕСТИТО! MAXI RADAR "+m(prize);
-popupMsg("🎉 MAXI RADAR!","Честито! Спечелихте Maxi Radar "+m(prize));
+status.innerText="🎉 ЧЕСТИТО! ОТЪРВА СЕ ОТ АКТА "+m(prize);
+popupMsg("🎉 ОТЪРВА СЕ ОТ АКТА!","Късметлия! Спечели "+m(prize));
 beep(1400,.25,"triangle");
 update();
 return true;
@@ -455,8 +467,8 @@ if(spinCounter>=100 && !megaPaid){
 megaPaid=true;
 let prize=20;
 balance+=prize;
-status.innerText="🎉 ЧЕСТИТО! MEGA BLITZ "+m(prize);
-popupMsg("🎉 MEGA BLITZ!","Честито! Спечелихте Mega Blitz "+m(prize));
+status.innerText="🎉 ШЕФЪТ НА КАТ ТИ ПРОСТИ "+m(prize);
+popupMsg("🎉 ГОЛЯМ УДАР!","Шефът на КАТ ти прости! Взимаш "+m(prize));
 beep(1600,.3,"triangle");
 update();
 return true;
@@ -472,18 +484,47 @@ if(balance>HARD_LIMIT)balance=HARD_LIMIT;
 if(balance>=SOFT_LIMIT)dryMode=true;
 
 if(freeWin>0){
-status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(freeWin)+" ОТ RADAR BONUS!";
-popupMsg("🎉 RADAR BONUS!","Спечелихте "+m(freeWin)+" от Radar Bonus!");
+status.innerText="🎉 БРАВО! СПЕЧЕЛИ "+m(freeWin)+" ОТ РАДАР БОНУС!";
+popupMsg("🎉 РАДАР БОНУС!","Спечели "+m(freeWin)+" от бонуса! Този път мина метър 😄");
 win.innerText=m(freeWin);
 }else{
-status.innerText="RADAR BONUS ПРИКЛЮЧИ";
-popupMsg("RADAR BONUS","Бонусът приключи без печалба.");
+status.innerText="РАДАР БОНУСЪТ ПРИКЛЮЧИ";
+popupMsg("РАДАР БОНУС","Бонусът приключи без печалба. Камерата беше празна 😄");
 win.innerText=m(0);
 }
 
 free=0;totalFree=0;freeWin=0;
 beep(1400,.3,"triangle");
 update();
+}
+
+function applyFreeFeatures(b,total){
+if(!inFree||total<=0)return total;
+
+let hasPolice=false;
+let hasMoney=false;
+
+for(let r=0;r<3;r++){
+for(let c=0;c<5;c++){
+if(b[r][c]=="W")hasPolice=true;
+if(b[r][c]=="EURO")hasMoney=true;
+}
+}
+
+if(hasPolice && Math.random()<.35 && freeWin<8){
+popupMsg("🚓 ПОЛИЦИЯ!","СПРЯХА ТЕ! ROAD BLOCK WILD удари колоната!");
+status.innerText="🚓 ПОЛИЦИЯ! КОЛОНАТА СТАВА WILD!";
+beep(1100,.2,"triangle");
+}
+
+if(hasPolice && hasMoney && Math.random()<.35 && freeWin<10){
+total*=2;
+popupMsg("💶 ДВОЙНА ГЛОБА!","Плащаш двойно... ама този път печелиш двойно 😄");
+status.innerText="💶 ДВОЙНА ГЛОБА!";
+beep(1300,.2,"triangle");
+}
+
+return total;
 }
 
 function spin(){
@@ -498,7 +539,7 @@ return;
 }
 
 if(!isFree&&balance<betv){
-status.innerText="НЕДОСТАТЪЧЕН БАЛАНС";
+status.innerText="НЯМА ПАРИ ЗА ГЛОБАТА";
 beep(130,.15,"sawtooth");
 return;
 }
@@ -508,18 +549,29 @@ document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
 
 if(isFree){
 free--;
-status.innerText=`RADAR FREE SPIN ${totalFree-free}/${totalFree}`;
+status.innerText=`РАДАР БЕЗПЛАТНА ${totalFree-free}/${totalFree}`;
 }else{
 balance-=betv;
 lastBet=betv;
 spinCounter++;
-status.innerText="ВЪРТИ...";
+status.innerText=jokes[Math.floor(Math.random()*jokes.length)];
 }
 
 update();
 beep(150,.15,"sawtooth");
 
 let finalBoard=nextBoard();
+
+if(isFree && freeWin<8){
+for(let c=0;c<5;c++){
+let hasW=false;
+for(let r=0;r<3;r++) if(finalBoard[r][c]=="W") hasW=true;
+if(hasW && Math.random()<.18){
+for(let r=0;r<3;r++) finalBoard[r][c]="W";
+}
+}
+}
+
 let reelsA=[...document.querySelectorAll(".reel")];
 let stopped=0;
 
@@ -557,6 +609,8 @@ return;
 let e=evalBoard(b);
 let total=e.total;
 
+total=applyFreeFeatures(b,total);
+
 if(!isFree && balance>=HARD_LIMIT)total=0;
 if(!isFree && balance+total>HARD_LIMIT)total=HARD_LIMIT-balance;
 
@@ -566,7 +620,7 @@ win.innerText=m(total);
 
 if(isFree){
 freeWin+=total;
-status.innerText="RADAR WIN "+m(total);
+status.innerText="РАДАР ПЕЧАЛБА "+m(total);
 }else{
 balance+=total;
 if(balance>=SOFT_LIMIT)dryMode=true;
@@ -575,7 +629,7 @@ status.innerText="ПЕЧАЛБА "+m(total);
 beep(total>=lastBet*10?1200:780,.15,"triangle");
 }else{
 win.innerText=m(0);
-status.innerText=isFree?"RADAR FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
+status.innerText=isFree?"БЕЗПЛАТНА БЕЗ ПЕЧАЛБА":"ПАК ТЕ ХВАНАХА 😄";
 }
 
 update();
@@ -618,11 +672,11 @@ update();
 
 function toggleSound(){
 snd=!snd;
-soundBtn.innerText=snd?"SOUND ON":"SOUND OFF";
+soundBtn.innerText=snd?"ЗВУК ON":"ЗВУК OFF";
 }
 
 function paytable(){
-alert("DIDI BLITZ PAYTABLE при 1€ залог:\\n⚡: 3x=10€, 4x=40€, 5x=600€\\n💶/📸: 3x=8€, 4x=20€, 5x=100€\\n100: 3x=6€, 4x=15€, 5x=50€\\n50: 3x=4€, 4x=10€, 5x=30€\\n30: 3x=2€, 4x=6€, 5x=20€\\n📸 Scatter: 3x = 30 Free Spins\\n🚓 Wild замества символите.");
+alert("DIDI BLITZ ТАБЛИЦА при 1€ залог:\\n⚡: 3x=10€, 4x=40€, 5x=600€\\n💶/📸: 3x=8€, 4x=20€, 5x=100€\\n100: 3x=6€, 4x=15€, 5x=50€\\n50: 3x=4€, 4x=10€, 5x=30€\\n30: 3x=2€, 4x=6€, 5x=20€\\n📸 Scatter: 3x = 30 безплатни\\n🚓 Wild замества символите.");
 }
 
 drawBoard(makeLoseBoard());
