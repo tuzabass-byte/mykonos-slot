@@ -201,14 +201,16 @@ bell.w=60;
 
 /* Висок залог още по-сух */
 if(currentBet>=1){
-sc.w=Math.min(sc.w,0.35);
-w.w=Math.min(w.w,0.2);
-seven.w=Math.min(seven.w,0.4);
-bar.w=Math.min(bar.w,0.8);
-dia.w=Math.min(dia.w,0.8);
-cherry.w=55;
-horse.w=44;
-bell.w=40;
+sc.w=Math.min(sc.w,0.12);
+w.w=Math.min(w.w,0.08);
+seven.w=Math.min(seven.w,0.12);
+bar.w=Math.min(bar.w,0.25);
+dia.w=Math.min(dia.w,0.25);
+
+cherry.w=85;
+horse.w=18;
+bell.w=55;
+}
 }
 
 if(currentBet>=5){
@@ -329,7 +331,7 @@ if(isFree){
 return Math.min(amount, betv*4);
 }
 
-let cap=betv*6;
+let cap = currentBet >= 1 ? betv * 2.5 : betv * 6;
 
 if(balance>=SOFT_LIMIT || dryMode){
 cap=Math.min(0.30,betv*0.3);
