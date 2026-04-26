@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V21 RNG</title>
+<title>Vasa Fortune V22</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -205,6 +205,11 @@ dia.w=bets[bi]>=5?.45:1.1;
 cherry.w=bets[bi]>=5?46:38;
 horse.w=bets[bi]>=5?36:30;
 bell.w=bets[bi]>=5?34:28;
+
+if(freeWin>=MAX_FREE_WIN*0.75){
+w.w=.08;sc.w=.03;seven.w=.05;bar.w=.12;dia.w=.12;
+cherry.w=55;horse.w=42;bell.w=40;
+}
 }
 
 return a;
@@ -300,29 +305,9 @@ cap=Math.min(0.5,betv*0.5);
 return Math.min(amount,cap);
 }
 
-function applyFreeRNG(total){
-if(!inFree)return total;
-
-if(freeWin >= MAX_FREE_WIN){
-return 0;
-}
-
-if(freeWin >= MAX_FREE_WIN * 0.85){
-return 0;
-}
-
-let dryChance = 0.68;
-
-if(freeWin >= MAX_FREE_WIN * 0.60){
-dryChance = 0.82;
-}
-
-if(total > 0 && Math.random() < dryChance){
-return 0;
-}
-
-let allowedFree=Math.max(0,MAX_FREE_WIN-freeWin);
-return Math.min(total,allowedFree);
+function capFreeWin(total){
+let allowed=Math.max(0,MAX_FREE_WIN-freeWin);
+return Math.min(total,allowed);
 }
 
 function activateCooling(){
@@ -483,7 +468,7 @@ beep(1000,.2,"triangle");
 total=maxSpinWin(total,isFree);
 
 if(isFree){
-total=applyFreeRNG(total);
+total=capFreeWin(total);
 }
 
 total=limitWin(total);
