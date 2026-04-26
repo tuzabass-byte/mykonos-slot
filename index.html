@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V24</title>
+<title>Vasa Fortune V25 Dry RNG</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -98,8 +98,8 @@ button:active{transform:scale(.94)}
 
 <script>
 const START_BALANCE=20;
-const HELP_BALANCE=10;
-const SOFT_LIMIT=40;
+const HELP_BALANCE=8;
+const SOFT_LIMIT=30;
 const HARD_LIMIT=50;
 
 let balance=START_BALANCE;
@@ -165,60 +165,96 @@ let bell=a.find(x=>x.id=="B");
 let horse=a.find(x=>x.id=="H");
 let cherry=a.find(x=>x.id=="C");
 
-/* нисък баланс: малка заигравка */
+/* V25: базово много по-сухо */
+sc.w=1.1;
+w.w=.7;
+seven.w=1.2;
+bar.w=2.2;
+dia.w=2.2;
+cherry.w=38;
+horse.w=30;
+bell.w=28;
+
+/* Нисък баланс: малка заигравка, но не прекалена */
 if(balance<=HELP_BALANCE && !inFree){
-sc.w=4.5; w.w=2; seven.w=3.2; bar.w=5.5; dia.w=5.5;
-cherry.w=22; horse.w=16; bell.w=15;
+sc.w=2.8;
+w.w=1.2;
+seven.w=1.8;
+bar.w=3.2;
+dia.w=3.2;
+cherry.w=34;
+horse.w=28;
+bell.w=26;
 }
 
-/* висок залог = сухо */
-if(currentBet>=1){
-seven.w=2.2;bar.w=4.5;dia.w=5;w.w=1;sc.w=Math.min(sc.w,1.4);
-cherry.w=25;horse.w=18;bell.w=16;
-}
-if(currentBet>=5){
-seven.w=.6;bar.w=1.6;dia.w=1.6;w.w=.35;sc.w=.25;
-cherry.w=36;horse.w=28;bell.w=25;
-}
-if(currentBet>=10){
-seven.w=.2;bar.w=.6;dia.w=.6;w.w=.12;sc.w=.08;
-cherry.w=48;horse.w=36;bell.w=34;
-}
-
-/* V24: след 40€ става много сухо и започва спад */
+/* След 30€ става супер сухо */
 if(balance>=SOFT_LIMIT || dryMode){
 sc.w=.03;
 w.w=.03;
-seven.w=.08;
-bar.w=.16;
-dia.w=.16;
+seven.w=.05;
+bar.w=.12;
+dia.w=.12;
 cherry.w=70;
 horse.w=55;
 bell.w=50;
 }
 
-/* Free Spins: сух бонус; печалба само ако реално падне линия */
-if(inFree){
-w.w=.25;
-sc.w=.06;
-seven.w=.18;
-bar.w=.45;
-dia.w=.45;
-cherry.w=52;
-horse.w=42;
-bell.w=38;
+/* Висок залог още по-сух */
+if(currentBet>=1){
+sc.w=Math.min(sc.w,.6);
+w.w=Math.min(w.w,.4);
+seven.w=Math.min(seven.w,.8);
+bar.w=Math.min(bar.w,1.5);
+dia.w=Math.min(dia.w,1.5);
+cherry.w=45;
+horse.w=36;
+bell.w=34;
 }
 
-/* ако бонусът вече е дал прилично, още по-сухо */
-if(inFree && freeWin>=15){
-w.w=.04;
-sc.w=.01;
-seven.w=.04;
+if(currentBet>=5){
+sc.w=.02;
+w.w=.02;
+seven.w=.03;
 bar.w=.08;
 dia.w=.08;
+cherry.w=80;
+horse.w=65;
+bell.w=60;
+}
+
+if(currentBet>=10){
+sc.w=.005;
+w.w=.005;
+seven.w=.01;
+bar.w=.02;
+dia.w=.02;
+cherry.w=90;
+horse.w=75;
+bell.w=70;
+}
+
+/* Free Spins: много сухо, но ако падне линия — плаща */
+if(inFree){
+sc.w=.03;
+w.w=.12;
+seven.w=.08;
+bar.w=.18;
+dia.w=.18;
 cherry.w=70;
 horse.w=55;
 bell.w=50;
+}
+
+/* Ако бонусът вече е дал прилично, още по-сухо */
+if(inFree && freeWin>=10){
+sc.w=.005;
+w.w=.01;
+seven.w=.01;
+bar.w=.02;
+dia.w=.02;
+cherry.w=85;
+horse.w=70;
+bell.w=65;
 }
 
 return a;
@@ -302,7 +338,7 @@ let betv=lastBet;
 
 if(isFree)return amount;
 
-let cap=betv*10;
+let cap=betv*8;
 
 if(balance>=SOFT_LIMIT || dryMode){
 cap=Math.min(0.5,betv*0.5);
@@ -389,8 +425,8 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=.015;
-if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance&&freeWin<15){
+let chance=.008;
+if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance&&freeWin<10){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
 }
@@ -457,13 +493,7 @@ for(let i=0;i<res.count;i++)winners.push(cells[i]);
 }
 }
 
-if(sc>=3&&isFree&&freeWin<10){
-free+=10;
-totalFree+=10;
-status.innerText="⭐ RETRIGGER +10 FREE SPINS!";
-popupMsg("⭐ RETRIGGER!","+10 FREE SPINS!");
-beep(1000,.2,"triangle");
-}
+/* Без retrigger в V25, за да не избухва бонусът */
 
 total=maxSpinWin(total,isFree);
 
