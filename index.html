@@ -3,53 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V9</title>
+<title>Vasa Fortune V10</title>
+
 <style>
-body{margin:0;font-family:Arial;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
-.app{max-width:430px;margin:auto;padding:20px}
-.logo{text-align:center;font-size:28px;font-weight:900;color:#36f3ff}
-.freeBox{display:none;background:#ffe15a;color:#111;padding:8px;border-radius:10px;text-align:center;font-weight:900;margin:8px 0}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;background:#200020}
-.reel{display:grid;grid-template-rows:repeat(3,70px);gap:3px}
-.cell{border:1px solid gold;display:flex;align-items:center;justify-content:center;font-size:32px;background:#300020}
-.cell.win{background:gold;color:#111}
-.cell.scatter{background:orange;color:#000}
-.controls{text-align:center;margin-top:15px}
-button{padding:12px 18px;margin:5px;font-weight:900}
+body{
+margin:0;
+font-family:Arial;
+background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);
+color:#fff
+}
+
+.app{max-width:430px;margin:auto;padding:20px 12px 100px}
+
+.logo{
+text-align:center;
+font-size:30px;
+font-weight:900;
+color:#36f3ff;
+text-shadow:0 0 18px #00eaff
+}
+
+.freeBox{
+display:none;
+background:#ffe15a;
+color:#111;
+text-align:center;
+font-weight:900;
+padding:10px;
+border-radius:10px;
+margin-bottom:10px
+}
+
+.machine{
+border:3px solid #ffd23c;
+border-radius:15px;
+background:#21001b;
+overflow:hidden
+}
+
+.title{
+background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);
+text-align:center;
+padding:12px;
+font-size:22px;
+font-weight:900;
+color:#ffe15a
+}
+
+.reels{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:3px;
+padding:7px;
+background:#280023
+}
+
+.reel{
+display:grid;
+grid-template-rows:repeat(3,70px);
+gap:3px
+}
+
+.cell{
+border:1px solid gold;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:30px;
+background:#300020
+}
+
+.cell.win{
+background:gold;
+color:#111
+}
+
+.cell.scatter{
+background:orange;
+color:#000
+}
+
+.info{
+padding:10px;
+background:#080611
+}
+
+.stats{
+display:flex;
+justify-content:space-around
+}
+
+.controls{
+margin-top:15px;
+text-align:center
+}
+
+.spinBtn{
+width:100px;
+height:100px;
+border-radius:50%;
+background:red;
+color:#fff;
+font-size:18px;
+font-weight:900;
+border:5px solid #fff
+}
 </style>
 </head>
 
 <body>
+
 <div class="app">
+
 <div class="logo">VASA FORTUNE</div>
 <div id="freeBox" class="freeBox"></div>
 
+<div class="machine">
+<div class="title">🔥 VASA FORTUNE 🔥</div>
+
 <div class="reels" id="reels"></div>
 
-<div id="status" style="text-align:center;font-weight:900;margin:10px">ГОТОВ</div>
+<div class="info">
+<div id="status" style="text-align:center;font-weight:900">ГОТОВ</div>
 
-<div style="display:flex;justify-content:space-around">
+<div class="stats">
 <div>ПЕЧАЛБА<br><b id="win">0.00 €</b></div>
 <div>ЗАЛОГ<br><b id="bet">0.50 €</b></div>
 <div>БАЛАНС<br><b id="bal">20.00 €</b></div>
 </div>
+</div>
+</div>
 
 <div class="controls">
-<button onclick="spin()">SPIN</button>
+<button class="spinBtn" onclick="spin()" id="spinBtn">SPIN</button>
 </div>
+
 </div>
 
 <script>
-let balance=20,bet=0.5;
-let inFree=false,free=0,totalFree=0,freeWin=0;
+
+const START_BALANCE=20;
+const MAX_BALANCE=80;
+
+let balance=20;
+let bet=0.5;
+
+let inFree=false;
+let free=0,totalFree=0,freeWin=0;
 
 const symbols=[
-{id:"7",h:"7",w:5,p:{3:5,4:15,5:50}},
-{id:"BAR",h:"BAR",w:8,p:{3:4,4:10,5:25}},
-{id:"D",h:"💎",w:10,p:{3:3,4:7,5:20}},
-{id:"C",h:"🍒",w:18,p:{3:2,4:5,5:12}},
-{id:"B",h:"🔔",w:14,p:{3:1.5,4:4,5:10}},
-{id:"H",h:"♞",w:12,p:{3:1,4:3,5:8}},
+{id:"7",h:"7",w:5,p:{3:10,4:40,5:600}},
+{id:"BAR",h:"BAR",w:8,p:{3:8,4:20,5:100}},
+{id:"D",h:"💎",w:10,p:{3:8,4:20,5:100}},
+{id:"B",h:"🔔",w:14,p:{3:4,4:10,5:40}},
+{id:"C",h:"🍒",w:18,p:{3:2,4:6,5:20}},
+{id:"H",h:"♞",w:12,p:{3:2,4:6,5:20}},
 {id:"W",h:"W",w:3},
 {id:"S",h:"SC",w:3}
 ];
@@ -60,7 +168,7 @@ function rs(){
 let sum=symbols.reduce((a,b)=>a+b.w,0);
 let r=Math.random()*sum;
 for(let s of symbols){r-=s.w;if(r<=0)return s}
-return symbols[0];
+return symbols[0]
 }
 
 function draw(){
@@ -68,15 +176,20 @@ reels.innerHTML="";
 for(let c=0;c<5;c++){
 let reel=document.createElement("div");
 reel.className="reel";
+
 for(let r=0;r<3;r++){
 let cell=document.createElement("div");
 cell.className="cell";
+
 let s=rs();
 cell.innerHTML=s.h;
 cell.dataset.id=s.id;
+
 if(s.id=="S")cell.classList.add("scatter");
+
 reel.appendChild(cell);
 }
+
 reels.appendChild(reel);
 }
 }
@@ -84,26 +197,29 @@ reels.appendChild(reel);
 function board(){
 let b=[[],[],[]];
 [...document.querySelectorAll(".reel")].forEach((r,c)=>{
-[...r.children].forEach((cell,i)=>b[i][c]=cell);
+[...r.children].forEach((cell,i)=>b[i][c]=cell)
 });
-return b;
+return b
 }
 
 function spin(){
-if(!inFree && balance<bet){status.innerText="НЯМА ПАРИ";return}
 
-if(inFree){
-free--;
-status.innerText="FREE SPIN "+(totalFree-free)+"/"+totalFree;
-}else{
-balance-=bet;
+if(!inFree && balance<bet){
+status.innerText="НЯМА БАЛАНС";
+return
 }
 
+if(!inFree) balance-=bet;
+else free--;
+
 draw();
-setTimeout(()=>calc(),200);
+setTimeout(calc,200);
+
+spinBtn.innerText=inFree?"FREE":"SPIN";
 }
 
 function calc(){
+
 let b=board();
 let total=0;
 let sc=0;
@@ -115,37 +231,40 @@ inFree=true;
 free=30;
 totalFree=30;
 freeWin=0;
+
 status.innerText="🎉 30 FREE SPINS!";
+update();
 return;
 }
 
 for(let r=0;r<3;r++){
+
 let row=b[r];
 
 let base=null;
 let count=0;
 
 for(let i=0;i<5;i++){
+
 let id=row[i].dataset.id;
 
-if(!base && id!="W" && id!="S"){
-base=id;
-}
+if(!base && id!="W" && id!="S") base=id;
 
-if(id==base || id=="W"){
-count++;
-}else break;
+if(id==base || id=="W") count++;
+else break;
 }
 
 if(base && count>=3){
 let sym=symbols.find(s=>s.id==base);
-let win=bet*sym.p[count];
+let win=sym.p[count];
+
 total+=win;
-for(let i=0;i<count;i++)row[i].classList.add("win");
+
+for(let i=0;i<count;i++) row[i].classList.add("win");
 }
 }
 
-// expanding wild във free spins
+// EXPANDING WILD
 if(inFree){
 for(let c=0;c<5;c++){
 let col=[b[0][c],b[1][c],b[2][c]];
@@ -159,7 +278,14 @@ status.innerText="🔥 EXPANDING WILD!";
 }
 }
 
+// баланс лимит
+if(balance+total>MAX_BALANCE){
+total=MAX_BALANCE-balance;
+}
+
+// добавяне
 if(total>0){
+
 if(inFree){
 freeWin+=total;
 status.innerText="FREE WIN "+m(total);
@@ -167,28 +293,39 @@ status.innerText="FREE WIN "+m(total);
 balance+=total;
 status.innerText="ПЕЧАЛБА "+m(total);
 }
+
 }
 
+// край free spins
 if(inFree && free<=0){
+
 inFree=false;
 balance+=freeWin;
+
 status.innerText="🎉 СПЕЧЕЛИХТЕ "+m(freeWin)+" ОТ FREE SPINS!";
-freeBox.style.display="none";
+
 freeWin=0;
 }
 
+// update
 update();
 }
 
 function update(){
 win.innerText=m(inFree?freeWin:0);
 bal.innerText=m(balance);
+
 freeBox.style.display=inFree?"block":"none";
-freeBox.innerText="FREE SPINS "+(totalFree-free)+"/"+totalFree+" · "+m(freeWin);
+
+freeBox.innerText=
+"FREE SPINS "+(totalFree-free)+"/"+totalFree+
+" · "+m(freeWin);
+
 }
 
 draw();
 update();
+
 </script>
 
 </body>
