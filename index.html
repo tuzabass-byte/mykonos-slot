@@ -331,7 +331,7 @@ if(isFree){
 return Math.min(amount, betv*4);
 }
 
-let cap = currentBet >= 1 ? betv * 2.5 : betv * 6;
+let cap = betv >= 1 ? betv * 2.5 : betv * 6;
 
 if(balance>=SOFT_LIMIT || dryMode){
 cap=Math.min(0.30,betv*0.3);
