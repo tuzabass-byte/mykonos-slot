@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V26</title>
+<title>Vasa Fortune Stable Dry</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -98,164 +98,210 @@ button:active{transform:scale(.94)}
 
 <script>
 const START_BALANCE=20;
+const HELP_BALANCE=8;
 const SOFT_LIMIT=30;
+const HARD_LIMIT=50;
 
 let balance=START_BALANCE;
 let bets=[0.10,0.20,0.50,1,2,5,10];
 let bi=2;
-
 let spinning=false;
 let snd=true;
+let dryMode=false;
 
 let inFree=false;
 let free=0,totalFree=0,freeWin=0,lastBet=bets[bi];
 
 let jp={mega:12928.65,maxi:647.45,mini:42.66};
 
-const pay={
-"7":{3:10,4:40,5:600},
-"BAR":{3:8,4:20,5:100},
-"D":{3:8,4:20,5:100},
-"B":{3:6,4:15,5:50},
-"H":{3:4,4:10,5:30},
-"C":{3:2,4:6,5:20}
-};
+const symbols=[
+{id:"7",h:"7",w:5,p:{3:10,4:40,5:600}},
+{id:"BAR",h:"BAR",w:8,p:{3:8,4:20,5:100}},
+{id:"D",h:"💎",w:10,p:{3:8,4:20,5:100}},
+{id:"B",h:"🔔",w:14,p:{3:6,4:15,5:50}},
+{id:"H",h:"♞",w:12,p:{3:4,4:10,5:30}},
+{id:"C",h:"🍒",w:18,p:{3:2,4:6,5:20}},
+{id:"W",h:"W",w:2,p:{}},
+{id:"S",h:"SC",w:3,p:{}}
+];
 
-const symbols=["7","BAR","D","B","H","C"];
+const lines=[
+[0,0,0,0,0],
+[1,1,1,1,1],
+[2,2,2,2,2],
+[0,1,2,1,0],
+[2,1,0,1,2]
+];
 
 function m(v){return Number(v).toFixed(2)+" €"}
 
-function setCell(c,id){
-c.dataset.id=id;
-c.className="cell";
-if(id==="S"){c.innerHTML="SC";c.classList.add("scatter");return;}
-if(id==="W"){c.innerHTML="W";return;}
-if(id==="7")c.innerHTML="7";
-if(id==="BAR")c.innerHTML="BAR";
-if(id==="D")c.innerHTML="💎";
-if(id==="B")c.innerHTML="🔔";
-if(id==="H")c.innerHTML="♞";
-if(id==="C")c.innerHTML="🍒";
+function beep(f,d=.08,t="sine"){
+if(!snd)return;
+let c=new (window.AudioContext||window.webkitAudioContext)();
+let o=c.createOscillator(),g=c.createGain();
+o.type=t;o.frequency.value=f;g.gain.value=.045;
+o.connect(g);g.connect(c.destination);
+o.start();o.stop(c.currentTime+d);
 }
 
-function drawBoard(board){
+function popupMsg(title,text){
+popupTitle.innerText=title;
+popupText.innerText=text;
+popup.style.display="flex";
+}
+
+function closePopup(){popup.style.display="none"}
+
+function getSymbols(){
+let a=JSON.parse(JSON.stringify(symbols));
+let currentBet=bets[bi];
+
+let sc=a.find(x=>x.id=="S");
+let w=a.find(x=>x.id=="W");
+let seven=a.find(x=>x.id=="7");
+let bar=a.find(x=>x.id=="BAR");
+let dia=a.find(x=>x.id=="D");
+let bell=a.find(x=>x.id=="B");
+let horse=a.find(x=>x.id=="H");
+let cherry=a.find(x=>x.id=="C");
+
+/* Базово много по-сухо */
+sc.w=0.6;
+w.w=0.3;
+seven.w=0.7;
+bar.w=1.4;
+dia.w=1.4;
+cherry.w=44;
+horse.w=34;
+bell.w=32;
+
+/* Нисък баланс: малка заигравка */
+if(balance<=HELP_BALANCE && !inFree){
+sc.w=2.2;
+w.w=0.8;
+seven.w=1.2;
+bar.w=2.4;
+dia.w=2.4;
+cherry.w=38;
+horse.w=31;
+bell.w=29;
+}
+
+/* След 30€ става много сухо */
+if(balance>=SOFT_LIMIT || dryMode){
+sc.w=0.02;
+w.w=0.02;
+seven.w=0.03;
+bar.w=0.08;
+dia.w=0.08;
+cherry.w=80;
+horse.w=65;
+bell.w=60;
+}
+
+/* Висок залог още по-сух */
+if(currentBet>=1){
+sc.w=Math.min(sc.w,0.35);
+w.w=Math.min(w.w,0.2);
+seven.w=Math.min(seven.w,0.4);
+bar.w=Math.min(bar.w,0.8);
+dia.w=Math.min(dia.w,0.8);
+cherry.w=55;
+horse.w=44;
+bell.w=40;
+}
+
+if(currentBet>=5){
+sc.w=0.01;
+w.w=0.01;
+seven.w=0.02;
+bar.w=0.04;
+dia.w=0.04;
+cherry.w=90;
+horse.w=75;
+bell.w=70;
+}
+
+/* Free Spins: много сухо */
+if(inFree){
+sc.w=0.02;
+w.w=0.06;
+seven.w=0.05;
+bar.w=0.12;
+dia.w=0.12;
+cherry.w=75;
+horse.w=60;
+bell.w=55;
+}
+
+/* Ако бонусът вече е дал 10€+, почти спира */
+if(inFree && freeWin>=10){
+sc.w=0.003;
+w.w=0.006;
+seven.w=0.006;
+bar.w=0.01;
+dia.w=0.01;
+cherry.w=95;
+horse.w=80;
+bell.w=75;
+}
+
+return a;
+}
+
+function rs(){
+let arr=getSymbols();
+let sum=arr.reduce((s,x)=>s+x.w,0);
+let r=Math.random()*sum;
+for(let x of arr){r-=x.w;if(r<=0)return x}
+return arr[0];
+}
+
+function setCell(c,s){
+c.innerHTML=s.h;
+c.dataset.id=s.id;
+c.className="cell";
+if(s.id=="S")c.classList.add("scatter");
+}
+
+function draw(){
 reels.innerHTML="";
 for(let c=0;c<5;c++){
 let reel=document.createElement("div");
 reel.className="reel";
 for(let r=0;r<3;r++){
 let cell=document.createElement("div");
-setCell(cell,board[r][c]);
+setCell(cell,rs());
 reel.appendChild(cell);
 }
 reels.appendChild(reel);
 }
 }
 
-function emptyBoard(){
-let b=[];
-for(let r=0;r<3;r++){
-b[r]=[];
-for(let c=0;c<5;c++){
-b[r][c]=symbols[Math.floor(Math.random()*symbols.length)];
-}
-}
+function board(){
+let b=[[],[],[]];
+[...document.querySelectorAll(".reel")].forEach((reel,c)=>{
+[...reel.children].forEach((cell,r)=>b[r][c]=cell);
+});
 return b;
 }
 
-/* 🎯 OUTCOME FIRST */
-function generateOutcome(){
-let betv=bets[bi];
-
-let r=Math.random();
-
-if(balance>=SOFT_LIMIT) r*=0.4; // сухо след 30€
-
-if(r<0.03 && !inFree){
-return {type:"bonus"};
+function update(){
+bet.innerText=m(bets[bi]);
+bal.innerText=m(balance);
+mega.innerText=m(jp.mega);
+maxi.innerText=m(jp.maxi);
+mini.innerText=m(jp.mini);
+spinButton.innerText=inFree?"FREE SPIN":"SPIN";
+freeBox.style.display=inFree?"block":"none";
+freeBox.innerText=inFree?`FREE SPINS: ${totalFree-free}/${totalFree} · FREE WIN: ${m(freeWin)}`:"";
 }
 
-if(r<0.18){
-let sym=symbols[Math.floor(Math.random()*symbols.length)];
-let count=3;
-let win=betv*pay[sym][3];
-return {type:"win",sym,count,win};
-}
-
-return {type:"lose"};
-}
-
-function buildBoard(outcome){
-let b=emptyBoard();
-
-if(outcome.type==="win"){
-let row=Math.floor(Math.random()*3);
-for(let i=0;i<outcome.count;i++){
-b[row][i]=outcome.sym;
-}
-}
-
-if(outcome.type==="bonus"){
-for(let i=0;i<3;i++){
-b[i][i]="S";
-}
-}
-
-return b;
-}
-
-function spin(){
-if(spinning)return;
-
-let betv=bets[bi];
-
-if(!inFree && balance<betv)return;
-
-spinning=true;
-
-if(!inFree){
-balance-=betv;
-lastBet=betv;
-}
-
-let outcome=generateOutcome();
-let board=buildBoard(outcome);
-
-drawBoard(board);
-
-setTimeout(()=>{
-applyOutcome(outcome);
-spinning=false;
-},300);
-}
-
-function applyOutcome(o){
-
-if(o.type==="bonus"){
-startFree();
-return;
-}
-
-if(o.type==="win"){
-win.innerText=m(o.win);
-
-if(inFree){
-freeWin+=o.win;
-}else{
-balance+=o.win;
-}
-
-status.innerText="ПЕЧАЛБА "+m(o.win);
-}else{
-status.innerText="ОПИТАЙ ПАК";
-}
-
+function changeBet(d){
+if(spinning||inFree)return;
+bi=Math.max(0,Math.min(bets.length-1,bi+d));
+beep(650,.04,"square");
 update();
-
-if(inFree){
-free--;
-if(free<=0)endFree();
-}
 }
 
 function startFree(){
@@ -263,41 +309,250 @@ inFree=true;
 free=30;
 totalFree=30;
 freeWin=0;
-status.innerText="FREE SPINS!";
+lastBet=bets[bi];
+status.innerText="🎉 ПОЗДРАВЛЕНИЯ! ПЕЧЕЛИТЕ 30 FREE SPINS!";
+popupMsg("🎉 БРАВО!","Печелите 30 FREE SPINS!");
+beep(900,.25,"triangle");
 update();
+}
+
+function limitWinNormal(amount){
+if(balance>=HARD_LIMIT)return 0;
+let room=HARD_LIMIT-balance;
+return Math.min(amount,room);
+}
+
+function maxSpinWin(amount,isFree){
+let betv=lastBet;
+
+if(isFree){
+return Math.min(amount, betv*4);
+}
+
+let cap=betv*6;
+
+if(balance>=SOFT_LIMIT || dryMode){
+cap=Math.min(0.30,betv*0.3);
+}
+
+return Math.min(amount,cap);
+}
+
+function activateDryMode(){
+if(balance>=SOFT_LIMIT)dryMode=true;
 }
 
 function endFree(){
 inFree=false;
+
 balance+=freeWin;
-status.innerText="FREE WIN "+m(freeWin);
+if(balance>HARD_LIMIT)balance=HARD_LIMIT;
+
+activateDryMode();
+
+if(freeWin>0){
+status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(freeWin)+" ОТ FREE SPINS!";
+popupMsg("🎉 БРАВО!","Спечелихте "+m(freeWin)+" от FREE SPINS!");
+win.innerText=m(freeWin);
+}else{
+status.innerText="FREE SPINS ПРИКЛЮЧИХА";
+popupMsg("FREE SPINS","Бонусът приключи без печалба.");
+win.innerText=m(0);
+}
+
+free=0;
+totalFree=0;
 freeWin=0;
+
+beep(1400,.3,"triangle");
 update();
 }
 
-function update(){
-bet.innerText=m(bets[bi]);
-bal.innerText=m(balance);
-freeBox.style.display=inFree?"block":"none";
-freeBox.innerText=`FREE SPINS: ${totalFree-free}/${totalFree} · WIN: ${m(freeWin)}`;
+function spin(){
+if(spinning)return;
+
+let betv=bets[bi];
+let isFree=inFree;
+
+if(!isFree&&balance<=0){
+status.innerText="0.00 €";
+popupMsg("INFO","Моля, свържете се със Stefan Boss 😄");
+return;
 }
 
-function changeBet(d){
-if(inFree)return;
-bi=Math.max(0,Math.min(bets.length-1,bi+d));
+if(!isFree&&balance<betv){
+status.innerText="НЕДОСТАТЪЧЕН БАЛАНС";
+beep(130,.15,"sawtooth");
+return;
+}
+
+spinning=true;
+document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
+
+if(isFree){
+free--;
+status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
+}else{
+balance-=betv;
+if(balance<0)balance=0;
+lastBet=betv;
+status.innerText="ВЪРТИ...";
+}
+
+update();
+beep(150,.15,"sawtooth");
+
+let reelsA=[...document.querySelectorAll(".reel")],stopped=0;
+
+reelsA.forEach((reel,i)=>{
+reel.classList.add("spin");
+let timer=setInterval(()=>{
+[...reel.children].forEach(c=>setCell(c,rs()));
+},65);
+
+setTimeout(()=>{
+clearInterval(timer);
+[...reel.children].forEach(c=>setCell(c,rs()));
+
+if(isFree){
+let col=[...reel.children];
+let chance=0.005;
+if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance&&freeWin<8){
+col.forEach(x=>setCell(x,{id:"W",h:"W"}));
+status.innerText="🔥 EXPANDING WILD!";
+}
+}
+
+reel.classList.remove("spin");
+beep(360,.05,"square");
+stopped++;
+
+if(stopped===5){
+setTimeout(()=>{calc(isFree);grow(betv);spinning=false},160);
+}
+},720+i*280);
+});
+}
+
+function evaluateLine(cells){
+let ids=cells.map(c=>c.dataset.id);
+let base=null;
+let count=0;
+
+for(let i=0;i<5;i++){
+let id=ids[i];
+
+if(id==="S")break;
+
+if(base===null){
+if(id==="W"){count++;continue;}
+base=id;
+count++;
+continue;
+}
+
+if(id===base||id==="W"){
+count++;
+}else{
+break;
+}
+}
+
+if(!base||count<3)return null;
+
+let sym=symbols.find(x=>x.id===base);
+return {base,count,amount:lastBet*sym.p[count]};
+}
+
+function calc(isFree){
+let b=board();
+let total=0,winners=[],sc=0;
+
+b.flat().forEach(c=>{if(c.dataset.id==="S")sc++});
+
+if(sc>=3&&!isFree){
+startFree();
+return;
+}
+
+for(let line of lines){
+let cells=line.map((row,col)=>b[row][col]);
+let res=evaluateLine(cells);
+if(res){
+total+=res.amount;
+for(let i=0;i<res.count;i++)winners.push(cells[i]);
+}
+}
+
+/* Без retrigger — бонусът не избухва */
+total=maxSpinWin(total,isFree);
+
+if(!isFree){
+total=limitWinNormal(total);
+}
+
+if(total>0){
+winners.forEach(c=>c.classList.add("win"));
+win.innerText=m(total);
+
+if(isFree){
+freeWin+=total;
+status.innerText="FREE WIN "+m(total);
+}else{
+balance+=total;
+activateDryMode();
+status.innerText="ПЕЧАЛБА "+m(total);
+}
+
+beep(total>=lastBet*20?1200:780,.15,"triangle");
+}else{
+status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
+}
+
+update();
+
+if(isFree&&free<=0){
+setTimeout(endFree,900);
+}
+}
+
+function grow(b){
+jp.mega+=b*.01;
+jp.maxi+=b*.006;
+jp.mini+=b*.003;
+update();
+}
+
+function bonus(){
+if(balance<START_BALANCE){
+balance+=5;
+if(balance>START_BALANCE)balance=START_BALANCE;
+status.innerText="БОНУС +5.00 €";
+}else{
+status.innerText="БОНУСЪТ Е ДОСТЪПЕН САМО ПРИ НИСЪК БАЛАНС";
+}
 update();
 }
 
 function deposit(){
 balance=START_BALANCE;
+dryMode=false;
+inFree=false;free=0;totalFree=0;freeWin=0;
+win.innerText=m(0);
+status.innerText="DEMO ДЕПОЗИТ: БАЛАНСЪТ Е 20.00 €";
 update();
 }
 
-function toggleSound(){snd=!snd}
+function toggleSound(){
+snd=!snd;
+soundBtn.innerText=snd?"SOUND ON":"SOUND OFF";
+}
 
-function paytable(){alert("OK")}
+function paytable(){
+alert("PAYTABLE при 1€ залог:\\n7: 3x=10€, 4x=40€, 5x=600€\\nBAR/💎: 3x=8€, 4x=20€, 5x=100€\\n🔔: 3x=6€, 4x=15€, 5x=50€\\n♞: 3x=4€, 4x=10€, 5x=30€\\n🍒: 3x=2€, 4x=6€, 5x=20€\\nSC: 3x = 30 Free Spins\\nW замества символите.");
+}
 
-drawBoard(emptyBoard());
+draw();
 update();
 </script>
 </body>
