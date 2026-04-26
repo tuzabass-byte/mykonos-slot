@@ -99,8 +99,8 @@ button:active{transform:scale(.94)}
 
 <script>
 const START_BALANCE=20;
-const SOFT_LIMIT=30;
-const HARD_LIMIT=50;
+const SOFT_LIMIT=80;
+const HARD_LIMIT=95;
 const HELP_BALANCE=8;
 
 let balance=START_BALANCE;
@@ -114,6 +114,11 @@ let inFree=false;
 let free=0,totalFree=0,freeWin=0,lastBet=bets[bi];
 
 let jp={mega:12928.65,maxi:647.45,mini:42.66};
+
+let spinCounter=0;
+let miniPaid=false;
+let maxiPaid=false;
+let megaPaid=false;
 
 const pay={
 "7":{3:10,4:40,5:600},
@@ -164,9 +169,9 @@ function weights(){
 let betv=bets[bi];
 
 let w=[
-{id:"C",w:48},{id:"H",w:34},{id:"B",w:32},
-{id:"D",w:1.2},{id:"BAR",w:1.2},{id:"7",w:.35},
-{id:"W",w:.25},{id:"S",w:.55}
+{id:"C",w:44},{id:"H",w:32},{id:"B",w:30},
+{id:"D",w:1.8},{id:"BAR",w:1.8},{id:"7",w:.55},
+{id:"W",w:.35},{id:"S",w:.75}
 ];
 
 if(balance<=HELP_BALANCE&&!inFree){
@@ -179,9 +184,9 @@ w=[
 
 if(balance>=SOFT_LIMIT||dryMode){
 w=[
-{id:"C",w:86},{id:"H",w:68},{id:"B",w:62},
-{id:"D",w:.04},{id:"BAR",w:.04},{id:"7",w:.01},
-{id:"W",w:.01},{id:"S",w:.01}
+{id:"C",w:95},{id:"H",w:78},{id:"B",w:72},
+{id:"D",w:.02},{id:"BAR",w:.02},{id:"7",w:.005},
+{id:"W",w:.005},{id:"S",w:.003}
 ];
 }
 
@@ -409,6 +414,45 @@ beep(900,.25,"triangle");
 update();
 }
 
+function checkJackpot(){
+if(inFree)return false;
+
+if(spinCounter>=40 && !miniPaid){
+miniPaid=true;
+let prize=5;
+balance+=prize;
+status.innerText="🎉 ЧЕСТИТО! СПЕЧЕЛИХТЕ MINI НАГРАДА "+m(prize);
+popupMsg("🎉 MINI JACKPOT!","Честито! Спечелихте MINI награда "+m(prize));
+beep(1200,.25,"triangle");
+update();
+return true;
+}
+
+if(spinCounter>=70 && !maxiPaid){
+maxiPaid=true;
+let prize=10;
+balance+=prize;
+status.innerText="🎉 ЧЕСТИТО! СПЕЧЕЛИХТЕ MAXI НАГРАДА "+m(prize);
+popupMsg("🎉 MAXI JACKPOT!","Честито! Спечелихте MAXI награда "+m(prize));
+beep(1400,.25,"triangle");
+update();
+return true;
+}
+
+if(spinCounter>=100 && !megaPaid){
+megaPaid=true;
+let prize=20;
+balance+=prize;
+status.innerText="🎉 ЧЕСТИТО! СПЕЧЕЛИХТЕ MEGA НАГРАДА "+m(prize);
+popupMsg("🎉 MEGA JACKPOT!","Честито! Спечелихте MEGA награда "+m(prize));
+beep(1600,.3,"triangle");
+update();
+return true;
+}
+
+return false;
+}
+
 function endFree(){
 inFree=false;
 balance+=freeWin;
@@ -456,6 +500,7 @@ status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
 }else{
 balance-=betv;
 lastBet=betv;
+spinCounter++;
 status.innerText="ВЪРТИ...";
 }
 
@@ -487,6 +532,8 @@ setTimeout(()=>{calc(isFree);grow(betv);spinning=false},160);
 }
 
 function calc(isFree){
+if(checkJackpot()){return;}
+
 let b=board();
 let sc=countScatter(b);
 
