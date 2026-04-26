@@ -3,9 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune PRO</title>
+<title>Vasa Fortune PRO V5</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff;min-height:100vh}.app{max-width:430px;margin:auto;padding:22px 12px 100px}.hidden{display:none}.logo{text-align:center;font-size:29px;font-weight:900;letter-spacing:3px;color:#36f3ff;text-shadow:0 0 20px #00eaff}.sub{text-align:center;color:#ffd35a;margin:7px 0 15px}.jackpot{height:52px;border:3px solid #36f1ff;border-radius:14px;background:#031632;margin:8px 0;box-shadow:0 0 15px #00eaff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:22px;font-weight:900}.machine{border:3px solid #ffd23c;border-radius:15px;overflow:hidden;background:#21001b;box-shadow:0 0 22px rgba(255,208,40,.75)}.title{background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);text-align:center;padding:11px;font-size:23px;font-weight:900;color:#ffe15a;border-bottom:3px solid #ffd23c}.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:7px;background:#280023;border-bottom:3px solid #ffd23c}.reel{display:grid;grid-template-rows:repeat(3,72px);gap:3px}.cell{border:1px solid #ffd85a;background:radial-gradient(circle,#884311,#310033 52%,#120013);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;overflow:hidden}.cell.win{animation:flash .35s infinite alternate;background:gold;color:#111}.spin .cell{animation:blur .08s linear infinite}@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}@keyframes flash{to{box-shadow:inset 0 0 28px #fff;filter:brightness(1.7)}}.info{padding:11px;background:#080611}.status{text-align:center;font-size:19px;font-weight:900;min-height:28px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}.stat{border:1px solid #6e7490;border-radius:8px;background:#090814;text-align:center;padding:7px 2px}.stat small{display:block;font-size:11px;color:#ccc}.stat b{font-size:20px}.controls{margin-top:16px;display:flex;justify-content:space-around;align-items:center}button{border:0;color:#fff;font-weight:900;cursor:pointer}button:active{transform:scale(.94)}.betBtn{width:68px;height:68px;border-radius:50%;border:4px solid #fff;background:radial-gradient(circle,#16f2ff,#003b88)}.spinBtn{width:108px;height:108px;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#ff2020,#790000);font-size:20px;box-shadow:0 0 24px red}.extra{text-align:center;margin-top:10px}.small{padding:10px 13px;border-radius:8px;background:#112a67;border:1px solid #37eaff;margin:3px}.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:78px;background:#071b50;display:grid;grid-template-columns:repeat(5,1fr)}.nav{text-align:center;font-size:12px;padding-top:8px;color:#c5cdec}.nav div{font-size:24px}.deposit{margin:14px 6px;border-radius:10px;background:#2cf5f2;color:#061943;display:flex;align-items:center;justify-content:center;font-weight:900}.gamesGrid{display:grid;gap:12px;margin-top:18px}.gameCard{border:2px solid #36f1ff;border-radius:15px;padding:16px;background:linear-gradient(135deg,#081331,#182b7a);box-shadow:0 0 15px rgba(0,234,255,.5)}.gameCard h2{margin:0 0 6px;color:#ffe15a}.gameCard p{margin:0;color:#d7e8ff}.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9;align-items:center;justify-content:center;padding:18px}.box{max-width:390px;background:#081331;border:2px solid #36f1ff;border-radius:14px;padding:16px}.row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid #345;padding:6px 0;font-size:13px}.close{width:100%;padding:12px;margin-top:12px;background:#ff2020;border-radius:8px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff;min-height:100vh}
+.app{max-width:430px;margin:auto;padding:22px 12px 100px}
+.hidden{display:none}
+.logo{text-align:center;font-size:29px;font-weight:900;letter-spacing:3px;color:#36f3ff;text-shadow:0 0 20px #00eaff}
+.sub{text-align:center;color:#ffd35a;margin:7px 0 15px}
+.freeBox{display:none;text-align:center;background:#ffe15a;color:#111;border-radius:10px;padding:8px;margin:8px 0;font-weight:900}
+.jackpot{height:52px;border:3px solid #36f1ff;border-radius:14px;background:#031632;margin:8px 0;box-shadow:0 0 15px #00eaff;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:22px;font-weight:900}
+.machine{border:3px solid #ffd23c;border-radius:15px;overflow:hidden;background:#21001b;box-shadow:0 0 22px rgba(255,208,40,.75)}
+.title{background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);text-align:center;padding:11px;font-size:23px;font-weight:900;color:#ffe15a;border-bottom:3px solid #ffd23c}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:7px;background:#280023;border-bottom:3px solid #ffd23c}
+.reel{display:grid;grid-template-rows:repeat(3,72px);gap:3px}
+.cell{border:1px solid #ffd85a;background:radial-gradient(circle,#884311,#310033 52%,#120013);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;overflow:hidden}
+.cell.win{animation:flash .35s infinite alternate;background:gold;color:#111}
+.spin .cell{animation:blur .08s linear infinite}
+@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
+@keyframes flash{to{box-shadow:inset 0 0 28px #fff;filter:brightness(1.7)}}
+.info{padding:11px;background:#080611}
+.status{text-align:center;font-size:19px;font-weight:900;min-height:28px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+.stat{border:1px solid #6e7490;border-radius:8px;background:#090814;text-align:center;padding:7px 2px}
+.stat small{display:block;font-size:11px;color:#ccc}.stat b{font-size:20px}
+.controls{margin-top:16px;display:flex;justify-content:space-around;align-items:center}
+button{border:0;color:#fff;font-weight:900;cursor:pointer}
+button:active{transform:scale(.94)}
+.betBtn{width:68px;height:68px;border-radius:50%;border:4px solid #fff;background:radial-gradient(circle,#16f2ff,#003b88)}
+.spinBtn{width:108px;height:108px;border-radius:50%;border:6px solid #fff;background:radial-gradient(circle,#ff2020,#790000);font-size:20px;box-shadow:0 0 24px red}
+.extra{text-align:center;margin-top:10px}
+.small{padding:10px 13px;border-radius:8px;background:#112a67;border:1px solid #37eaff;margin:3px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:78px;background:#071b50;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav{text-align:center;font-size:12px;padding-top:8px;color:#c5cdec}.nav div{font-size:24px}
+.deposit{margin:14px 6px;border-radius:10px;background:#2cf5f2;color:#061943;display:flex;align-items:center;justify-content:center;font-weight:900}
+.gamesGrid{display:grid;gap:12px;margin-top:18px}
+.gameCard{border:2px solid #36f1ff;border-radius:15px;padding:16px;background:linear-gradient(135deg,#081331,#182b7a);box-shadow:0 0 15px rgba(0,234,255,.5)}
+.gameCard h2{margin:0 0 6px;color:#ffe15a}.gameCard p{margin:0;color:#d7e8ff}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:9;align-items:center;justify-content:center;padding:18px}
+.box{max-width:390px;background:#081331;border:2px solid #36f1ff;border-radius:14px;padding:16px}
+.row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid #345;padding:6px 0;font-size:13px}
+.close{width:100%;padding:12px;margin-top:12px;background:#ff2020;border-radius:8px}
 </style>
 </head>
 <body>
@@ -13,7 +51,8 @@
 <div class="app">
 <div id="slot">
 <div class="logo" id="gName">VASA FORTUNE</div>
-<div class="sub" id="gSub">Wild Free Spins</div>
+<div class="sub" id="gSub">5 линии · Scatter Free Spins · Wild</div>
+<div class="freeBox" id="freeBox">FREE SPINS: 0</div>
 
 <div class="jackpot"><span style="color:#ff4ee6">Mega</span><span id="mega">12928.65 €</span></div>
 <div class="jackpot"><span style="color:#54ff65">Maxi</span><span id="maxi">647.45 €</span></div>
@@ -40,7 +79,7 @@
 
 <div class="extra">
 <button class="small" onclick="pay()">PAYTABLE</button>
-<button class="small" onclick="sound()">SOUND ON</button>
+<button class="small" id="soundBtn" onclick="sound()">SOUND ON</button>
 </div>
 </div>
 
@@ -61,19 +100,21 @@
 
 <div class="modal" id="modal">
 <div class="box">
-<h2>PAYTABLE</h2>
+<h2>PAYTABLE — 5 ЛИНИИ</h2>
 <div class="row"><b>Символ</b><b>3x</b><b>4x</b><b>5x</b></div>
-<div class="row"><span>7</span><span>8x</span><span>25x</span><span>120x</span></div>
-<div class="row"><span>BAR</span><span>5x</span><span>15x</span><span>60x</span></div>
-<div class="row"><span>💎</span><span>4x</span><span>12x</span><span>45x</span></div>
-<div class="row"><span>🍒</span><span>2x</span><span>6x</span><span>20x</span></div>
-<p>⭐ 3 Scatter = 8 Free Spins<br>W = Wild. Demo виртуални кредити, не реални пари.</p>
+<div class="row"><span>7</span><span>5x</span><span>20x</span><span>100x</span></div>
+<div class="row"><span>BAR</span><span>3x</span><span>12x</span><span>50x</span></div>
+<div class="row"><span>💎</span><span>2x</span><span>8x</span><span>30x</span></div>
+<div class="row"><span>🍒</span><span>1x</span><span>4x</span><span>15x</span></div>
+<div class="row"><span>🔔</span><span>0.8x</span><span>3x</span><span>10x</span></div>
+<div class="row"><span>♞</span><span>0.5x</span><span>2x</span><span>8x</span></div>
+<p>⭐ 3 Scatter = 8 Free Spins<br>W = Wild. Печалбите се броят само по 5 линии.</p>
 <button class="close" onclick="closePay()">Затвори</button>
 </div>
 </div>
 
 <script>
-let balance=50,bets=[.1,.2,.5,1,2,5,10],bi=0,spinning=false,free=0,snd=true,game=0,favOn=false,bonusUsed=false;
+let balance=50,bets=[.1,.2,.5,1,2,5,10],bi=0,spinning=false,free=0,totalFree=0,snd=true,game=0,favOn=false,bonusUsed=false;
 let jp={mega:12928.65,maxi:647.45,mini:42.66};
 
 const gameList=[
@@ -85,25 +126,31 @@ const gameList=[
 ];
 
 const base=[
-{id:"7",h:"7",w:5,p:{3:8,4:25,5:120}},
-{id:"BAR",h:"BAR",w:9,p:{3:5,4:15,5:60}},
-{id:"D",h:"💎",w:10,p:{3:4,4:12,5:45}},
-{id:"C",h:"🍒",w:18,p:{3:2,4:6,5:20}},
-{id:"B",h:"🔔",w:14,p:{3:1.5,4:4,5:12}},
-{id:"H",h:"♞",w:12,p:{3:1.2,4:3,5:10}},
-{id:"W",h:"W",w:5,p:{3:10,4:35,5:150}},
-{id:"S",h:"⭐",w:4,p:{3:0,4:0,5:0}}
+{id:"7",h:"7",w:5,p:{3:5,4:20,5:100}},
+{id:"BAR",h:"BAR",w:8,p:{3:3,4:12,5:50}},
+{id:"D",h:"💎",w:10,p:{3:2,4:8,5:30}},
+{id:"C",h:"🍒",w:18,p:{3:1,4:4,5:15}},
+{id:"B",h:"🔔",w:14,p:{3:.8,4:3,5:10}},
+{id:"H",h:"♞",w:12,p:{3:.5,4:2,5:8}},
+{id:"W",h:"W",w:4,p:{3:5,4:25,5:150}},
+{id:"S",h:"⭐",w:8,p:{3:0,4:0,5:0}}
 ];
 
-const lines=[[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2],[0,0,1,2,2],[2,2,1,0,0],[1,0,1,2,1],[1,2,1,0,1],[0,1,1,1,2]];
+const lines=[
+[0,0,0,0,0],
+[1,1,1,1,1],
+[2,2,2,2,2],
+[0,1,2,1,0],
+[2,1,0,1,2]
+];
 
 function m(v){return Number(v).toFixed(2)+" €"}
 function beep(f,d=.07,t="sine"){if(!snd)return;let c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=f;o.type=t;g.gain.value=.04;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}
-function arr(){let a=JSON.parse(JSON.stringify(base)),ft=gameList[game][3];if(free>0){if(ft=="wild")a.find(x=>x.id=="W").w=15;if(ft=="diamond")a.find(x=>x.id=="D").w=20}return a}
-function rs(){let a=arr(),sum=a.reduce((s,x)=>s+x.w,0),r=Math.random()*sum;for(let x of a){r-=x.w;if(r<=0)return x}return a[0]}
+function getSymbols(){let a=JSON.parse(JSON.stringify(base)),ft=gameList[game][3];if(free>0){if(ft=="wild")a.find(x=>x.id=="W").w=15;if(ft=="diamond")a.find(x=>x.id=="D").w=20}return a}
+function rs(){let a=getSymbols(),sum=a.reduce((s,x)=>s+x.w,0),r=Math.random()*sum;for(let x of a){r-=x.w;if(r<=0)return x}return a[0]}
 function cellSet(c,s){c.innerHTML=s.h;c.dataset.id=s.id}
 function draw(){reels.innerHTML="";for(let c=0;c<5;c++){let reel=document.createElement("div");reel.className="reel";for(let r=0;r<3;r++){let d=document.createElement("div");d.className="cell";cellSet(d,rs());reel.appendChild(d)}reels.appendChild(reel)}}
-function ui(){bet.innerText=m(bets[bi]);bal.innerText=m(balance);mega.innerText=m(jp.mega);maxi.innerText=m(jp.maxi);mini.innerText=m(jp.mini)}
+function ui(){bet.innerText=m(bets[bi]);bal.innerText=m(balance);mega.innerText=m(jp.mega);maxi.innerText=m(jp.maxi);mini.innerText=m(jp.mini);freeBox.style.display=free>0?"block":"none";freeBox.innerText="FREE SPINS: "+free+" / "+totalFree}
 function board(){let b=[[],[],[]];[...document.querySelectorAll(".reel")].forEach((reel,c)=>[...reel.children].forEach((x,r)=>b[r][c]=x));return b}
 function changeBet(d){if(spinning)return;bi=Math.max(0,Math.min(bets.length-1,bi+d));beep(650,.04,"square");ui()}
 
@@ -112,14 +159,16 @@ if(spinning)return;
 let betv=bets[bi],isFree=free>0;
 if(!isFree&&balance<betv){status.innerText="НЕДОСТАТЪЧЕН БАЛАНС";return}
 spinning=true;win.innerText=m(0);document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
-if(isFree){free--;status.innerText="FREE SPIN ОСТАВАТ: "+free}else{balance-=betv;status.innerText="ВЪРТИ..."}
+if(isFree){free--;status.innerText="FREE SPIN "+(totalFree-free)+" / "+totalFree}else{balance-=betv;status.innerText="ВЪРТИ..."}
 ui();beep(120,.15,"sawtooth");
+
 let reelsA=[...document.querySelectorAll(".reel")],stop=0;
 reelsA.forEach((reel,i)=>{
 reel.classList.add("spin");
 let t=setInterval(()=>[...reel.children].forEach(c=>cellSet(c,rs())),65);
 setTimeout(()=>{
-clearInterval(t);[...reel.children].forEach(c=>cellSet(c,rs()));
+clearInterval(t);
+[...reel.children].forEach(c=>cellSet(c,rs()));
 if(isFree&&gameList[game][3]=="reel"&&Math.random()<.25)[...reel.children].forEach(c=>cellSet(c,{id:"W",h:"W"}));
 reel.classList.remove("spin");beep(360,.05,"square");stop++;
 if(stop==5)setTimeout(()=>{calc(isFree);grow(betv);spinning=false},150)
@@ -130,36 +179,70 @@ if(stop==5)setTimeout(()=>{calc(isFree);grow(betv);spinning=false},150)
 function calc(isFree){
 let b=board(),betv=bets[bi],total=0,wins=[],sc=0;
 b.flat().forEach(c=>{if(c.dataset.id=="S")sc++});
+
 for(let line of lines){
-let first=b[line[0]][0].dataset.id;if(first=="S")continue;let count=1;
-for(let col=1;col<5;col++){let id=b[line[col]][col].dataset.id;if(id==first||id=="W"||first=="W")count++;else break}
-if(count>=3){let pid=first=="W"?"W":first,sym=base.find(x=>x.id==pid),amt=betv*sym.p[count];total+=amt;for(let col=0;col<count;col++)wins.push(b[line[col]][col])}
+let first=b[line[0]][0].dataset.id;
+if(first=="S")continue;
+let count=1;
+for(let col=1;col<5;col++){
+let id=b[line[col]][col].dataset.id;
+if(id==first||id=="W"||first=="W")count++;else break;
 }
-if(isFree&&gameList[game][3]=="cherry"){let ch=b.flat().filter(c=>c.dataset.id=="C");if(ch.length>=3){total+=betv*ch.length*2;wins.push(...ch)}}
-let j=jackpotCheck(b);total+=j.amount;
-if(sc>=3&&!isFree){free+=8;status.innerText="⭐ 8 БЕЗПЛАТНИ ИГРИ ⭐";beep(900,.2,"triangle")}
-if(total>0){balance+=total;win.innerText=m(total);wins.forEach(c=>c.classList.add("win"));status.innerText=j.name?j.name+" JACKPOT "+m(j.amount):(isFree?"FREE WIN ":"ПЕЧАЛБА ")+m(total);beep(total>=betv*30?1200:780,.15,"triangle")}
-else if(sc<3)status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
-ui()
+if(count>=3){
+let pid=first=="W"?"W":first;
+let sym=base.find(x=>x.id==pid);
+let amt=betv*sym.p[count];
+total+=amt;
+for(let col=0;col<count;col++)wins.push(b[line[col]][col]);
+}
+}
+
+if(isFree&&gameList[game][3]=="cherry"){
+let ch=b.flat().filter(c=>c.dataset.id=="C");
+if(ch.length>=3){total+=betv*ch.length*1.5;wins.push(...ch)}
+}
+
+let j=jackpotCheck(b);
+total+=j.amount;
+
+if(sc>=3&&!isFree){
+free+=8;
+totalFree=free;
+status.innerText="⭐ 8 БЕЗПЛАТНИ ИГРИ ⭐";
+beep(900,.2,"triangle");
+}
+
+if(total>0){
+balance+=total;
+win.innerText=m(total);
+wins.forEach(c=>c.classList.add("win"));
+status.innerText=j.name?j.name+" JACKPOT "+m(j.amount):(isFree?"FREE WIN ":"ПЕЧАЛБА ")+m(total);
+beep(total>=betv*25?1200:780,.15,"triangle");
+}else if(sc<3){
+status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
+}
+ui();
 }
 
 function jackpotCheck(b){
 let mid=b[1].map(c=>c.dataset.id),ft=gameList[game][3];
-if(mid.every(x=>x=="7")&&Math.random()<.10){let a=jp.mega;jp.mega=12000+Math.random()*1500;return{name:"MEGA",amount:a}}
-if(mid.every(x=>x=="D")&&Math.random()<.18){let a=jp.maxi;jp.maxi=500+Math.random()*180;return{name:"MAXI",amount:a}}
-if(Math.random()<(ft=="jackpot"?.012:.003)){let a=jp.mini;jp.mini=35+Math.random()*25;return{name:"MINI",amount:a}}
+if(mid.every(x=>x=="7")&&Math.random()<.08){let a=jp.mega;jp.mega=12000+Math.random()*1500;return{name:"MEGA",amount:a}}
+if(mid.every(x=>x=="D")&&Math.random()<.12){let a=jp.maxi;jp.maxi=500+Math.random()*180;return{name:"MAXI",amount:a}}
+if(Math.random()<(ft=="jackpot"?.01:.002)){let a=jp.mini;jp.mini=35+Math.random()*25;return{name:"MINI",amount:a}}
 return{name:null,amount:0}
 }
 function grow(b){jp.mega+=b*.025;jp.maxi+=b*.012;jp.mini+=b*.006;ui()}
 
 function showGames(){slot.classList.add("hidden");games.classList.remove("hidden")}
 function home(){games.classList.add("hidden");slot.classList.remove("hidden");status.innerText="НАЧАЛО"}
-function selectGame(i){game=i;let g=gameList[i];gName.innerText=g[0].toUpperCase();gSub.innerText=g[1];gTitle.innerText=g[2];free=0;draw();home();status.innerText="ИГРАТА Е СМЕНЕНА"}
-function renderGames(){gamesGrid.innerHTML="";gameList.forEach((g,i)=>{let d=document.createElement("div");d.className="gameCard";d.innerHTML=`<h2>${g[0]}</h2><p>${g[1]}</p>`;d.onclick=()=>selectGame(i);gamesGrid.appendChild(d)})}
+function selectGame(i){game=i;let g=gameList[i];gName.innerText=g[0].toUpperCase();gSub.innerText=g[1]+" · 5 линии";gTitle.innerText=g[2];free=0;totalFree=0;draw();home();status.innerText="ИГРАТА Е СМЕНЕНА";ui()}
+function renderGames(){gamesGrid.innerHTML="";gameList.forEach((g,i)=>{let d=document.createElement("div");d.className="gameCard";d.innerHTML=`<h2>${g[0]}</h2><p>${g[1]} · 5 линии</p>`;d.onclick=()=>selectGame(i);gamesGrid.appendChild(d)})}
 function bonus(){if(!bonusUsed){balance+=5;bonusUsed=true;status.innerText="БОНУС +5.00 €"}else status.innerText="БОНУСЪТ Е ВЗЕТ";ui()}
 function fav(){favOn=!favOn;status.innerText=favOn?"ДОБАВЕНО В ЛЮБИМИ":"ПРЕМАХНАТО ОТ ЛЮБИМИ"}
 function deposit(){alert("Demo режим: заявка за виртуални кредити. Не са реални пари.")}
-function pay(){modal.style.display="flex"}function closePay(){modal.style.display="none"}function sound(){snd=!snd;event.target.innerText=snd?"SOUND ON":"SOUND OFF"}
+function pay(){modal.style.display="flex"}
+function closePay(){modal.style.display="none"}
+function sound(){snd=!snd;soundBtn.innerText=snd?"SOUND ON":"SOUND OFF"}
 
 renderGames();draw();ui();
 </script>
