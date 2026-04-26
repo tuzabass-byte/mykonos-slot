@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V13</title>
+<title>Vasa Fortune V14</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -97,13 +97,15 @@ button:active{transform:scale(.94)}
 
 <script>
 const START_BALANCE=20;
-const MAX_BALANCE=80;
+const SOFT_LIMIT=80;
+const HARD_LIMIT=100;
 
 let balance=START_BALANCE;
 let bets=[0.10,0.20,0.50,1,2,5,10];
 let bi=2;
 let spinning=false;
 let snd=true;
+let coolingSpins=0;
 
 let inFree=false;
 let free=0,totalFree=0,freeWin=0,lastBet=bets[bi];
@@ -146,9 +148,7 @@ popupText.innerText=text;
 popup.style.display="flex";
 }
 
-function closePopup(){
-popup.style.display="none";
-}
+function closePopup(){popup.style.display="none"}
 
 function getSymbols(){
 let a=JSON.parse(JSON.stringify(symbols));
@@ -170,45 +170,33 @@ if(profit>=40)sc.w=1;
 if(profit>=55)sc.w=.5;
 
 if(currentBet>=1){
-seven.w=3;
-bar.w=6;
-dia.w=7;
-w.w=1.5;
-sc.w=Math.min(sc.w,2);
-cherry.w=22;
-horse.w=15;
-bell.w=14;
+seven.w=3;bar.w=6;dia.w=7;w.w=1.5;sc.w=Math.min(sc.w,2);
+cherry.w=22;horse.w=15;bell.w=14;
 }
 
 if(currentBet>=5){
-seven.w=1.2;
-bar.w=3;
-dia.w=3;
-w.w=.7;
-sc.w=.8;
-cherry.w=28;
-horse.w=20;
-bell.w=18;
+seven.w=1.2;bar.w=3;dia.w=3;w.w=.7;sc.w=.8;
+cherry.w=28;horse.w=20;bell.w=18;
 }
 
 if(currentBet>=10){
-seven.w=.6;
-bar.w=1.8;
-dia.w=1.8;
-w.w=.4;
-sc.w=.4;
-cherry.w=34;
-horse.w=24;
-bell.w=22;
+seven.w=.6;bar.w=1.8;dia.w=1.8;w.w=.4;sc.w=.4;
+cherry.w=34;horse.w=24;bell.w=22;
+}
+
+if(balance>SOFT_LIMIT || coolingSpins>0){
+seven.w=.4;bar.w=1.2;dia.w=1.2;w.w=.25;sc.w=.2;
+cherry.w=38;horse.w=28;bell.w=26;
 }
 
 if(inFree){
-w.w=currentBet>=5?2:4;
-sc.w=currentBet>=5?.5:1.5;
-seven.w=currentBet>=5?1.5:3;
-bar.w=currentBet>=5?3:6;
-dia.w=currentBet>=5?3:6;
+w.w=bets[bi]>=5?1.5:3.5;
+sc.w=bets[bi]>=5?.4:1.2;
+seven.w=bets[bi]>=5?1:2.5;
+bar.w=bets[bi]>=5?2:5;
+dia.w=bets[bi]>=5?2:5;
 }
+
 return a;
 }
 
@@ -281,29 +269,39 @@ update();
 }
 
 function limitWin(amount){
-let room=MAX_BALANCE-balance;
-if(inFree)room=MAX_BALANCE-balance-freeWin;
+let room=HARD_LIMIT-balance;
+if(inFree)room=HARD_LIMIT-balance-freeWin;
 if(room<=0)return 0;
 return Math.min(amount,room);
 }
 
 function maxSpinWin(amount,isFree){
 let betv=lastBet;
-let cap=isFree?betv*45:betv*18;
+let cap=isFree?betv*35:betv*14;
 
-if(isFree && totalFree>30) cap=betv*65;
+if(isFree && totalFree>30) cap=betv*50;
+if(balance>SOFT_LIMIT || coolingSpins>0) cap=betv*6;
 if(amount>cap)return cap;
 
 return amount;
+}
+
+function activateCooling(){
+if(balance>SOFT_LIMIT){
+coolingSpins=15;
+}
 }
 
 function endFree(){
 inFree=false;
 let add=limitWin(freeWin);
 balance+=add;
+activateCooling();
+
 status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(add)+" ОТ FREE SPINS!";
 win.innerText=m(add);
 popupMsg("🎉 БРАВО!","Спечелихте "+m(add)+" от FREE SPINS!");
+
 free=0;
 totalFree=0;
 freeWin=0;
@@ -332,7 +330,7 @@ status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
 }else{
 balance-=betv;
 lastBet=betv;
-status.innerText="ВЪРТИ...";
+status.innerText=coolingSpins>0?"ВЪРТИ...":"ВЪРТИ...";
 }
 
 update();
@@ -352,7 +350,7 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=bets[bi]>=5?.18:.38;
+let chance=bets[bi]>=5?.15:.32;
 if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
@@ -440,6 +438,7 @@ freeWin+=total;
 status.innerText="FREE WIN "+m(total);
 }else{
 balance+=total;
+activateCooling();
 status.innerText="ПЕЧАЛБА "+m(total);
 }
 
@@ -447,6 +446,8 @@ beep(total>=lastBet*20?1200:780,.15,"triangle");
 }else{
 status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
 }
+
+if(!isFree && coolingSpins>0)coolingSpins--;
 
 update();
 
@@ -475,6 +476,7 @@ update();
 
 function deposit(){
 balance=START_BALANCE;
+coolingSpins=0;
 inFree=false;free=0;totalFree=0;freeWin=0;
 win.innerText=m(0);
 status.innerText="DEMO ДЕПОЗИТ: БАЛАНСЪТ Е 20.00 €";
