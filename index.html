@@ -9,136 +9,175 @@
 body{
 margin:0;
 font-family:Arial;
-background:#0a0a0a;
+background:
+linear-gradient(rgba(0,0,0,.8),rgba(0,0,0,.9)),
+url("https://images.unsplash.com/photo-1511512578047-dfb367046420");
+background-size:cover;
+background-position:center;
 color:white;
-text-align:center;
 }
-.box{
-max-width:420px;
+
+/* container */
+.app{
+max-width:430px;
 margin:auto;
-padding:20px;
+padding:15px;
 }
-input,button{
+
+/* header */
+.logo{
+text-align:center;
+font-size:28px;
+font-weight:900;
+color:#ffcc00;
+text-shadow:0 0 10px red;
+margin-bottom:10px;
+}
+
+/* panel */
+.panel{
+background:rgba(0,0,0,.7);
+border:2px solid #ffcc00;
+border-radius:12px;
 padding:10px;
-margin:5px;
-border-radius:8px;
-border:none;
+margin-bottom:10px;
 }
-button{
-background:#ffcc00;
+
+/* balance */
+.balance{
+text-align:center;
+font-size:20px;
 font-weight:900;
 }
+
+/* games */
+.games{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:10px;
+}
+
+.game{
+background:#111;
+border:2px solid #ffcc00;
+border-radius:10px;
+padding:10px;
+text-align:center;
+font-size:12px;
+cursor:pointer;
+}
+
+.game:hover{
+background:#222;
+}
+
+/* chat */
 .chat{
-height:200px;
+height:180px;
 overflow:auto;
 border:1px solid #555;
-margin:10px 0;
 padding:5px;
-text-align:left;
+margin:10px 0;
+background:#000;
 }
+
 .msg{
 font-size:13px;
 margin:3px 0;
 }
+
 .name{
 color:#ffcc00;
 font-weight:900;
+}
+
+/* input */
+.inputRow{
+display:flex;
+gap:5px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:8px;
+background:#ffcc00;
+font-weight:900;
+}
+
+/* bonus */
+.bonus{
+background:linear-gradient(45deg,#ffcc00,#ff6600);
+color:black;
+font-weight:900;
+text-align:center;
+padding:8px;
+border-radius:10px;
+margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="app">
 
-<h2>🎰 MYKONOS CASINO</h2>
+<div class="logo">🎰 MYKONOS CASINO</div>
 
-<div id="loginBox">
-<select id="name">
-<option>Mariana</option>
-<option>Marian</option>
-<option>Yanko</option>
-<option>Stoianka</option>
-<option>Mitko</option>
-<option>Vasilka</option>
-</select>
-
-<br>
-
-<input id="pin" placeholder="PIN">
-
-<br>
-
-<button onclick="login()">ВЛЕЗ</button>
+<div class="panel">
+<div id="welcome"></div>
+<div class="balance">Баланс: <span id="bal">0</span>€</div>
 </div>
 
-<div id="game" style="display:none">
+<div class="bonus" onclick="dailyBonus()">🎁 ДНЕВЕН БОНУС</div>
 
-<h3 id="welcome"></h3>
+<div class="panel">
+<div><b>🎮 ИГРИ</b></div>
 
-<div>Баланс: <span id="bal">0</span>€</div>
+<div class="games">
+<div class="game">VASA</div>
+<div class="game">DIDI</div>
+<div class="game">MITKO</div>
+</div>
+</div>
 
-<hr>
-
-<h3>💬 ЧАТ</h3>
+<div class="panel">
+<div><b>💬 ЧАТ</b></div>
 
 <div class="chat" id="chat"></div>
 
-<input id="msg" placeholder="напиши...">
+<div class="inputRow">
+<input id="msg" placeholder="пиши...">
 <button onclick="sendMsg()">SEND</button>
-
+</div>
 </div>
 
 </div>
 
 <script>
-
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
-let user=null;
-
-async function login(){
-
-let name=document.getElementById("name").value;
-let pin=document.getElementById("pin").value;
-
-let r=await fetch(URL+"players?Name=eq."+name,{
-headers:{apikey:KEY}
-});
-
-let data=await r.json();
-
-if(!data[0] || String(data[0].Pin)!==pin){
-alert("Грешен PIN");
-return;
-}
-
-user=data[0];
-
-document.getElementById("loginBox").style.display="none";
-document.getElementById("game").style.display="block";
+let user={Name:"Vasilka",Points:80}; // временно
 
 document.getElementById("welcome").innerText="Здравей, "+user.Name;
 document.getElementById("bal").innerText=user.Points;
 
-sendSystem(user.Name+" влезе в казиното 🎰");
-
-loadChat();
-setInterval(loadChat,2000);
-}
-
 async function sendMsg(){
-
 let text=document.getElementById("msg").value;
 if(!text)return;
 
 await fetch(URL+"chat_messages",{
 method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{apikey:KEY,"Content-Type":"application/json"},
 body:JSON.stringify({
 player_name:user.Name,
 message:text
@@ -148,30 +187,11 @@ message:text
 document.getElementById("msg").value="";
 }
 
-async function sendSystem(t){
-await fetch(URL+"chat_messages",{
-method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-player_name:"SYSTEM",
-message:t
-})
-});
-}
-
 async function loadChat(){
-
-let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{
-headers:{apikey:KEY}
-});
-
+let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{headers:{apikey:KEY}});
 let data=await r.json();
 
 let html="";
-
 data.reverse().forEach(x=>{
 html+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
 });
@@ -179,6 +199,13 @@ html+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}
 document.getElementById("chat").innerHTML=html;
 }
 
+function dailyBonus(){
+user.Points+=5;
+document.getElementById("bal").innerText=user.Points;
+alert("Взе +5€ бонус");
+}
+
+setInterval(loadChat,2000);
 </script>
 
 </body>
