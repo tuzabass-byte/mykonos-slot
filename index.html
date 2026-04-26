@@ -3,273 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V16</title>
-
+<title>Vasa Fortune V17 FINAL</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#061943;color:#fff}
-.app{max-width:420px;margin:auto;padding:10px 8px 90px}
-
-.logo{text-align:center;font-size:24px;font-weight:900;color:#36f3ff}
-
-.jackpot{
-height:36px;
-border:2px solid #36f1ff;
-border-radius:10px;
-margin:4px 0;
-display:flex;
-justify-content:space-between;
-padding:0 10px;
-align-items:center;
-font-size:16px;
-}
-
-.freeBox{
-display:none;
-background:#ffe15a;
-color:#111;
-text-align:center;
-font-weight:900;
-padding:6px;
-border-radius:8px;
-margin:5px 0;
-}
-
-.machine{border:2px solid gold;border-radius:10px;background:#21001b}
-.title{text-align:center;background:red;padding:6px;font-weight:900}
-
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;padding:4px}
-.reel{display:grid;grid-template-rows:repeat(3,60px);gap:2px}
-
-.cell{
-display:flex;
-align-items:center;
-justify-content:center;
-border:1px solid gold;
-font-size:26px;
-background:#300020;
-}
-
-.win{background:gold;color:#000}
-.scatter{background:orange;color:#000}
-
-.stats{
-display:flex;
-justify-content:space-around;
-padding:8px;
-font-size:14px;
-}
-
-.controls{text-align:center;margin-top:8px}
-
-.spinBtn{
-width:80px;height:80px;border-radius:50%;
-background:red;color:white;font-weight:900;
-}
-
-.popup{
-display:none;position:fixed;inset:0;
-background:rgba(0,0,0,.7);
-align-items:center;justify-content:center;
-}
-
-.popupBox{
-background:#081331;
-border:2px solid #36f1ff;
-padding:20px;
-text-align:center;
-border-radius:12px;
-}
+body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
+.app{max-width:430px;margin:auto;padding:12px 10px 92px}
+.logo{text-align:center;font-size:27px;font-weight:900;color:#36f3ff;text-shadow:0 0 18px #00eaff}
+.sub{text-align:center;color:#ffd35a;margin:4px 0 8px;font-size:13px}
+.jackpot{height:42px;border:2px solid #36f1ff;border-radius:12px;background:#031632;margin:5px 0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;font-size:18px;font-weight:900;box-shadow:0 0 12px #00eaff}
+.freeBox{display:none;background:#ffe15a;color:#111;text-align:center;font-weight:900;padding:8px;border-radius:9px;margin:7px 0}
+.machine{border:3px solid #ffd23c;border-radius:15px;overflow:hidden;background:#21001b;box-shadow:0 0 22px rgba(255,208,40,.75)}
+.title{background:linear-gradient(90deg,#9b0000,#ff5200,#9b0000);padding:10px;text-align:center;color:#ffe15a;font-size:22px;font-weight:900;border-bottom:3px solid #ffd23c}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;background:#280023;border-bottom:3px solid #ffd23c}
+.reel{display:grid;grid-template-rows:repeat(3,64px);gap:3px}
+.cell{border:1px solid #ffd85a;background:radial-gradient(circle,#884311,#310033 52%,#120013);display:flex;align-items:center;justify-content:center;font-size:31px;font-weight:900}
+.cell.win{background:gold;color:#111;animation:flash .35s infinite alternate}
+.cell.scatter{background:radial-gradient(circle,#fff700,#ff9900);color:#111;font-size:23px}
+.spin .cell{animation:blur .08s linear infinite}
+@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
+@keyframes flash{to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}}
+.info{background:#080611;padding:9px}
+.status{text-align:center;font-size:18px;font-weight:900;min-height:28px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+.stat{border:1px solid #6e7490;border-radius:8px;background:#090814;text-align:center;padding:6px 2px}
+.stat small{display:block;color:#ccc;font-size:10px}.stat b{font-size:18px}
+.controls{display:flex;justify-content:space-around;align-items:center;margin-top:13px}
+button{border:0;color:white;font-weight:900;cursor:pointer}
+button:active{transform:scale(.94)}
+.betBtn{width:62px;height:62px;border-radius:50%;border:4px solid white;background:radial-gradient(circle,#16f2ff,#003b88)}
+.spinBtn{width:96px;height:96px;border-radius:50%;border:6px solid white;background:radial-gradient(circle,#ff2020,#790000);font-size:18px;box-shadow:0 0 24px red}
+.extra{text-align:center;margin-top:8px}
+.small{padding:9px 12px;border-radius:8px;background:#112a67;border:1px solid #37eaff;margin:3px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:74px;background:#071b50;display:grid;grid-template-columns:repeat(5,1fr)}
+.nav{text-align:center;font-size:11px;padding-top:7px;color:#c5cdec}.nav div{font-size:22px}
+.deposit{margin:13px 5px;border-radius:10px;background:#2cf5f2;color:#061943;display:flex;align-items:center;justify-content:center;font-weight:900}
+.popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:50;align-items:center;justify-content:center;padding:20px}
+.popupBox{background:#081331;border:3px solid #36f1ff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 0 25px #00eaff;max-width:360px}
+.popupBox h2{color:#ffe15a;margin:0 0 12px}
+.popupBox button{background:#ff2020;border-radius:8px;padding:12px 25px;margin-top:15px}
 </style>
 </head>
-
 <body>
 
 <div class="app">
+  <div class="logo">VASA FORTUNE</div>
+  <div class="sub">Demo баланс · 5 линии · 30 Free Spins</div>
 
-<div class="logo">VASA FORTUNE</div>
+  <div class="jackpot"><span style="color:#ff4ee6">Mega</span><span id="mega">12928.65 €</span></div>
+  <div class="jackpot"><span style="color:#54ff65">Maxi</span><span id="maxi">647.45 €</span></div>
+  <div class="jackpot"><span style="color:#c9f7ff">Mini</span><span id="mini">42.66 €</span></div>
 
-<div class="jackpot"><span>Mega</span><span>12928€</span></div>
-<div class="jackpot"><span>Maxi</span><span>647€</span></div>
-<div class="jackpot"><span>Mini</span><span>42€</span></div>
+  <div class="freeBox" id="freeBox"></div>
 
-<div class="freeBox" id="freeBox"></div>
+  <div class="machine">
+    <div class="title">🔥 VASA FORTUNE 🔥</div>
+    <div class="reels" id="reels"></div>
+    <div class="info">
+      <div class="status" id="status">ГОТОВ</div>
+      <div class="stats">
+        <div class="stat"><small>ПЕЧАЛБА</small><b id="win">0.00 €</b></div>
+        <div class="stat"><small>ЗАЛОГ</small><b id="bet">0.50 €</b></div>
+        <div class="stat"><small>БАЛАНС</small><b id="bal">20.00 €</b></div>
+      </div>
+    </div>
+  </div>
 
-<div class="machine">
-<div class="title">🔥 VASA 🔥</div>
-<div class="reels" id="reels"></div>
+  <div class="controls">
+    <button class="betBtn" onclick="changeBet(-1)">BET -</button>
+    <button class="spinBtn" id="spinButton" onclick="spin()">SPIN</button>
+    <button class="betBtn" onclick="changeBet(1)">BET +</button>
+  </div>
 
-<div class="stats">
-<div>WIN<br><b id="win">0€</b></div>
-<div>BET<br><b id="bet">1€</b></div>
-<div>BAL<br><b id="bal">20€</b></div>
+  <div class="extra">
+    <button class="small" onclick="paytable()">PAYTABLE</button>
+    <button class="small" id="soundBtn" onclick="toggleSound()">SOUND ON</button>
+  </div>
 </div>
-</div>
 
-<div id="status" style="text-align:center;margin-top:5px">READY</div>
-
-<div class="controls">
-<button class="spinBtn" onclick="spin()">SPIN</button>
-</div>
-
+<div class="bottom">
+  <div class="nav"><div>🏝️</div>Начало</div>
+  <div class="nav"><div>▦</div>Игри</div>
+  <div class="nav" onclick="bonus()"><div>🎁</div>Бонуси</div>
+  <div class="nav"><div>♡</div>Любими</div>
+  <div class="deposit" onclick="deposit()">Депозит</div>
 </div>
 
 <div class="popup" id="popup">
-<div class="popupBox">
-<h3 id="popTitle"></h3>
-<p id="popText"></p>
-<button onclick="popup.style.display='none'">OK</button>
-</div>
+  <div class="popupBox">
+    <h2 id="popupTitle">БРАВО!</h2>
+    <div id="popupText"></div>
+    <button onclick="closePopup()">OK</button>
+  </div>
 </div>
 
 <script>
+const START_BALANCE=20;
+const SOFT_LIMIT=70;
+const HARD_LIMIT=90;
 
-let balance=20;
-let bet=1;
+let balance=START_BALANCE;
+let bets=[0.10,0.20,0.50,1,2,5,10];
+let bi=2;
+let spinning=false;
+let snd=true;
+let coolingSpins=0;
 
-let free=false;
-let freeSpins=0;
-let freeWin=0;
+let inFree=false;
+let free=0,totalFree=0,freeWin=0,lastBet=bets[bi];
 
-const SOFT_MAX=70;
+let jp={mega:12928.65,maxi:647.45,mini:42.66};
 
-/* symbols */
 const symbols=[
-{id:"7",h:"7",w:3,p:{3:10,4:40,5:100}},
-{id:"BAR",h:"BAR",w:5,p:{3:8,4:20,5:60}},
-{id:"D",h:"💎",w:6,p:{3:8,4:20,5:60}},
-{id:"B",h:"🔔",w:10,p:{3:4,4:10,5:30}},
-{id:"H",h:"♞",w:12,p:{3:3,4:8,5:20}},
-{id:"C",h:"🍒",w:18,p:{3:2,4:6,5:15}},
-{id:"W",h:"W",w:2},
-{id:"S",h:"SC",w:2}
+{id:"7",h:"7",w:5,p:{3:10,4:40,5:600}},
+{id:"BAR",h:"BAR",w:8,p:{3:8,4:20,5:100}},
+{id:"D",h:"💎",w:10,p:{3:8,4:20,5:100}},
+{id:"B",h:"🔔",w:14,p:{3:6,4:15,5:50}},
+{id:"H",h:"♞",w:12,p:{3:4,4:10,5:30}},
+{id:"C",h:"🍒",w:18,p:{3:2,4:6,5:20}},
+{id:"W",h:"W",w:2,p:{}},
+{id:"S",h:"SC",w:3,p:{}}
 ];
 
-function r(){
-let arr=[...symbols];
+const lines=[
+[0,0,0,0,0],
+[1,1,1,1,1],
+[2,2,2,2,2],
+[0,1,2,1,0],
+[2,1,0,1,2]
+];
 
-/* ако балансът падне → по-лесно бонус */
+function m(v){return Number(v).toFixed(2)+" €"}
+
+function beep(f,d=.08,t="sine"){
+if(!snd)return;
+let c=new (window.AudioContext||window.webkitAudioContext)();
+let o=c.createOscillator(),g=c.createGain();
+o.type=t;o.frequency.value=f;g.gain.value=.045;
+o.connect(g);g.connect(c.destination);
+o.start();o.stop(c.currentTime+d);
+}
+
+function popupMsg(title,text){
+popupTitle.innerText=title;
+popupText.innerText=text;
+popup.style.display="flex";
+}
+
+function closePopup(){popup.style.display="none"}
+
+function getSymbols(){
+let a=JSON.parse(JSON.stringify(symbols));
+let profit=balance-START_BALANCE;
+let currentBet=bets[bi];
+
+let sc=a.find(x=>x.id=="S");
+let w=a.find(x=>x.id=="W");
+let seven=a.find(x=>x.id=="7");
+let bar=a.find(x=>x.id=="BAR");
+let dia=a.find(x=>x.id=="D");
+let bell=a.find(x=>x.id=="B");
+let horse=a.find(x=>x.id=="H");
+let cherry=a.find(x=>x.id=="C");
+
+/* Нисък баланс: леко помагаме да влезе бонус */
 if(balance<=10){
-arr.find(x=>x.id=="S").w=4;
+sc.w=5;
+w.w=2.5;
+seven.w=4;
+bar.w=7;
+dia.w=7;
 }
 
-/* ако е висок баланс → сухо */
-if(balance>SOFT_MAX){
-arr.find(x=>x.id=="7").w=0.5;
-arr.find(x=>x.id=="BAR").w=1;
-arr.find(x=>x.id=="D").w=1;
-arr.find(x=>x.id=="W").w=0.3;
+/* Нормална зона */
+if(profit>=20){sc.w=2}
+if(profit>=40){sc.w=1}
+if(profit>=55){sc.w=.5}
+
+/* По-висок залог = по-сухо */
+if(currentBet>=1){
+seven.w=3;bar.w=6;dia.w=7;w.w=1.5;sc.w=Math.min(sc.w,2);
+cherry.w=22;horse.w=15;bell.w=14;
 }
 
-let sum=arr.reduce((a,b)=>a+b.w,0);
-let x=Math.random()*sum;
-
-for(let s of arr){
-x-=s.w;
-if(x<=0)return s;
+if(currentBet>=5){
+seven.w=1.2;bar.w=3;dia.w=3;w.w=.7;sc.w=.8;
+cherry.w=28;horse.w=20;bell.w=18;
 }
+
+if(currentBet>=10){
+seven.w=.6;bar.w=1.8;dia.w=1.8;w.w=.4;sc.w=.4;
+cherry.w=34;horse.w=24;bell.w=22;
+}
+
+/* След 70€ — охлаждане */
+if(balance>SOFT_LIMIT || coolingSpins>0){
+seven.w=.35;bar.w=1;dia.w=1;w.w=.2;sc.w=.15;
+cherry.w=40;horse.w=30;bell.w=28;
+}
+
+/* Free Spins — контролирани */
+if(inFree){
+w.w=bets[bi]>=5?.8:1.8;
+sc.w=bets[bi]>=5?.2:.5;
+seven.w=bets[bi]>=5?.6:1.2;
+bar.w=bets[bi]>=5?1.2:2.5;
+dia.w=bets[bi]>=5?1.2:2.5;
+cherry.w=bets[bi]>=5?38:30;
+horse.w=bets[bi]>=5?30:24;
+bell.w=bets[bi]>=5?28:22;
+}
+
+return a;
+}
+
+function rs(){
+let arr=getSymbols();
+let sum=arr.reduce((s,x)=>s+x.w,0);
+let r=Math.random()*sum;
+for(let x of arr){r-=x.w;if(r<=0)return x}
+return arr[0];
+}
+
+function setCell(c,s){
+c.innerHTML=s.h;
+c.dataset.id=s.id;
+c.className="cell";
+if(s.id=="S")c.classList.add("scatter");
 }
 
 function draw(){
 reels.innerHTML="";
-for(let i=0;i<5;i++){
+for(let c=0;c<5;c++){
 let reel=document.createElement("div");
 reel.className="reel";
-
-for(let j=0;j<3;j++){
-let c=document.createElement("div");
-c.className="cell";
-let s=r();
-c.innerHTML=s.h;
-c.dataset.id=s.id;
-if(s.id=="S")c.classList.add("scatter");
-reel.appendChild(c);
+for(let r=0;r<3;r++){
+let cell=document.createElement("div");
+setCell(cell,rs());
+reel.appendChild(cell);
 }
-
 reels.appendChild(reel);
 }
 }
 
-function spin(){
-
-if(!free && balance<=0){
-status.innerText="0€";
-popup.style.display="flex";
-popTitle.innerText="INFO";
-popText.innerText="Моля свържете се със Stefan Boss 😄";
-return;
+function board(){
+let b=[[],[],[]];
+[...document.querySelectorAll(".reel")].forEach((reel,c)=>{
+[...reel.children].forEach((cell,r)=>b[r][c]=cell);
+});
+return b;
 }
 
-if(!free) balance-=bet;
-else freeSpins--;
+function update(){
+bet.innerText=m(bets[bi]);
+bal.innerText=m(balance);
+mega.innerText=m(jp.mega);
+maxi.innerText=m(jp.maxi);
+mini.innerText=m(jp.mini);
+spinButton.innerText=inFree?"FREE SPIN":"SPIN";
 
-draw();
-setTimeout(calc,200);
+freeBox.style.display=inFree?"block":"none";
+freeBox.innerText=inFree?`FREE SPINS: ${totalFree-free}/${totalFree} · FREE WIN: ${m(freeWin)}`:"";
 }
 
-function calc(){
+function changeBet(d){
+if(spinning||inFree)return;
+bi=Math.max(0,Math.min(bets.length-1,bi+d));
+beep(650,.04,"square");
+update();
+}
 
-let total=0;
-let sc=0;
-let cells=[...document.querySelectorAll(".cell")];
-
-cells.forEach(x=>{if(x.dataset.id=="S")sc++});
-
-/* free spins */
-if(sc>=3 && !free){
-free=true;
-freeSpins=20;
+function startFree(){
+inFree=true;
+free=30;
+totalFree=30;
 freeWin=0;
-popup.style.display="flex";
-popTitle.innerText="🎉 FREE SPINS";
-popText.innerText="Печелите 20 безплатни!";
+lastBet=bets[bi];
+status.innerText="🎉 ПОЗДРАВЛЕНИЯ! ПЕЧЕЛИТЕ 30 FREE SPINS!";
+popupMsg("🎉 БРАВО!","Печелите 30 FREE SPINS!");
+beep(900,.25,"triangle");
+update();
+}
+
+function limitWin(amount){
+let room=HARD_LIMIT-balance;
+if(inFree)room=HARD_LIMIT-balance-freeWin;
+if(room<=0)return 0;
+return Math.min(amount,room);
+}
+
+function maxSpinWin(amount,isFree){
+let betv=lastBet;
+
+/* Основна игра: нормални, но не избухващи печалби */
+let cap=isFree?betv*10:betv*14;
+
+/* Free Spins: максимум около 20–25€ при нормален залог */
+if(isFree){
+cap=Math.min(cap,25);
+}
+
+/* Retrigger позволява леко повече */
+if(isFree && totalFree>30){
+cap=Math.min(betv*16,30);
+}
+
+/* След soft limit става сухо */
+if(balance>SOFT_LIMIT || coolingSpins>0){
+cap=betv*4;
+}
+
+if(amount>cap)return cap;
+return amount;
+}
+
+function activateCooling(){
+if(balance>SOFT_LIMIT){
+coolingSpins=24;
+}
+}
+
+function endFree(){
+inFree=false;
+
+let add=limitWin(freeWin);
+balance+=add;
+activateCooling();
+
+if(add>0){
+status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(add)+" ОТ FREE SPINS!";
+popupMsg("🎉 БРАВО!","Спечелихте "+m(add)+" от FREE SPINS!");
+win.innerText=m(add);
+}else{
+status.innerText="FREE SPINS ПРИКЛЮЧИХА";
+popupMsg("FREE SPINS","Бонусът приключи без добавена печалба.");
+win.innerText=m(0);
+}
+
+free=0;
+totalFree=0;
+freeWin=0;
+
+beep(1400,.3,"triangle");
+update();
+}
+
+function spin(){
+if(spinning)return;
+
+let betv=bets[bi];
+let isFree=inFree;
+
+if(!isFree&&balance<=0){
+status.innerText="0.00 €";
+popupMsg("INFO","Моля, свържете се със Stefan Boss 😄");
 return;
 }
 
-/* печалба */
-for(let i=0;i<cells.length-2;i++){
-let a=cells[i].dataset.id;
-let b=cells[i+1].dataset.id;
-let c=cells[i+2].dataset.id;
-
-if(a==b && b==c){
-let sym=symbols.find(x=>x.id==a);
-if(sym && sym.p[3]){
-total+=sym.p[3];
-}
-}
+if(!isFree&&balance<betv){
+status.innerText="НЕДОСТАТЪЧЕН БАЛАНС";
+beep(130,.15,"sawtooth");
+return;
 }
 
-/* лимит */
-if(free){
-if(total>20) total=20;
+spinning=true;
+document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
+
+if(isFree){
+free--;
+status.innerText=`FREE SPIN ${totalFree-free}/${totalFree}`;
+}else{
+balance-=betv;
+if(balance<0)balance=0;
+lastBet=betv;
+status.innerText="ВЪРТИ...";
+}
+
+update();
+beep(150,.15,"sawtooth");
+
+let reelsA=[...document.querySelectorAll(".reel")],stopped=0;
+
+reelsA.forEach((reel,i)=>{
+reel.classList.add("spin");
+let timer=setInterval(()=>{
+[...reel.children].forEach(c=>setCell(c,rs()));
+},65);
+
+setTimeout(()=>{
+clearInterval(timer);
+[...reel.children].forEach(c=>setCell(c,rs()));
+
+if(isFree){
+let col=[...reel.children];
+let chance=bets[bi]>=5?.05:.10;
+if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance){
+col.forEach(x=>setCell(x,{id:"W",h:"W"}));
+status.innerText="🔥 EXPANDING WILD!";
+}
+}
+
+reel.classList.remove("spin");
+beep(360,.05,"square");
+stopped++;
+
+if(stopped===5){
+setTimeout(()=>{calc(isFree);grow(betv);spinning=false},160);
+}
+},720+i*280);
+});
+}
+
+function evaluateLine(cells){
+let ids=cells.map(c=>c.dataset.id);
+let base=null;
+let count=0;
+
+for(let i=0;i<5;i++){
+let id=ids[i];
+
+if(id==="S")break;
+
+if(base===null){
+if(id==="W"){count++;continue;}
+base=id;
+count++;
+continue;
+}
+
+if(id===base||id==="W"){
+count++;
+}else{
+break;
+}
+}
+
+if(!base||count<3)return null;
+
+let sym=symbols.find(x=>x.id===base);
+return {base,count,amount:lastBet*sym.p[count]};
+}
+
+function calc(isFree){
+let b=board();
+let total=0,winners=[],sc=0;
+
+b.flat().forEach(c=>{if(c.dataset.id==="S")sc++});
+
+if(sc>=3&&!isFree){
+startFree();
+return;
+}
+
+for(let line of lines){
+let cells=line.map((row,col)=>b[row][col]);
+let res=evaluateLine(cells);
+if(res){
+total+=res.amount;
+for(let i=0;i<res.count;i++)winners.push(cells[i]);
+}
+}
+
+if(sc>=3&&isFree){
+free+=10;
+totalFree+=10;
+status.innerText="⭐ RETRIGGER +10 FREE SPINS!";
+popupMsg("⭐ RETRIGGER!","+10 FREE SPINS!");
+beep(1000,.2,"triangle");
+}
+
+total=maxSpinWin(total,isFree);
+total=limitWin(total);
+
+if(total>0){
+winners.forEach(c=>c.classList.add("win"));
+win.innerText=m(total);
+
+if(isFree){
 freeWin+=total;
+status.innerText="FREE WIN "+m(total);
 }else{
 balance+=total;
+activateCooling();
+status.innerText="ПЕЧАЛБА "+m(total);
 }
 
-/* край free */
-if(free && freeSpins<=0){
-free=false;
-balance+=freeWin;
-
-popup.style.display="flex";
-popTitle.innerText="🎉 БРАВО!";
-popText.innerText="Спечелихте "+freeWin+"€";
-
-freeWin=0;
+beep(total>=lastBet*20?1200:780,.15,"triangle");
+}else{
+status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК";
 }
 
-win.innerText=total+"€";
-bal.innerText=balance+"€";
+if(!isFree && coolingSpins>0)coolingSpins--;
 
-freeBox.style.display=free?"block":"none";
-freeBox.innerText="FREE "+freeSpins+" · "+freeWin+"€";
+update();
+
+if(isFree&&free<=0){
+setTimeout(endFree,900);
+}
+}
+
+function grow(b){
+jp.mega+=b*.01;
+jp.maxi+=b*.006;
+jp.mini+=b*.003;
+update();
+}
+
+function bonus(){
+if(balance<START_BALANCE){
+balance+=5;
+if(balance>START_BALANCE)balance=START_BALANCE;
+status.innerText="БОНУС +5.00 €";
+}else{
+status.innerText="БОНУСЪТ Е ДОСТЪПЕН САМО ПРИ НИСЪК БАЛАНС";
+}
+update();
+}
+
+function deposit(){
+balance=START_BALANCE;
+coolingSpins=0;
+inFree=false;free=0;totalFree=0;freeWin=0;
+win.innerText=m(0);
+status.innerText="DEMO ДЕПОЗИТ: БАЛАНСЪТ Е 20.00 €";
+update();
+}
+
+function toggleSound(){
+snd=!snd;
+soundBtn.innerText=snd?"SOUND ON":"SOUND OFF";
+}
+
+function paytable(){
+alert("PAYTABLE при 1€ залог:\\n7: 3x=10€, 4x=40€, 5x=600€\\nBAR/💎: 3x=8€, 4x=20€, 5x=100€\\n🔔: 3x=6€, 4x=15€, 5x=50€\\n♞: 3x=4€, 4x=10€, 5x=30€\\n🍒: 3x=2€, 4x=6€, 5x=20€\\nSC: 3x = 30 Free Spins\\nW замества символите.");
 }
 
 draw();
-
+update();
 </script>
-
 </body>
 </html>
