@@ -294,4 +294,256 @@ transition:.35s;
 
 <div class="quickGrid">
 <div class="banner bonusBanner" onclick="dailyBonus()">🎁 ДНЕВЕН БОНУС<br><small>+5€ веднъж на ден</small></div>
-<div class="banner jackpotBanner">💰 JACKPOT<br><span
+<div class="banner jackpotBanner">💰 JACKPOT<br><span <div class="banner jackpotBanner">
+💰 JACKPOT<br>
+<span>12 500€</span>
+</div>
+
+<div class="banner winnerBanner">
+🏆 ПОСЛЕДЕН ПЕЧЕЛИВШ<br>
+<span id="topWinner">---</span>
+</div>
+
+<div class="banner missionBanner">
+🎯 ПОКАНИ ПРИЯТЕЛ +5€
+</div>
+
+</div>
+
+<div class="card">
+<div class="sectionTitle">🎮 Игри</div>
+
+<div class="games">
+
+<div class="gameCard vasa" onclick="openGame('VASA')">
+<div class="gameTitle">VASA</div>
+<div class="gameSub">Classic Slots</div>
+<div class="playBtn">ИГРАЙ</div>
+</div>
+
+<div class="gameCard didi" onclick="openGame('DIDI')">
+<div class="gameTitle">DIDI</div>
+<div class="gameSub">Hot Spins</div>
+<div class="playBtn">ИГРАЙ</div>
+</div>
+
+<div class="gameCard mitko" onclick="openGame('MITKO')">
+<div class="gameTitle">MITKO</div>
+<div class="gameSub">Bell Bonus</div>
+<div class="playBtn">ИГРАЙ</div>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<div class="sectionTitle">🏆 Топ играчи</div>
+<div id="leaderboard"></div>
+</div>
+
+<div class="card">
+<div class="sectionTitle">💬 Чат</div>
+
+<div class="chat" id="chat"></div>
+
+<div class="inputRow">
+<input id="msgInput" placeholder="пиши...">
+<button onclick="sendMsg()">SEND</button>
+</div>
+
+</div>
+
+<div class="card">
+<div class="sectionTitle">🔗 Твоят линк</div>
+<div id="myLink"></div>
+</div>
+
+<button class="logoutBtn" onclick="logout()">ИЗХОД</button>
+
+</div><script>
+
+const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+
+let user=null;
+
+// 🔥 генерира чист код
+function makeRefCode(name){
+return name.replace(/\s+/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
+}
+
+// 🔗 линк
+function getInviteLink(){
+return location.origin + location.pathname + "?ref=" + user.ref_code;
+}
+
+// load players
+loadPlayers();
+
+async function loadPlayers(){
+let r=await fetch(URL+"players",{headers:{apikey:KEY}});
+let d=await r.json();
+
+playerSelect.innerHTML="";
+d.forEach(p=>{
+let o=document.createElement("option");
+o.value=p.Name;
+o.textContent=p.Name;
+playerSelect.appendChild(o);
+});
+}
+
+// LOGIN
+async function login(){
+
+let r=await fetch(URL+"players?Name=eq."+playerSelect.value,{headers:{apikey:KEY}});
+let d=await r.json();
+
+if(!d[0] || String(d[0].Pin)!=pinInput.value){
+alert("Грешен PIN");
+return;
+}
+
+user=d[0];
+
+// auto ref ако няма
+if(!user.ref_code){
+user.ref_code=makeRefCode(user.Name);
+
+await fetch(URL+"players?Name=eq."+user.Name,{
+method:"PATCH",
+headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({ref_code:user.ref_code})
+});
+}
+
+loginBox.classList.add("hidden");
+lobbyBox.classList.remove("hidden");
+
+welcomeText.innerText="Здравей, "+user.Name;
+balanceText.innerText=user.Points+"€";
+
+myLink.innerText=getInviteLink();
+
+sendSystem(user.Name+" влезе в казиното 🎰");
+
+loadChat();
+setInterval(loadChat,2000);
+loadTop();
+}
+
+// REGISTER
+async function register(){
+
+let name=regName.value;
+let pin=regPin.value;
+let ref=regRef.value;
+
+if(!name || !pin){
+alert("Попълни всичко");
+return;
+}
+
+let code=makeRefCode(name);
+
+await fetch(URL+"players",{
+method:"POST",
+headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({
+Name:name,
+Pin:pin,
+Points:10,
+ref_code:code,
+ref_by:ref || null
+})
+});
+
+// referral бонус
+if(ref){
+let r=await fetch(URL+"players?ref_code=eq."+ref,{headers:{apikey:KEY}});
+let d=await r.json();
+
+if(d[0]){
+await fetch(URL+"players?ref_code=eq."+ref,{
+method:"PATCH",
+headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({Points:d[0].Points+5})
+});
+
+sendSystem(d[0].Name+" получи +5€ за покана 🎁");
+}
+}
+
+alert("Регистрация успешна!");
+loadPlayers();
+}
+
+// бонус
+function dailyBonus(){
+user.Points+=5;
+balanceText.innerText=user.Points+"€";
+sendSystem(user.Name+" взе +5€ бонус 🎁");
+}
+
+// чат
+async function sendMsg(){
+if(!msgInput.value)return;
+
+await fetch(URL+"chat_messages",{
+method:"POST",
+headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({
+player_name:user.Name,
+message:msgInput.value
+})
+});
+
+msgInput.value="";
+}
+
+// system
+async function sendSystem(t){
+await fetch(URL+"chat_messages",{
+method:"POST",
+headers:{apikey:KEY,"Content-Type":"application/json"},
+body:JSON.stringify({
+player_name:"SYSTEM",
+message:t
+})
+});
+}
+
+// load chat
+async function loadChat(){
+let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{headers:{apikey:KEY}});
+let d=await r.json();
+
+chat.innerHTML="";
+d.reverse().forEach(x=>{
+chat.innerHTML+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
+});
+}
+
+// top player
+async function loadTop(){
+let r=await fetch(URL+"players?order=Points.desc&limit=1",{headers:{apikey:KEY}});
+let d=await r.json();
+
+if(d[0]){
+topWinner.innerText=d[0].Name+" "+d[0].Points+"€";
+}
+}
+
+// game click
+function openGame(g){
+sendSystem(user.Name+" отвори "+g+" 🎮");
+}
+
+// logout
+function logout(){
+location.reload();
+}
+
+</script>
+</body>
+</html>
