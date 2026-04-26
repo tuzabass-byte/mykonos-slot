@@ -1,74 +1,157 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MYKONOS CASINO</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#000;color:#fff;text-align:center}
+.box{max-width:400px;margin:auto;padding:20px}
+button,input,select{width:100%;padding:12px;margin:6px;border-radius:8px;border:0;font-size:16px}
+button{background:#00eaff;color:#000;font-weight:900}
+.hidden{display:none}
+.game{border:2px solid gold;margin:10px;padding:20px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>🎰 MYKONOS CASINO</h1>
+
+<!-- LOGIN -->
+<div id="login">
+<select id="player"></select>
+<input id="pin" placeholder="PIN">
+<button onclick="login()">Вход</button>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby" class="hidden">
+<h2 id="user"></h2>
+<h3>Баланс: <span id="bal">0</span> €</h3>
+
+<div class="game" onclick="openGame('vasa')">🔥 Vasa Fortune</div>
+<div class="game" onclick="openGame('didi')">🚨 Didi Blitz</div>
+
+<button onclick="logout()">Изход</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="hidden">
+<h2 id="gameTitle"></h2>
+<h3>Баланс: <span id="bal2">0</span> €</h3>
+
+<button onclick="spin()">SPIN (-1€)</button>
+<div id="result"></div>
+
+<button onclick="back()">Назад</button>
+</div>
+
+</div>
 
 <script>
 const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-let balance = 0;
-let currentPlayer = null;
+let player=null;
+let balance=0;
+let currentGame=null;
 
-async function loadPlayers(){
-  const { data } = await db.from("players").select("*");
-
-  let sel = document.getElementById("playerSelect");
-  sel.innerHTML = "";
-
-  data.forEach(p=>{
-    let opt = document.createElement("option");
-    opt.value = p.id;
-    opt.textContent = p.Name;
-    sel.appendChild(opt);
-  });
+async function load(){
+let {data}=await db.from("players").select("*");
+let sel=document.getElementById("player");
+sel.innerHTML="";
+data.forEach(p=>{
+let o=document.createElement("option");
+o.value=p.id;
+o.textContent=p.Name;
+sel.appendChild(o);
+});
 }
 
 async function login(){
-  let id = document.getElementById("playerSelect").value;
-  let pin = document.getElementById("pinInput").value;
+let id=document.getElementById("player").value;
+let pin=document.getElementById("pin").value;
 
-  const { data } = await db
-    .from("players")
-    .select("*")
-    .eq("id", id)
-    .single();
+let {data}=await db.from("players").select("*").eq("id",id).single();
 
-  if(!data){
-    alert("Грешка");
-    return;
-  }
+if(String(data.pin)!==pin){alert("Грешен PIN");return;}
 
-  if(String(data.pin) !== pin){
-    alert("Грешен PIN");
-    return;
-  }
+player=data;
+balance=data.balance||0;
 
-  currentPlayer = data;
-  balance = Number(data.balance || 0);
+document.getElementById("user").innerText="Добре дошъл "+data.Name;
+update();
 
-  document.getElementById("bal").innerText = balance.toFixed(2)+" €";
-  document.getElementById("login").style.display="none";
-  document.getElementById("lobby").style.display="block";
+loginBox(false);
+lobbyBox(true);
 }
 
-async function saveBalance(){
-  await db.from("players")
-    .update({ balance: balance })
-    .eq("id", currentPlayer.id);
+function logout(){
+player=null;
+loginBox(true);
+lobbyBox(false);
+}
+
+function loginBox(x){document.getElementById("login").classList.toggle("hidden",!x)}
+function lobbyBox(x){document.getElementById("lobby").classList.toggle("hidden",!x)}
+function gameBox(x){document.getElementById("game").classList.toggle("hidden",!x)}
+
+function openGame(g){
+currentGame=g;
+document.getElementById("gameTitle").innerText=g==="vasa"?"🔥 Vasa Fortune":"🚨 Didi Blitz";
+lobbyBox(false);
+gameBox(true);
+update();
+}
+
+function back(){
+gameBox(false);
+lobbyBox(true);
+}
+
+function update(){
+document.getElementById("bal").innerText=balance.toFixed(2);
+document.getElementById("bal2").innerText=balance.toFixed(2);
+}
+
+async function save(){
+await db.from("players").update({balance:balance}).eq("id",player.id);
 }
 
 function spin(){
-  if(balance<=0)return;
+if(balance<1){alert("Няма пари");return;}
 
-  balance -= 1;
+balance-=1;
 
-  let win = Math.random()<0.3 ? 2 : 0;
-  balance += win;
+let win=0;
 
-  document.getElementById("bal").innerText = balance.toFixed(2)+" €";
-
-  saveBalance();
+if(currentGame==="vasa"){
+win = Math.random()<0.25 ? 2 : 0;
 }
 
-loadPlayers();
+if(currentGame==="didi"){
+win = Math.random()<0.35 ? 3 : 0;
+}
+
+balance+=win;
+
+document.getElementById("result").innerText=
+win>0 ? "Печалба "+win+"€ 🎉" : "Загуба 😄";
+
+update();
+save();
+}
+
+load();
 </script>
+
+</body>
+</html>
