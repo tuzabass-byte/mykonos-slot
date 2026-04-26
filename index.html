@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V20</title>
+<title>Vasa Fortune V21 RNG</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -300,6 +300,31 @@ cap=Math.min(0.5,betv*0.5);
 return Math.min(amount,cap);
 }
 
+function applyFreeRNG(total){
+if(!inFree)return total;
+
+if(freeWin >= MAX_FREE_WIN){
+return 0;
+}
+
+if(freeWin >= MAX_FREE_WIN * 0.85){
+return 0;
+}
+
+let dryChance = 0.68;
+
+if(freeWin >= MAX_FREE_WIN * 0.60){
+dryChance = 0.82;
+}
+
+if(total > 0 && Math.random() < dryChance){
+return 0;
+}
+
+let allowedFree=Math.max(0,MAX_FREE_WIN-freeWin);
+return Math.min(total,allowedFree);
+}
+
 function activateCooling(){
 if(balance>=DRAIN_LIMIT){
 coolingSpins=35;
@@ -379,8 +404,8 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=bets[bi]>=5?.02:.045;
-if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance){
+let chance=bets[bi]>=5?.02:.035;
+if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance && freeWin < MAX_FREE_WIN*0.65){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
 }
@@ -447,7 +472,7 @@ for(let i=0;i<res.count;i++)winners.push(cells[i]);
 }
 }
 
-if(sc>=3&&isFree){
+if(sc>=3&&isFree && freeWin < MAX_FREE_WIN*0.5){
 free+=10;
 totalFree+=10;
 status.innerText="⭐ RETRIGGER +10 FREE SPINS!";
@@ -458,8 +483,7 @@ beep(1000,.2,"triangle");
 total=maxSpinWin(total,isFree);
 
 if(isFree){
-let allowedFree=Math.max(0,MAX_FREE_WIN-freeWin);
-total=Math.min(total,allowedFree);
+total=applyFreeRNG(total);
 }
 
 total=limitWin(total);
