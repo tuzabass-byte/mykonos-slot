@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune V17 FINAL</title>
+<title>Vasa Fortune V18</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -98,8 +98,9 @@ button:active{transform:scale(.94)}
 
 <script>
 const START_BALANCE=20;
-const SOFT_LIMIT=70;
-const HARD_LIMIT=90;
+const HELP_BALANCE=10;
+const SOFT_LIMIT=65;
+const HARD_LIMIT=85;
 
 let balance=START_BALANCE;
 let bets=[0.10,0.20,0.50,1,2,5,10];
@@ -153,7 +154,6 @@ function closePopup(){popup.style.display="none"}
 
 function getSymbols(){
 let a=JSON.parse(JSON.stringify(symbols));
-let profit=balance-START_BALANCE;
 let currentBet=bets[bi];
 
 let sc=a.find(x=>x.id=="S");
@@ -165,52 +165,55 @@ let bell=a.find(x=>x.id=="B");
 let horse=a.find(x=>x.id=="H");
 let cherry=a.find(x=>x.id=="C");
 
-/* Нисък баланс: леко помагаме да влезе бонус */
-if(balance<=10){
-sc.w=5;
-w.w=2.5;
-seven.w=4;
-bar.w=7;
-dia.w=7;
+/* low balance: zaigravka, but not crazy */
+if(balance<=HELP_BALANCE){
+sc.w=4.8;
+w.w=2.2;
+seven.w=3.5;
+bar.w=6;
+dia.w=6;
+cherry.w=22;
+horse.w=16;
+bell.w=15;
 }
 
-/* Нормална зона */
-if(profit>=20){sc.w=2}
-if(profit>=40){sc.w=1}
-if(profit>=55){sc.w=.5}
+/* normal profit control */
+if(balance>=40){sc.w=1.6}
+if(balance>=55){sc.w=.8}
+if(balance>=SOFT_LIMIT){sc.w=.25}
 
-/* По-висок залог = по-сухо */
+/* higher bet is dryer */
 if(currentBet>=1){
-seven.w=3;bar.w=6;dia.w=7;w.w=1.5;sc.w=Math.min(sc.w,2);
-cherry.w=22;horse.w=15;bell.w=14;
+seven.w=2.4;bar.w=5;dia.w=5.5;w.w=1.2;sc.w=Math.min(sc.w,1.5);
+cherry.w=24;horse.w=17;bell.w=15;
 }
 
 if(currentBet>=5){
-seven.w=1.2;bar.w=3;dia.w=3;w.w=.7;sc.w=.8;
-cherry.w=28;horse.w=20;bell.w=18;
+seven.w=.8;bar.w=2;dia.w=2;w.w=.45;sc.w=.35;
+cherry.w=32;horse.w=24;bell.w=22;
 }
 
 if(currentBet>=10){
-seven.w=.6;bar.w=1.8;dia.w=1.8;w.w=.4;sc.w=.4;
-cherry.w=34;horse.w=24;bell.w=22;
+seven.w=.35;bar.w=1;dia.w=1;w.w=.2;sc.w=.18;
+cherry.w=42;horse.w=30;bell.w=28;
 }
 
-/* След 70€ — охлаждане */
-if(balance>SOFT_LIMIT || coolingSpins>0){
-seven.w=.35;bar.w=1;dia.w=1;w.w=.2;sc.w=.15;
-cherry.w=40;horse.w=30;bell.w=28;
+/* after soft limit: VERY dry */
+if(balance>=SOFT_LIMIT || coolingSpins>0){
+seven.w=.15;bar.w=.5;dia.w=.5;w.w=.08;sc.w=.05;
+cherry.w=48;horse.w=35;bell.w=32;
 }
 
-/* Free Spins — контролирани */
+/* free spins: controlled max around 20 EUR */
 if(inFree){
-w.w=bets[bi]>=5?.8:1.8;
-sc.w=bets[bi]>=5?.2:.5;
-seven.w=bets[bi]>=5?.6:1.2;
-bar.w=bets[bi]>=5?1.2:2.5;
-dia.w=bets[bi]>=5?1.2:2.5;
-cherry.w=bets[bi]>=5?38:30;
-horse.w=bets[bi]>=5?30:24;
-bell.w=bets[bi]>=5?28:22;
+w.w=bets[bi]>=5?.25:.9;
+sc.w=bets[bi]>=5?.08:.22;
+seven.w=bets[bi]>=5?.2:.45;
+bar.w=bets[bi]>=5?.45:1.1;
+dia.w=bets[bi]>=5?.45:1.1;
+cherry.w=bets[bi]>=5?46:38;
+horse.w=bets[bi]>=5?36:30;
+bell.w=bets[bi]>=5?34:28;
 }
 
 return a;
@@ -260,7 +263,6 @@ mega.innerText=m(jp.mega);
 maxi.innerText=m(jp.maxi);
 mini.innerText=m(jp.mini);
 spinButton.innerText=inFree?"FREE SPIN":"SPIN";
-
 freeBox.style.display=inFree?"block":"none";
 freeBox.innerText=inFree?`FREE SPINS: ${totalFree-free}/${totalFree} · FREE WIN: ${m(freeWin)}`:"";
 }
@@ -293,32 +295,30 @@ return Math.min(amount,room);
 
 function maxSpinWin(amount,isFree){
 let betv=lastBet;
+let cap=isFree?betv*5:betv*12;
 
-/* Основна игра: нормални, но не избухващи печалби */
-let cap=isFree?betv*10:betv*14;
-
-/* Free Spins: максимум около 20–25€ при нормален залог */
 if(isFree){
-cap=Math.min(cap,25);
+cap=Math.min(cap,20);
 }
 
-/* Retrigger позволява леко повече */
 if(isFree && totalFree>30){
-cap=Math.min(betv*16,30);
+cap=Math.min(betv*7,22);
 }
 
-/* След soft limit става сухо */
-if(balance>SOFT_LIMIT || coolingSpins>0){
-cap=betv*4;
+if(balance>=SOFT_LIMIT || coolingSpins>0){
+cap=betv*2.5;
 }
 
-if(amount>cap)return cap;
-return amount;
+if(balance<=HELP_BALANCE && isFree){
+cap=Math.min(betv*8,20);
+}
+
+return Math.min(amount,cap);
 }
 
 function activateCooling(){
-if(balance>SOFT_LIMIT){
-coolingSpins=24;
+if(balance>=SOFT_LIMIT){
+coolingSpins=35;
 }
 }
 
@@ -395,7 +395,7 @@ clearInterval(timer);
 
 if(isFree){
 let col=[...reel.children];
-let chance=bets[bi]>=5?.05:.10;
+let chance=bets[bi]>=5?.02:.045;
 if(col.some(x=>x.dataset.id=="W")&&Math.random()<chance){
 col.forEach(x=>setCell(x,{id:"W",h:"W"}));
 status.innerText="🔥 EXPANDING WILD!";
