@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune</title>
+<title>Vasa Fortune V12</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#15558f,#061943 40%,#020817);color:#fff}
@@ -102,9 +102,9 @@ const symbols=[
 {id:"7",h:"7",w:5,p:{3:10,4:40,5:600}},
 {id:"BAR",h:"BAR",w:8,p:{3:8,4:20,5:100}},
 {id:"D",h:"💎",w:10,p:{3:8,4:20,5:100}},
-{id:"B",h:"🔔",w:14,p:{3:4,4:10,5:40}},
+{id:"B",h:"🔔",w:14,p:{3:6,4:15,5:50}},
+{id:"H",h:"♞",w:12,p:{3:4,4:10,5:30}},
 {id:"C",h:"🍒",w:18,p:{3:2,4:6,5:20}},
-{id:"H",h:"♞",w:12,p:{3:2,4:6,5:20}},
 {id:"W",h:"W",w:2,p:{}},
 {id:"S",h:"SC",w:3,p:{}}
 ];
@@ -184,12 +184,12 @@ return b;
 }
 
 function update(){
-document.getElementById("bet").innerText=m(bets[bi]);
-document.getElementById("bal").innerText=m(balance);
-document.getElementById("mega").innerText=m(jp.mega);
-document.getElementById("maxi").innerText=m(jp.maxi);
-document.getElementById("mini").innerText=m(jp.mini);
-document.getElementById("spinButton").innerText=inFree?"FREE SPIN":"SPIN";
+bet.innerText=m(bets[bi]);
+bal.innerText=m(balance);
+mega.innerText=m(jp.mega);
+maxi.innerText=m(jp.maxi);
+mini.innerText=m(jp.mini);
+spinButton.innerText=inFree?"FREE SPIN":"SPIN";
 
 freeBox.style.display=inFree?"block":"none";
 freeBox.innerText=inFree?`FREE SPINS: ${totalFree-free}/${totalFree} · FREE WIN: ${m(freeWin)}`:"";
@@ -213,22 +213,24 @@ beep(900,.25,"triangle");
 update();
 }
 
-function endFree(){
-inFree=false;
-let add=limitWin(freeWin);
-balance+=add;
-status.innerText="🎉 СПЕЧЕЛИХТЕ "+m(add)+" ОТ БЕЗПЛАТНИ ИГРИ!";
-win.innerText=m(add);
-free=0;totalFree=0;freeWin=0;
-beep(1200,.25,"triangle");
-update();
-}
-
 function limitWin(amount){
 let room=MAX_BALANCE-balance;
 if(inFree)room=MAX_BALANCE-balance-freeWin;
 if(room<=0)return 0;
 return Math.min(amount,room);
+}
+
+function endFree(){
+inFree=false;
+let add=limitWin(freeWin);
+balance+=add;
+status.innerText="🎉 БРАВО! СПЕЧЕЛИХТЕ "+m(add)+" ОТ FREE SPINS!";
+win.innerText=m(add);
+free=0;
+totalFree=0;
+freeWin=0;
+beep(1400,.3,"triangle");
+update();
 }
 
 function spin(){
@@ -244,7 +246,6 @@ return;
 }
 
 spinning=true;
-win.innerText=m(0);
 document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
 
 if(isFree){
@@ -292,7 +293,8 @@ setTimeout(()=>{calc(isFree);grow(betv);spinning=false},160);
 
 function evaluateLine(cells){
 let ids=cells.map(c=>c.dataset.id);
-let base=null,count=0;
+let base=null;
+let count=0;
 
 for(let i=0;i<5;i++){
 let id=ids[i];
@@ -301,14 +303,20 @@ if(id==="S")break;
 
 if(base===null){
 if(id==="W"){count++;continue;}
-base=id;count++;continue;
+base=id;
+count++;
+continue;
 }
 
-if(id===base||id==="W")count++;
-else break;
+if(id===base||id==="W"){
+count++;
+}else{
+break;
+}
 }
 
 if(!base||count<3)return null;
+
 let sym=symbols.find(x=>x.id===base);
 return {base,count,amount:lastBet*sym.p[count]};
 }
@@ -398,7 +406,7 @@ soundBtn.innerText=snd?"SOUND ON":"SOUND OFF";
 }
 
 function paytable(){
-alert("PAYTABLE при 1€ залог:\\n7: 3x=10€, 4x=40€, 5x=600€\\nBAR/💎: 3x=8€, 4x=20€, 5x=100€\\n🔔: 3x=4€, 4x=10€, 5x=40€\\n🍒/♞: 3x=2€, 4x=6€, 5x=20€\\nSC: 3x = 30 Free Spins\\nW замества символите.");
+alert("PAYTABLE при 1€ залог:\\n7: 3x=10€, 4x=40€, 5x=600€\\nBAR/💎: 3x=8€, 4x=20€, 5x=100€\\n🔔: 3x=6€, 4x=15€, 5x=50€\\n♞: 3x=4€, 4x=10€, 5x=30€\\n🍒: 3x=2€, 4x=6€, 5x=20€\\nSC: 3x = 30 Free Spins\\nW замества символите.");
 }
 
 draw();
