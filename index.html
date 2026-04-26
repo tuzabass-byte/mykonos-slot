@@ -3,154 +3,361 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MYKONOS CASINO</title>
-
+<title>Mykonos Casino</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-body{margin:0;font-family:Arial;background:#000;color:#fff;text-align:center}
-.box{max-width:400px;margin:auto;padding:20px}
-button,input,select{width:100%;padding:12px;margin:6px;border-radius:8px;border:0;font-size:16px}
-button{background:#00eaff;color:#000;font-weight:900}
-.hidden{display:none}
-.game{border:2px solid gold;margin:10px;padding:20px;border-radius:10px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#123b73,#061943 45%,#020817);color:#fff}
+.app{max-width:430px;margin:auto;padding:12px 10px 92px}
+.hidden{display:none!important}
+.logo{text-align:center;font-size:29px;font-weight:900;color:#36f3ff;text-shadow:0 0 18px #00eaff;margin:10px 0}
+.card{background:#071b50;border:2px solid #36f1ff;border-radius:16px;padding:16px;box-shadow:0 0 18px #00eaff;margin-top:15px}
+input,select,button{width:100%;padding:13px;margin:7px 0;border:0;border-radius:10px;font-size:17px}
+button{font-weight:900;background:#2cf5f2;color:#061943}
+.status{text-align:center;font-weight:900;color:#ffdd25;min-height:26px}
+.balance{text-align:center;font-size:24px;font-weight:900;color:#ffdd25;margin:10px 0}
+.gamePick{border:2px solid #ffdd25;border-radius:14px;padding:18px;margin:12px 0;text-align:center;font-size:22px;font-weight:900;background:#111}
+.logout{background:#e00000;color:white}
+
+/* SLOT */
+.jackpot{height:42px;border:2px solid var(--accent);border-radius:12px;background:#101010;margin:5px 0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;font-size:18px;font-weight:900;box-shadow:0 0 12px var(--glow)}
+.freeBox{display:none;background:var(--accent);color:#111;text-align:center;font-weight:900;padding:8px;border-radius:9px;margin:7px 0}
+.machine{border:3px solid var(--accent);border-radius:15px;overflow:hidden;background:#160000;box-shadow:0 0 22px var(--glow)}
+.title{background:linear-gradient(90deg,#111,var(--main),#111);padding:10px;text-align:center;color:var(--accent);font-size:22px;font-weight:900;border-bottom:3px solid var(--accent)}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;background:#070707;border-bottom:3px solid var(--accent)}
+.reel{display:grid;grid-template-rows:repeat(3,64px);gap:3px}
+.cell{border:1px solid var(--accent);background:radial-gradient(circle,#333,#160000 58%,#050505);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
+.cell.win{background:var(--accent);color:#111;animation:flash .35s infinite alternate}
+.cell.scatter{background:radial-gradient(circle,#fff700,var(--main));color:#111}
+.sign{width:44px;height:44px;border-radius:50%;border:4px solid red;background:white;color:black;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
+.spin .cell{animation:blur .08s linear infinite}
+@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
+@keyframes flash{to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}}
+.info{background:#080808;padding:9px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+.stat{border:1px solid var(--accent);border-radius:8px;background:#111;text-align:center;padding:6px 2px}
+.stat small{display:block;color:#ccc;font-size:10px}.stat b{font-size:18px}
+.controls{display:flex;justify-content:space-around;align-items:center;margin-top:13px}
+.betBtn{width:62px;height:62px;border-radius:50%;border:4px solid white;background:radial-gradient(circle,var(--accent),#a15b00);color:#111}
+.spinBtn{width:96px;height:96px;border-radius:50%;border:6px solid white;background:radial-gradient(circle,#ff2020,#790000);font-size:18px;color:white;box-shadow:0 0 24px red}
+.small{padding:9px 12px;border-radius:8px;background:#1a1a1a;border:1px solid var(--accent);color:white;margin:3px;width:auto}
+.row{text-align:center}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:74px;background:#111;display:grid;grid-template-columns:repeat(5,1fr);border-top:2px solid var(--accent)}
+.nav{text-align:center;font-size:11px;padding-top:7px;color:#eee}.nav div{font-size:22px}
+.deposit{margin:13px 5px;border-radius:10px;background:var(--accent);color:#111;display:flex;align-items:center;justify-content:center;font-weight:900}
+.popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:50;align-items:center;justify-content:center;padding:20px}
+.popupBox{background:#111;border:3px solid var(--accent);border-radius:16px;padding:20px;text-align:center;box-shadow:0 0 25px var(--glow);max-width:360px}
+.popupBox h2{color:var(--accent);margin:0 0 12px}
+.popupBox button{background:#e00000;color:white;border-radius:8px;padding:12px 25px;margin-top:15px}
 </style>
 </head>
-
 <body>
 
-<div class="box">
+<div class="app" id="app">
+  <div class="logo">🎰 MYKONOS CASINO 🎰</div>
 
-<h1>🎰 MYKONOS CASINO</h1>
+  <div id="loginBox" class="card">
+    <h2>Вход</h2>
+    <select id="playerSelect"><option>Зареждане...</option></select>
+    <input id="pinInput" type="password" placeholder="PIN код">
+    <button onclick="login()">ВЛЕЗ</button>
+    <div id="loginStatus" class="status"></div>
+  </div>
 
-<!-- LOGIN -->
-<div id="login">
-<select id="player"></select>
-<input id="pin" placeholder="PIN">
-<button onclick="login()">Вход</button>
+  <div id="lobbyBox" class="card hidden">
+    <h2 id="welcomeText">Добре дошъл</h2>
+    <div class="balance">Баланс: <span id="lobbyBalance">0.00 €</span></div>
+    <div class="gamePick" onclick="openGame('vasa')">🔥 VASA FORTUNE</div>
+    <div class="gamePick" onclick="openGame('didi')">🚨 DIDI BLITZ</div>
+    <button onclick="addDemo()">+ DEMO 20€</button>
+    <button class="logout" onclick="logout()">ИЗХОД</button>
+  </div>
+
+  <div id="gameBox" class="hidden">
+    <button onclick="backToLobby()">⬅ Назад към игрите</button>
+
+    <div class="logo" id="gameLogo">GAME</div>
+    <div class="status" id="gameSub">5 линии · 30 безплатни</div>
+
+    <div class="jackpot"><span style="color:#ff4ee6" id="jp1name">Mega</span><span id="mega">12928.65 €</span></div>
+    <div class="jackpot"><span style="color:#54ff65" id="jp2name">Maxi</span><span id="maxi">647.45 €</span></div>
+    <div class="jackpot"><span style="color:#c9f7ff" id="jp3name">Mini</span><span id="mini">42.66 €</span></div>
+
+    <div class="freeBox" id="freeBox"></div>
+
+    <div class="machine">
+      <div class="title" id="machineTitle">TITLE</div>
+      <div class="reels" id="reels"></div>
+      <div class="info">
+        <div class="status" id="status">ГОТОВ</div>
+        <div class="stats">
+          <div class="stat"><small>ПЕЧАЛБА</small><b id="win">0.00 €</b></div>
+          <div class="stat"><small>ЗАЛОГ</small><b id="bet">0.50 €</b></div>
+          <div class="stat"><small>БАЛАНС</small><b id="bal">20.00 €</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="betBtn" onclick="changeBet(-1)">BET -</button>
+      <button class="spinBtn" id="spinButton" onclick="spin()">SPIN</button>
+      <button class="betBtn" onclick="changeBet(1)">BET +</button>
+    </div>
+
+    <div class="row">
+      <button class="small" onclick="paytable()">ТАБЛИЦА</button>
+      <button class="small" id="soundBtn" onclick="toggleSound()">ЗВУК ON</button>
+    </div>
+  </div>
 </div>
 
-<!-- LOBBY -->
-<div id="lobby" class="hidden">
-<h2 id="user"></h2>
-<h3>Баланс: <span id="bal">0</span> €</h3>
-
-<div class="game" onclick="openGame('vasa')">🔥 Vasa Fortune</div>
-<div class="game" onclick="openGame('didi')">🚨 Didi Blitz</div>
-
-<button onclick="logout()">Изход</button>
+<div class="bottom hidden" id="bottomNav">
+  <div class="nav"><div>🏠</div>Начало</div>
+  <div class="nav" onclick="backToLobby()"><div>🎮</div>Игри</div>
+  <div class="nav" onclick="addDemo()"><div>🎁</div>Бонус</div>
+  <div class="nav"><div>⭐</div>Любими</div>
+  <div class="deposit" onclick="addDemo()">Депозит</div>
 </div>
 
-<!-- GAME -->
-<div id="game" class="hidden">
-<h2 id="gameTitle"></h2>
-<h3>Баланс: <span id="bal2">0</span> €</h3>
-
-<button onclick="spin()">SPIN (-1€)</button>
-<div id="result"></div>
-
-<button onclick="back()">Назад</button>
-</div>
-
+<div class="popup" id="popup">
+  <div class="popupBox">
+    <h2 id="popupTitle">БРАВО!</h2>
+    <div id="popupText"></div>
+    <button onclick="closePopup()">OK</button>
+  </div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const SUPABASE_URL="https://xjcvntplrbjsaozkduqd.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentPlayer=null;
+let balance=20;
+let currentGame="vasa";
+let bets=[0.10,0.20,0.50,1,2,5,10], bi=2, lastBet=bets[bi];
+let spinning=false, snd=true, inFree=false, free=0,totalFree=0,freeWin=0,dryMode=false;
+let jp={mega:12928.65,maxi:647.45,mini:42.66};
+const SOFT_LIMIT=80, HARD_LIMIT=95, HELP_BALANCE=8;
 
-let player=null;
-let balance=0;
-let currentGame=null;
+const themes={
+vasa:{
+name:"🔥 VASA FORTUNE 🔥", sub:"Demo баланс · 5 линии · 30 Free Spins",
+title:"🔥 VASA FORTUNE 🔥", accent:"#ffd23c", main:"#e00000", glow:"rgba(255,208,40,.75)",
+jp:["Mega","Maxi","Mini"],
+pay:{"7":{3:10,4:40,5:600},"BAR":{3:8,4:20,5:100},"D":{3:8,4:20,5:100},"B":{3:6,4:15,5:50},"H":{3:4,4:10,5:30},"C":{3:2,4:6,5:20}},
+display:{"7":"7","BAR":"BAR","D":"💎","B":"🔔","H":"♞","C":"🍒","S":"SC","W":"W"},
+base:["C","H","B","D","BAR","7","W","S"],
+jokes:["ВЪРТИ...","ОПИТАЙ КЪСМЕТА!","ДАНО ДА УДАРИ!"]
+},
+didi:{
+name:"🚨 DIDI BLITZ 🚨", sub:"Радар демо · 5 линии · 30 безплатни",
+title:"📸 НЕ НАТИСКАЙ ГАЗТА 📸", accent:"#ffdd25", main:"#e00000", glow:"rgba(255,0,0,.75)",
+jp:["Голям акт","Средна глоба","Малък фиш"],
+pay:{"FLASH":{3:10,4:40,5:600},"EURO":{3:8,4:20,5:100},"CAM":{3:8,4:20,5:100},"100":{3:6,4:15,5:50},"50":{3:4,4:10,5:30},"30":{3:2,4:6,5:20}},
+display:{"FLASH":"⚡","EURO":"💶","CAM":"📸","100":"100","50":"50","30":"30","S":"📸","W":"🚓"},
+base:["30","50","100","CAM","EURO","FLASH","W","S"],
+jokes:["БЕГАЙ! КАТ Е ЗАД ТЕБ!","НЕ НАТИСКАЙ ГАЗТА!","ПАК ЩЕ ПЛАЩАШ 😄","РАДАРЪТ НЕ СПИ!"]
+}
+};
 
-async function load(){
-let {data}=await db.from("players").select("*");
-let sel=document.getElementById("player");
-sel.innerHTML="";
-data.forEach(p=>{
-let o=document.createElement("option");
-o.value=p.id;
-o.textContent=p.Name;
-sel.appendChild(o);
-});
+const lines=[[0,0,0,0,0],[1,1,1,1,1],[2,2,2,2,2],[0,1,2,1,0],[2,1,0,1,2]];
+function t(){return themes[currentGame]}
+function m(v){return Number(v).toFixed(2)+" €"}
+
+async function loadPlayers(){
+ const {data,error}=await db.from("players").select("id,Name,Pin,Points").order("id");
+ let sel=document.getElementById("playerSelect");
+ sel.innerHTML='<option value="">Избери играч</option>';
+ if(error){document.getElementById("loginStatus").innerText="Грешка в Supabase.";return}
+ data.forEach(p=>{let o=document.createElement("option");o.value=p.id;o.textContent=p.Name;sel.appendChild(o)});
 }
 
 async function login(){
-let id=document.getElementById("player").value;
-let pin=document.getElementById("pin").value;
+ let id=document.getElementById("playerSelect").value;
+ let pin=document.getElementById("pinInput").value.trim();
+ let st=document.getElementById("loginStatus");
+ if(!id||!pin){st.innerText="Избери име и PIN.";return}
+ const {data,error}=await db.from("players").select("id,Name,Pin,Points").eq("id",id).single();
+ if(error||!data){st.innerText="Грешка при вход.";return}
+ if(String(data.Pin)!==pin){st.innerText="Грешен PIN.";return}
+ currentPlayer=data; balance=Number(data.Points||0);
+ document.getElementById("welcomeText").innerText="Добре дошъл, "+data.Name;
+ document.getElementById("loginBox").classList.add("hidden");
+ document.getElementById("lobbyBox").classList.remove("hidden");
+ document.getElementById("bottomNav").classList.remove("hidden");
+ updateAll();
+}
 
-let {data}=await db.from("players").select("*").eq("id",id).single();
-
-if(String(data.pin)!==pin){alert("Грешен PIN");return;}
-
-player=data;
-balance=data.balance||0;
-
-document.getElementById("user").innerText="Добре дошъл "+data.Name;
-update();
-
-loginBox(false);
-lobbyBox(true);
+async function saveBalance(){
+ if(!currentPlayer)return;
+ await db.from("players").update({Points:Math.round(balance)}).eq("id",currentPlayer.id);
 }
 
 function logout(){
-player=null;
-loginBox(true);
-lobbyBox(false);
+ currentPlayer=null; balance=0;
+ document.getElementById("pinInput").value="";
+ document.getElementById("loginBox").classList.remove("hidden");
+ document.getElementById("lobbyBox").classList.add("hidden");
+ document.getElementById("gameBox").classList.add("hidden");
+ document.getElementById("bottomNav").classList.add("hidden");
 }
-
-function loginBox(x){document.getElementById("login").classList.toggle("hidden",!x)}
-function lobbyBox(x){document.getElementById("lobby").classList.toggle("hidden",!x)}
-function gameBox(x){document.getElementById("game").classList.toggle("hidden",!x)}
 
 function openGame(g){
-currentGame=g;
-document.getElementById("gameTitle").innerText=g==="vasa"?"🔥 Vasa Fortune":"🚨 Didi Blitz";
-lobbyBox(false);
-gameBox(true);
-update();
+ currentGame=g; inFree=false; free=0; totalFree=0; freeWin=0; dryMode=false;
+ document.getElementById("lobbyBox").classList.add("hidden");
+ document.getElementById("gameBox").classList.remove("hidden");
+ applyTheme(); drawBoard(makeLoseBoard()); updateAll();
 }
 
-function back(){
-gameBox(false);
-lobbyBox(true);
+function backToLobby(){
+ document.getElementById("gameBox").classList.add("hidden");
+ document.getElementById("lobbyBox").classList.remove("hidden");
+ updateAll();
 }
 
-function update(){
-document.getElementById("bal").innerText=balance.toFixed(2);
-document.getElementById("bal2").innerText=balance.toFixed(2);
+function applyTheme(){
+ let th=t();
+ document.body.style.setProperty("--accent",th.accent);
+ document.body.style.setProperty("--main",th.main);
+ document.body.style.setProperty("--glow",th.glow);
+ document.getElementById("gameLogo").innerText=th.name;
+ document.getElementById("gameSub").innerText=th.sub;
+ document.getElementById("machineTitle").innerText=th.title;
+ document.getElementById("jp1name").innerText=th.jp[0];
+ document.getElementById("jp2name").innerText=th.jp[1];
+ document.getElementById("jp3name").innerText=th.jp[2];
 }
 
-async function save(){
-await db.from("players").update({balance:balance}).eq("id",player.id);
+function updateAll(){
+ document.getElementById("lobbyBalance").innerText=m(balance);
+ document.getElementById("bal").innerText=m(balance);
+ document.getElementById("bet").innerText=m(bets[bi]);
+ document.getElementById("mega").innerText=m(jp.mega);
+ document.getElementById("maxi").innerText=m(jp.maxi);
+ document.getElementById("mini").innerText=m(jp.mini);
+ document.getElementById("spinButton").innerText=inFree?"БЕЗПЛАТНО":"SPIN";
+ document.getElementById("freeBox").style.display=inFree?"block":"none";
+ document.getElementById("freeBox").innerText=inFree?`БОНУС: ${totalFree-free}/${totalFree} · СПЕЧЕЛЕНО: ${m(freeWin)}`:"";
 }
 
-function spin(){
-if(balance<1){alert("Няма пари");return;}
+function beep(f,d=.08,tp="sine"){
+ if(!snd)return;
+ let c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();
+ o.type=tp;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d);
+}
+function popupMsg(a,b){popupTitle.innerText=a;popupText.innerText=b;popup.style.display="flex"}
+function closePopup(){popup.style.display="none"}
+function toggleSound(){snd=!snd;soundBtn.innerText=snd?"ЗВУК ON":"ЗВУК OFF"}
+function changeBet(d){if(spinning||inFree)return;bi=Math.max(0,Math.min(bets.length-1,bi+d));lastBet=bets[bi];updateAll()}
 
-balance-=1;
-
-let win=0;
-
-if(currentGame==="vasa"){
-win = Math.random()<0.25 ? 2 : 0;
+function weightedPick(arr){let s=arr.reduce((a,b)=>a+b.w,0),r=Math.random()*s;for(let x of arr){r-=x.w;if(r<=0)return x.id}return arr[0].id}
+function weights(){
+ let betv=bets[bi], base=t().base;
+ let w=base.map(id=>({id,w:1}));
+ if(currentGame==="vasa") w=[{id:"C",w:44},{id:"H",w:32},{id:"B",w:30},{id:"D",w:2.4},{id:"BAR",w:2.4},{id:"7",w:.8},{id:"W",w:.45},{id:"S",w:1.2}];
+ if(currentGame==="didi") w=[{id:"30",w:44},{id:"50",w:32},{id:"100",w:30},{id:"CAM",w:2.4},{id:"EURO",w:2.4},{id:"FLASH",w:.8},{id:"W",w:.8},{id:"S",w:1.2}];
+ if(balance>=SOFT_LIMIT||dryMode) w=w.map(x=>["S","W","7","FLASH","BAR","D","EURO","CAM"].includes(x.id)?{...x,w:x.w*.05}:{...x,w:x.w*2});
+ if(betv>=1) w=w.map(x=>["S","W","7","FLASH","BAR","D","EURO","CAM"].includes(x.id)?{...x,w:x.w*.4}:{...x,w:x.w*1.2});
+ if(inFree) w=w.map(x=>x.id==="W"?{...x,w:x.w*3}:x.id==="S"?{...x,w:x.w*.1}:x);
+ return w;
 }
 
-if(currentGame==="didi"){
-win = Math.random()<0.35 ? 3 : 0;
+function makeRandomBoard(){let b=[[],[],[]],w=weights();for(let r=0;r<3;r++)for(let c=0;c<5;c++)b[r][c]=weightedPick(w);return b}
+function countScatter(b){let n=0;for(let r=0;r<3;r++)for(let c=0;c<5;c++)if(b[r][c]==="S")n++;return n}
+function evalLine(b,line){
+ let base=null,count=0,cells=[],pay=t().pay;
+ for(let c=0;c<5;c++){
+  let r=line[c],id=b[r][c]; if(id==="S")break;
+  if(base===null){if(id==="W"){count++;cells.push([r,c]);continue} base=id;count++;cells.push([r,c]);continue}
+  if(id===base||id==="W"){count++;cells.push([r,c])}else break;
+ }
+ if(!base||count<3||!pay[base])return null;
+ return {base,count,amount:lastBet*pay[base][count],cells};
 }
-
-balance+=win;
-
-document.getElementById("result").innerText=
-win>0 ? "Печалба "+win+"€ 🎉" : "Загуба 😄";
-
-update();
-save();
+function evalBoard(b){let total=0,winners=[];for(let l of lines){let r=evalLine(b,l);if(r){total+=r.amount;winners.push(...r.cells)}}return {total,winners}}
+function makeLoseBoard(){for(let i=0;i<300;i++){let b=makeRandomBoard();if(evalBoard(b).total===0&&countScatter(b)<3)return b}return makeRandomBoard()}
+function chooseSymbol(){
+ if(currentGame==="vasa")return weightedPick([{id:"C",w:60},{id:"H",w:20},{id:"B",w:16},{id:"D",w:1},{id:"BAR",w:1},{id:"7",w:.2}]);
+ return weightedPick([{id:"30",w:60},{id:"50",w:20},{id:"100",w:16},{id:"CAM",w:1},{id:"EURO",w:1},{id:"FLASH",w:.2}]);
 }
+function makeWinBoard(){
+ for(let i=0;i<200;i++){
+  let b=makeLoseBoard(),line=lines[Math.floor(Math.random()*lines.length)],sym=chooseSymbol(),count=Math.random()<.9?3:4;
+  for(let c=0;c<count;c++)b[line[c]][c]=sym;
+  let e=evalBoard(b),cap=inFree?lastBet*4:lastBet*6;
+  if(balance>=SOFT_LIMIT||dryMode)cap=Math.min(.3,lastBet*.3);
+  if(e.total>0&&e.total<=cap)return b;
+ }
+ return makeLoseBoard();
+}
+function makeBonusBoard(){let b=makeLoseBoard();b[0][0]="S";b[1][2]="S";b[2][4]="S";return b}
+function nextBoard(){
+ if(inFree){if(freeWin>=8)return makeLoseBoard();return Math.random()<.08?makeWinBoard():makeLoseBoard()}
+ if(balance>=SOFT_LIMIT||dryMode)return Math.random()<.025?makeWinBoard():makeLoseBoard();
+ let r=Math.random(); if(r<.06)return makeBonusBoard(); if(r<.28)return makeWinBoard(); return makeLoseBoard();
+}
+function setCell(cell,id){
+ let d=t().display;
+ if(id==="30"||id==="50"||id==="100") cell.innerHTML='<div class="sign">'+id+'</div>';
+ else cell.innerHTML=d[id]||id;
+ cell.dataset.id=id;cell.className="cell";if(id==="S")cell.classList.add("scatter");
+}
+function drawBoard(b){
+ reels.innerHTML="";
+ for(let c=0;c<5;c++){let reel=document.createElement("div");reel.className="reel";for(let r=0;r<3;r++){let cell=document.createElement("div");setCell(cell,b[r][c]);reel.appendChild(cell)}reels.appendChild(reel)}
+}
+function readBoard(){let b=[[],[],[]];document.querySelectorAll(".reel").forEach((reel,c)=>[...reel.children].forEach((cell,r)=>b[r][c]=cell.dataset.id));return b}
+function mark(winners){let cells=document.querySelectorAll(".cell");winners.forEach(([r,c])=>{let i=c*3+r;if(cells[i])cells[i].classList.add("win")})}
 
-load();
+function startFree(){
+ inFree=true;free=30;totalFree=30;freeWin=0;lastBet=bets[bi];
+ status.innerText=currentGame==="didi"?"📸 ХВАНАХА ТЕ С РАДАР! 30 БЕЗПЛАТНИ!":"🎉 ПЕЧЕЛИТЕ 30 FREE SPINS!";
+ popupMsg("БОНУС!","Печелиш 30 безплатни врътки!");
+ updateAll(); saveBalance();
+}
+function endFree(){
+ inFree=false; balance+=freeWin; if(balance>HARD_LIMIT)balance=HARD_LIMIT; if(balance>=SOFT_LIMIT)dryMode=true;
+ status.innerText="🎉 БОНУС ПЕЧАЛБА "+m(freeWin);
+ popupMsg("БРАВО!", "Спечели "+m(freeWin)+" от бонуса!");
+ win.innerText=m(freeWin); free=0;totalFree=0;freeWin=0; updateAll(); saveBalance();
+}
+async function spin(){
+ if(spinning)return;
+ let betv=bets[bi],isFree=inFree;
+ if(!isFree&&balance<betv){status.innerText="Няма достатъчно баланс";return}
+ spinning=true; document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
+ if(isFree){free--;status.innerText="БЕЗПЛАТНА "+(totalFree-free)+"/"+totalFree}
+ else{balance-=betv;lastBet=betv;status.innerText=t().jokes[Math.floor(Math.random()*t().jokes.length)]}
+ updateAll(); beep(150,.15,"sawtooth");
+ let finalBoard=nextBoard(),reelsA=[...document.querySelectorAll(".reel")],stopped=0;
+ reelsA.forEach((reel,i)=>{
+  reel.classList.add("spin");
+  let timer=setInterval(()=>[...reel.children].forEach(c=>setCell(c,weightedPick(weights()))),65);
+  setTimeout(()=>{
+   clearInterval(timer);[...reel.children].forEach((cell,r)=>setCell(cell,finalBoard[r][i]));
+   reel.classList.remove("spin");beep(360,.05,"square");stopped++;
+   if(stopped===5)setTimeout(()=>{calc(isFree);jp.mega+=betv*.01;jp.maxi+=betv*.006;jp.mini+=betv*.003;spinning=false},160);
+  },720+i*280);
+ });
+}
+function calc(isFree){
+ let b=readBoard(),sc=countScatter(b);
+ if(sc>=3&&!isFree){startFree();return}
+ let e=evalBoard(b),total=e.total;
+ if(currentGame==="didi"&&inFree&&total>0&&JSON.stringify(b).includes("W")&&Math.random()<.35){total*=2;popupMsg("💶 ДВОЙНА ГЛОБА!","Печелиш двойно 😄")}
+ if(!isFree&&balance+total>HARD_LIMIT)total=HARD_LIMIT-balance;
+ if(total>0){
+  mark(e.winners); win.innerText=m(total);
+  if(isFree){freeWin+=total;status.innerText="БОНУС ПЕЧАЛБА "+m(total)}
+  else{balance+=total;if(balance>=SOFT_LIMIT)dryMode=true;status.innerText="ПЕЧАЛБА "+m(total)}
+ }else{win.innerText=m(0);status.innerText=isFree?"БЕЗПЛАТНА БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК 😄"}
+ updateAll(); saveBalance();
+ if(isFree&&free<=0)setTimeout(endFree,900);
+}
+function paytable(){alert("5 линии. Scatter = 30 безплатни. Wild замества символите. Балансът се записва в Supabase.")}
+async function addDemo(){balance+=20;updateAll();await saveBalance()}
+loadPlayers();
 </script>
 
 </body>
