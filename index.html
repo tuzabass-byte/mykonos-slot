@@ -3,264 +3,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DIDI BLITZ PRO v2 FIX</title>
-
+<title>DIDI BLITZ v1</title>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:radial-gradient(circle at top,#3a2d00,#111 45%,#000);color:#fff}
-
 .app{max-width:430px;margin:auto;padding:12px 10px 92px}
-
 .logo{text-align:center;font-size:29px;font-weight:900;color:#ffdd25;text-shadow:0 0 18px #ff0000}
 .sub{text-align:center;color:#ff4a4a;margin:4px 0 8px;font-size:13px;font-weight:900}
-
-.jackpot{
-height:42px;
-border:2px solid #ffdd25;
-border-radius:12px;
-background:#101010;
-margin:5px 0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 14px;
-font-size:18px;
-font-weight:900;
-box-shadow:0 0 12px #ff0000
-}
-
-.freeBox{
-display:none;
-background:#ffdd25;
-color:#111;
-text-align:center;
-font-weight:900;
-padding:8px;
-border-radius:9px;
-margin:7px 0
-}
-
-.machine{
-border:3px solid #ffdd25;
-border-radius:15px;
-overflow:hidden;
-background:#160000;
-box-shadow:0 0 22px rgba(255,0,0,.75)
-}
-
-.title{
-background:linear-gradient(90deg,#111,#e00000,#111);
-padding:10px;
-text-align:center;
-color:#ffdd25;
-font-size:22px;
-font-weight:900;
-border-bottom:3px solid #ffdd25
-}
-
-.reels{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:3px;
-padding:6px;
-background:#070707;
-border-bottom:3px solid #ffdd25
-}
-
-.reel{
-display:grid;
-grid-template-rows:repeat(3,64px);
-gap:3px
-}
-
-.cell{
-border:1px solid #ffdd25;
-background:radial-gradient(circle,#333,#160000 58%,#050505);
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:30px;
-font-weight:900
-}
-
-.cell.win{
-background:#ffdd25;
-color:#111;
-animation:flash .35s infinite alternate
-}
-
-.cell.scatter{
-background:radial-gradient(circle,#fff700,#ff0000);
-color:#111;
-font-size:28px
-}
-
-/* ПЪТНИ ЗНАЦИ */
-.sign{
-width:44px;
-height:44px;
-border-radius:50%;
-border:4px solid red;
-background:white;
-color:black;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:900;
-font-size:18px
-}
-
-.spin .cell{
-animation:blur .08s linear infinite
-}
-
-@keyframes blur{
-from{filter:blur(2px);transform:translateY(-8px)}
-to{filter:blur(2px);transform:translateY(8px)}
-}
-
-@keyframes flash{
-to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}
-}
-
+.jackpot{height:42px;border:2px solid #ffdd25;border-radius:12px;background:#101010;margin:5px 0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;font-size:18px;font-weight:900;box-shadow:0 0 12px #ff0000}
+.freeBox{display:none;background:#ffdd25;color:#111;text-align:center;font-weight:900;padding:8px;border-radius:9px;margin:7px 0}
+.machine{border:3px solid #ffdd25;border-radius:15px;overflow:hidden;background:#160000;box-shadow:0 0 22px rgba(255,0,0,.75)}
+.title{background:linear-gradient(90deg,#111,#e00000,#111);padding:10px;text-align:center;color:#ffdd25;font-size:22px;font-weight:900;border-bottom:3px solid #ffdd25}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;padding:6px;background:#070707;border-bottom:3px solid #ffdd25}
+.reel{display:grid;grid-template-rows:repeat(3,64px);gap:3px}
+.cell{border:1px solid #ffdd25;background:radial-gradient(circle,#333,#160000 58%,#050505);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900}
+.cell.win{background:#ffdd25;color:#111;animation:flash .35s infinite alternate}
+.cell.scatter{background:radial-gradient(circle,#fff700,#ff0000);color:#111;font-size:28px}
+.sign{width:44px;height:44px;border-radius:50%;border:4px solid red;background:white;color:black;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
+.spin .cell{animation:blur .08s linear infinite}
+@keyframes blur{from{filter:blur(2px);transform:translateY(-8px)}to{filter:blur(2px);transform:translateY(8px)}}
+@keyframes flash{to{box-shadow:inset 0 0 28px white;filter:brightness(1.7)}}
 .info{background:#080808;padding:9px}
-
-.status{
-text-align:center;
-font-size:18px;
-font-weight:900;
-min-height:28px
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:7px;
-margin-top:7px
-}
-
-.stat{
-border:1px solid #ffdd25;
-border-radius:8px;
-background:#111;
-text-align:center;
-padding:6px 2px
-}
-
+.status{text-align:center;font-size:18px;font-weight:900;min-height:28px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+.stat{border:1px solid #ffdd25;border-radius:8px;background:#111;text-align:center;padding:6px 2px}
 .stat small{display:block;color:#ccc;font-size:10px}
 .stat b{font-size:18px}
-
-.controls{
-display:flex;
-justify-content:space-around;
-align-items:center;
-margin-top:13px
-}
-
-button{
-border:0;
-color:white;
-font-weight:900;
-cursor:pointer
-}
-
+.controls{display:flex;justify-content:space-around;align-items:center;margin-top:13px}
+button{border:0;color:white;font-weight:900;cursor:pointer}
 button:active{transform:scale(.94)}
-
-.betBtn{
-width:62px;
-height:62px;
-border-radius:50%;
-border:4px solid white;
-background:radial-gradient(circle,#ffdd25,#a15b00);
-color:#111
-}
-
-.spinBtn{
-width:96px;
-height:96px;
-border-radius:50%;
-border:6px solid white;
-background:radial-gradient(circle,#ff2020,#790000);
-font-size:18px;
-box-shadow:0 0 24px red
-}
-
+.betBtn{width:62px;height:62px;border-radius:50%;border:4px solid white;background:radial-gradient(circle,#ffdd25,#a15b00);color:#111}
+.spinBtn{width:96px;height:96px;border-radius:50%;border:6px solid white;background:radial-gradient(circle,#ff2020,#790000);font-size:18px;box-shadow:0 0 24px red}
 .extra{text-align:center;margin-top:8px}
-
-.small{
-padding:9px 12px;
-border-radius:8px;
-background:#1a1a1a;
-border:1px solid #ffdd25;
-margin:3px
-}
-
-.bottom{
-position:fixed;
-bottom:0;
-left:50%;
-transform:translateX(-50%);
-max-width:430px;
-width:100%;
-height:74px;
-background:#111;
-display:grid;
-grid-template-columns:repeat(5,1fr);
-border-top:2px solid #ffdd25
-}
-
-.nav{
-text-align:center;
-font-size:11px;
-padding-top:7px;
-color:#eee
-}
-
+.small{padding:9px 12px;border-radius:8px;background:#1a1a1a;border:1px solid #ffdd25;margin:3px}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);max-width:430px;width:100%;height:74px;background:#111;display:grid;grid-template-columns:repeat(5,1fr);border-top:2px solid #ffdd25}
+.nav{text-align:center;font-size:11px;padding-top:7px;color:#eee}
 .nav div{font-size:22px}
-
-.deposit{
-margin:13px 5px;
-border-radius:10px;
-background:#ffdd25;
-color:#111;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:900
-}
-
-.popup{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.78);
-z-index:50;
-align-items:center;
-justify-content:center;
-padding:20px
-}
-
-.popupBox{
-background:#111;
-border:3px solid #ffdd25;
-border-radius:16px;
-padding:20px;
-text-align:center;
-box-shadow:0 0 25px #ff0000;
-max-width:360px
-}
-
+.deposit{margin:13px 5px;border-radius:10px;background:#ffdd25;color:#111;display:flex;align-items:center;justify-content:center;font-weight:900}
+.popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:50;align-items:center;justify-content:center;padding:20px}
+.popupBox{background:#111;border:3px solid #ffdd25;border-radius:16px;padding:20px;text-align:center;box-shadow:0 0 25px #ff0000;max-width:360px}
 .popupBox h2{color:#ffdd25;margin:0 0 12px}
-
-.popupBox button{
-background:#e00000;
-border-radius:8px;
-padding:12px 25px;
-margin-top:15px
-}
+.popupBox button{background:#e00000;border-radius:8px;padding:12px 25px;margin-top:15px}
 </style>
 </head>
-<body><script>
+<body>
+
+<div class="app">
+  <div class="logo">🚨 DIDI BLITZ 🚨</div>
+  <div class="sub">Радар демо · 5 линии · 30 безплатни</div>
+
+  <div class="jackpot"><span style="color:#ff4ee6">Голям акт</span><span id="mega">12928.65 €</span></div>
+  <div class="jackpot"><span style="color:#54ff65">Средна глоба</span><span id="maxi">647.45 €</span></div>
+  <div class="jackpot"><span style="color:#c9f7ff">Малък фиш</span><span id="mini">42.66 €</span></div>
+
+  <div class="freeBox" id="freeBox"></div>
+
+  <div class="machine">
+    <div class="title">📸 НЕ НАТИСКАЙ ГАЗТА 📸</div>
+    <div class="reels" id="reels"></div>
+    <div class="info">
+      <div class="status" id="status">ГОТОВ</div>
+      <div class="stats">
+        <div class="stat"><small>ПЕЧАЛБА</small><b id="win">0.00 €</b></div>
+        <div class="stat"><small>ЗАЛОГ</small><b id="bet">0.50 €</b></div>
+        <div class="stat"><small>БАЛАНС</small><b id="bal">20.00 €</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="betBtn" onclick="changeBet(-1)">BET -</button>
+    <button class="spinBtn" id="spinButton" onclick="spin()">SPIN</button>
+    <button class="betBtn" onclick="changeBet(1)">BET +</button>
+  </div>
+
+  <div class="extra">
+    <button class="small" onclick="paytable()">ТАБЛИЦА</button>
+    <button class="small" id="soundBtn" onclick="toggleSound()">ЗВУК ON</button>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="nav"><div>🚦</div>Начало</div>
+  <div class="nav"><div>📸</div>Игри</div>
+  <div class="nav" onclick="bonus()"><div>🎁</div>Бонуси</div>
+  <div class="nav"><div>⭐</div>Любими</div>
+  <div class="deposit" onclick="deposit()">Депозит</div>
+</div>
+
+<div class="popup" id="popup">
+  <div class="popupBox">
+    <h2 id="popupTitle">БРАВО!</h2>
+    <div id="popupText"></div>
+    <button onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<script>
 const START_BALANCE=20;
 const SOFT_LIMIT=80;
 const HARD_LIMIT=95;
@@ -319,89 +158,277 @@ const jokes=[
 "ТЕЗИ КАМЕРИ СА НАВСЯКЪДЕ!"
 ];
 
+const el={
+reels:document.getElementById("reels"),
+status:document.getElementById("status"),
+win:document.getElementById("win"),
+bet:document.getElementById("bet"),
+bal:document.getElementById("bal"),
+mega:document.getElementById("mega"),
+maxi:document.getElementById("maxi"),
+mini:document.getElementById("mini"),
+freeBox:document.getElementById("freeBox"),
+spinButton:document.getElementById("spinButton"),
+soundBtn:document.getElementById("soundBtn"),
+popup:document.getElementById("popup"),
+popupTitle:document.getElementById("popupTitle"),
+popupText:document.getElementById("popupText")
+};
+
 function m(v){return Number(v).toFixed(2)+" €"}
 
-function popupMsg(t,x){
-popupTitle.innerText=t;
-popupText.innerText=x;
-popup.style.display="flex";
+function beep(f,d=.08,t="sine"){
+if(!snd)return;
+let c=new (window.AudioContext||window.webkitAudioContext)();
+let o=c.createOscillator(),g=c.createGain();
+o.type=t;o.frequency.value=f;g.gain.value=.045;
+o.connect(g);g.connect(c.destination);
+o.start();o.stop(c.currentTime+d);
 }
 
-function closePopup(){popup.style.display="none"}
+function popupMsg(title,text){
+el.popupTitle.innerText=title;
+el.popupText.innerText=text;
+el.popup.style.display="flex";
+}
 
-function weightedPick(a){
-let s=a.reduce((x,y)=>x+y.w,0);
-let r=Math.random()*s;
-for(let i of a){r-=i.w;if(r<=0)return i.id}
-return a[0].id;
+function closePopup(){
+el.popup.style.display="none";
+}
+
+function weightedPick(arr){
+let sum=arr.reduce((s,x)=>s+x.w,0);
+let r=Math.random()*sum;
+for(let x of arr){
+r-=x.w;
+if(r<=0)return x.id;
+}
+return arr[0].id;
 }
 
 function weights(){
+let betv=bets[bi];
+
 let w=[
-{id:"30",w:80},{id:"50",w:60},{id:"100",w:55},
-{id:"CAM",w:.1},{id:"EURO",w:.1},{id:"FLASH",w:.05},
-{id:"W",w:1.5},{id:"S",w:.05}
+{id:"30",w:44},{id:"50",w:32},{id:"100",w:30},
+{id:"CAM",w:2.4},{id:"EURO",w:2.4},{id:"FLASH",w:.8},
+{id:"W",w:.45},{id:"S",w:1.2}
 ];
+
+if(balance<=HELP_BALANCE&&!inFree){
+w=[
+{id:"30",w:40},{id:"50",w:30},{id:"100",w:28},
+{id:"CAM",w:2.2},{id:"EURO",w:2.2},{id:"FLASH",w:.8},
+{id:"W",w:.7},{id:"S",w:2.2}
+];
+}
+
+if(balance>=SOFT_LIMIT||dryMode){
+w=[
+{id:"30",w:95},{id:"50",w:78},{id:"100",w:72},
+{id:"CAM",w:.02},{id:"EURO",w:.02},{id:"FLASH",w:.005},
+{id:"W",w:.005},{id:"S",w:.003}
+];
+}
+
+if(betv>=1){
+w=w.map(x=>{
+if(["50","CAM","EURO","FLASH","W","S"].includes(x.id)) return {...x,w:x.w*.35};
+return {...x,w:x.w*1.35};
+});
+}
+
+if(betv>=5){
+w=w.map(x=>{
+if(["50","CAM","EURO","FLASH","W","S"].includes(x.id)) return {...x,w:x.w*.15};
+return {...x,w:x.w*1.45};
+});
+}
+
+if(inFree){
+w=[
+{id:"30",w:82},{id:"50",w:64},{id:"100",w:58},
+{id:"CAM",w:.08},{id:"EURO",w:.08},{id:"FLASH",w:.02},
+{id:"W",w:1.2},{id:"S",w:.02}
+];
+
+if(freeWin>=8){
+w=[
+{id:"30",w:95},{id:"50",w:78},{id:"100",w:72},
+{id:"CAM",w:.01},{id:"EURO",w:.01},{id:"FLASH",w:.005},
+{id:"W",w:.25},{id:"S",w:.003}
+];
+}
+}
+
 return w;
 }
 
 function makeRandomBoard(){
 let b=[[],[],[]];
+let w=weights();
 for(let r=0;r<3;r++){
 for(let c=0;c<5;c++){
-b[r][c]=weightedPick(weights());
+b[r][c]=weightedPick(w);
 }
 }
 return b;
 }
 
-function evalLine(b,l){
+function countScatter(b){
+let n=0;
+for(let r=0;r<3;r++){
+for(let c=0;c<5;c++){
+if(b[r][c]=="S")n++;
+}
+}
+return n;
+}
+
+function evalLine(b,line){
 let base=null,count=0,cells=[];
 for(let c=0;c<5;c++){
-let r=l[c],id=b[r][c];
+let r=line[c];
+let id=b[r][c];
 if(id=="S")break;
 
 if(base===null){
-if(id=="W"){count++;cells.push([r,c]);continue}
-base=id;count++;cells.push([r,c]);continue
+if(id=="W"){
+count++;
+cells.push([r,c]);
+continue;
 }
-if(id==base||id=="W"){count++;cells.push([r,c])}
-else break;
+base=id;
+count++;
+cells.push([r,c]);
+continue;
 }
+
+if(id==base||id=="W"){
+count++;
+cells.push([r,c]);
+}else{
+break;
+}
+}
+
 if(!base||count<3||!pay[base])return null;
-return {amount:lastBet*pay[base][count],cells};
+return {base,count,amount:lastBet*pay[base][count],cells};
 }
 
 function evalBoard(b){
-let t=0,w=[];
-for(let l of lines){
-let r=evalLine(b,l);
-if(r){t+=r.amount;w.push(...r.cells)}
+let total=0,winners=[];
+for(let line of lines){
+let res=evalLine(b,line);
+if(res){
+total+=res.amount;
+winners.push(...res.cells);
 }
-return {total:t,winners:w};
+}
+return {total,winners};
 }
 
 function makeLoseBoard(){
+for(let i=0;i<500;i++){
 let b=makeRandomBoard();
-return b;
+if(evalBoard(b).total===0 && countScatter(b)<3)return b;
+}
+return [
+["30","50","100","30","50"],
+["50","100","30","50","100"],
+["100","30","50","100","30"]
+];
+}
+
+function chooseSymbol(){
+let betv=bets[bi];
+
+if(inFree||balance>=SOFT_LIMIT||dryMode){
+return weightedPick([
+{id:"30",w:75},{id:"50",w:18},{id:"100",w:8},
+{id:"CAM",w:.05},{id:"EURO",w:.05},{id:"FLASH",w:.01}
+]);
+}
+
+if(betv>=1){
+return weightedPick([
+{id:"30",w:80},{id:"100",w:16},{id:"50",w:3},
+{id:"CAM",w:.1},{id:"EURO",w:.1},{id:"FLASH",w:.02}
+]);
+}
+
+return weightedPick([
+{id:"30",w:55},{id:"50",w:25},{id:"100",w:18},
+{id:"CAM",w:1},{id:"EURO",w:1},{id:"FLASH",w:.2}
+]);
+}
+
+function chooseCount(){
+let r=Math.random();
+if(r<.9)return 3;
+if(r<.99)return 4;
+return 5;
 }
 
 function makeWinBoard(){
+for(let i=0;i<300;i++){
 let b=makeLoseBoard();
-b[1][0]="30";b[1][1]="30";b[1][2]="30";
-return b;
+let line=lines[Math.floor(Math.random()*lines.length)];
+let sym=chooseSymbol();
+let count=chooseCount();
+
+for(let c=0;c<count;c++){
+let r=line[c];
+b[r][c]=sym;
+}
+
+let e=evalBoard(b);
+let maxAllowed=inFree?lastBet*4:lastBet*6;
+
+if(balance>=SOFT_LIMIT||dryMode){
+maxAllowed=Math.min(.3,lastBet*.3);
+}
+
+if(e.total>0 && e.total<=maxAllowed)return b;
+}
+return makeLoseBoard();
 }
 
 function makeBonusBoard(){
 let b=makeLoseBoard();
-b[0][0]="S";b[1][2]="S";b[2][4]="S";
+b[0][0]="S";
+b[1][2]="S";
+b[2][4]="S";
 return b;
 }
 
-function nextBoard(){
+function chooseOutcome(){
+if(inFree){
+if(freeWin>=8)return "lose";
+return Math.random()<.08?"win":"lose";
+}
+
+if(balance>=SOFT_LIMIT||dryMode){
+return Math.random()<.025?"win":"lose";
+}
+
+if(balance<=HELP_BALANCE){
 let r=Math.random();
-if(r<.05)return makeBonusBoard();
-if(r<.2)return makeWinBoard();
+if(r<.18)return "bonus";
+if(r<.40)return "win";
+return "lose";
+}
+
+let r=Math.random();
+if(r<.06)return "bonus";
+if(r<.28)return "win";
+return "lose";
+}
+
+function nextBoard(){
+let o=chooseOutcome();
+if(o=="bonus")return makeBonusBoard();
+if(o=="win")return makeWinBoard();
 return makeLoseBoard();
 }
 
@@ -413,10 +440,11 @@ cell.innerHTML=display[id];
 }
 cell.dataset.id=id;
 cell.className="cell";
+if(id=="S")cell.classList.add("scatter");
 }
 
 function drawBoard(b){
-reels.innerHTML="";
+el.reels.innerHTML="";
 for(let c=0;c<5;c++){
 let reel=document.createElement("div");
 reel.className="reel";
@@ -425,58 +453,283 @@ let cell=document.createElement("div");
 setCell(cell,b[r][c]);
 reel.appendChild(cell);
 }
-reels.appendChild(reel);
+el.reels.appendChild(reel);
 }
 }
 
 function board(){
 let b=[[],[],[]];
 document.querySelectorAll(".reel").forEach((reel,c)=>{
-[...reel.children].forEach((cell,r)=>b[r][c]=cell.dataset.id);
+[...reel.children].forEach((cell,r)=>{
+b[r][c]=cell.dataset.id;
+});
 });
 return b;
 }
 
-function mark(w){
+function mark(winners){
 let cells=document.querySelectorAll(".cell");
-w.forEach(([r,c])=>{
-let i=c*3+r;
-if(cells[i])cells[i].classList.add("win");
+winners.forEach(([r,c])=>{
+let idx=c*3+r;
+if(cells[idx])cells[idx].classList.add("win");
 });
 }
 
 function update(){
-bet.innerText=m(bets[bi]);
-bal.innerText=m(balance);
+el.bet.innerText=m(bets[bi]);
+el.bal.innerText=m(balance);
+el.mega.innerText=m(jp.mega);
+el.maxi.innerText=m(jp.maxi);
+el.mini.innerText=m(jp.mini);
+el.spinButton.innerText=inFree?"БЕЗПЛАТНО":"SPIN";
+el.freeBox.style.display=inFree?"block":"none";
+el.freeBox.innerText=inFree?`РАДАР БОНУС: ${totalFree-free}/${totalFree} · СПЕЧЕЛЕНО: ${m(freeWin)}`:"";
+}
+
+function changeBet(d){
+if(spinning||inFree)return;
+bi=Math.max(0,Math.min(bets.length-1,bi+d));
+beep(650,.04,"square");
+update();
+}
+
+function startFree(){
+inFree=true;
+free=30;
+totalFree=30;
+freeWin=0;
+lastBet=bets[bi];
+el.status.innerText="📸 ХВАНАХА ТЕ С РАДАР! 30 БЕЗПЛАТНИ!";
+popupMsg("📸 ХВАНАХА ТЕ С РАДАР!","Печелите 30 безплатни врътки! Не натискай газта 😄");
+beep(900,.25,"triangle");
+update();
+}
+
+function endFree(){
+inFree=false;
+balance+=freeWin;
+if(balance>HARD_LIMIT)balance=HARD_LIMIT;
+if(balance>=SOFT_LIMIT)dryMode=true;
+
+if(freeWin>0){
+el.status.innerText="🎉 БРАВО! СПЕЧЕЛИ "+m(freeWin)+" ОТ РАДАР БОНУС!";
+popupMsg("🎉 РАДАР БОНУС!","Спечели "+m(freeWin)+" от бонуса! Този път мина метър 😄");
+el.win.innerText=m(freeWin);
+}else{
+el.status.innerText="РАДАР БОНУСЪТ ПРИКЛЮЧИ";
+popupMsg("РАДАР БОНУС","Бонусът приключи без печалба. Камерата беше празна 😄");
+el.win.innerText=m(0);
+}
+
+free=0;
+totalFree=0;
+freeWin=0;
+beep(1400,.3,"triangle");
+update();
+}
+
+function applyFreeFeatures(b,total){
+if(!inFree||total<=0)return {total,feature:false};
+
+let hasPolice=false;
+let hasMoney=false;
+
+for(let r=0;r<3;r++){
+for(let c=0;c<5;c++){
+if(b[r][c]=="W")hasPolice=true;
+if(b[r][c]=="EURO")hasMoney=true;
+}
+}
+
+let feature=false;
+
+if(hasPolice && Math.random()<.45 && freeWin<8){
+popupMsg("🚓 ПОЛИЦИЯ!","СПРЯХА ТЕ! ЦЯЛАТА КОЛОНА СТАВА WILD!");
+el.status.innerText="🚓 ПОЛИЦИЯ! КОЛОНАТА СТАВА WILD!";
+beep(1100,.2,"triangle");
+feature=true;
+}
+
+if(hasPolice && hasMoney && Math.random()<.45 && freeWin<10){
+total*=2;
+popupMsg("💶 ДВОЙНА ГЛОБА!","Плащаш двойно... ама този път печелиш двойно 😄");
+el.status.innerText="💶 ДВОЙНА ГЛОБА!";
+beep(1300,.2,"triangle");
+feature=true;
+}
+
+return {total,feature};
 }
 
 function spin(){
 if(spinning)return;
-spinning=true;
 
-let b=nextBoard();
-drawBoard(b);
+let betv=bets[bi];
+let isFree=inFree;
+
+if(!isFree&&balance<=0){
+el.status.innerText="0.00 €";
+popupMsg("INFO","Моля, свържете се със Stefan Boss 😄");
+return;
+}
+
+if(!isFree&&balance<betv){
+el.status.innerText="НЯМА ПАРИ ЗА ГЛОБАТА";
+beep(130,.15,"sawtooth");
+return;
+}
+
+spinning=true;
+document.querySelectorAll(".cell").forEach(x=>x.classList.remove("win"));
+
+if(isFree){
+free--;
+el.status.innerText=`РАДАР БЕЗПЛАТНА ${totalFree-free}/${totalFree}`;
+}else{
+balance-=betv;
+lastBet=betv;
+spinCounter++;
+el.status.innerText=jokes[Math.floor(Math.random()*jokes.length)];
+}
+
+update();
+beep(150,.15,"sawtooth");
+
+let finalBoard=nextBoard();
+
+if(isFree && freeWin<8){
+for(let c=0;c<5;c++){
+let hasW=false;
+for(let r=0;r<3;r++){
+if(finalBoard[r][c]=="W")hasW=true;
+}
+if(hasW && Math.random()<.45){
+for(let r=0;r<3;r++){
+finalBoard[r][c]="W";
+}
+}
+}
+}
+
+let reelsA=[...document.querySelectorAll(".reel")];
+let stopped=0;
+
+reelsA.forEach((reel,i)=>{
+reel.classList.add("spin");
+let timer=setInterval(()=>{
+[...reel.children].forEach(c=>setCell(c,weightedPick(weights())));
+},65);
 
 setTimeout(()=>{
-let e=evalBoard(b);
+clearInterval(timer);
+[...reel.children].forEach((cell,r)=>setCell(cell,finalBoard[r][i]));
+reel.classList.remove("spin");
+beep(360,.05,"square");
+stopped++;
 
-if(e.total>0){
-mark(e.winners);
-balance+=e.total;
-win.innerText=m(e.total);
-status.innerText="ПЕЧАЛБА "+m(e.total);
-}else{
-win.innerText=m(0);
-status.innerText="ПАК ТЕ ХВАНАХА 😄";
-}
-
-update();
+if(stopped===5){
+setTimeout(()=>{
+calc(isFree);
+grow(betv);
 spinning=false;
-},400);
+},160);
+}
+},720+i*280);
+});
 }
 
+function calc(isFree){
+let b=board();
+let sc=countScatter(b);
+
+if(sc>=3&&!isFree){
+startFree();
+return;
+}
+
+let e=evalBoard(b);
+let featureResult=applyFreeFeatures(b,e.total);
+let total=featureResult.total;
+let feature=featureResult.feature;
+
+if(!isFree && balance>=HARD_LIMIT)total=0;
+if(!isFree && balance+total>HARD_LIMIT)total=HARD_LIMIT-balance;
+
+if(total>0){
+mark(e.winners);
+el.win.innerText=m(total);
+
+if(isFree){
+freeWin+=total;
+if(!feature)el.status.innerText="РАДАР ПЕЧАЛБА "+m(total);
+}else{
+balance+=total;
+if(balance>=SOFT_LIMIT)dryMode=true;
+el.status.innerText="ПЕЧАЛБА "+m(total);
+}
+
+beep(total>=lastBet*10?1200:780,.15,"triangle");
+update();
+
+if(isFree&&free<=0)setTimeout(endFree,900);
+return;
+}
+
+el.win.innerText=m(0);
+el.status.innerText=isFree?"БЕЗПЛАТНА БЕЗ ПЕЧАЛБА":"ПАК ТЕ ХВАНАХА 😄";
+update();
+
+if(isFree&&free<=0)setTimeout(endFree,900);
+}
+
+function grow(b){
+jp.mega+=b*.01;
+jp.maxi+=b*.006;
+jp.mini+=b*.003;
+update();
+}
+
+function bonus(){
+if(balance<START_BALANCE){
+balance+=5;
+if(balance>START_BALANCE)balance=START_BALANCE;
+el.status.innerText="БОНУС +5.00 €";
+}else{
+el.status.innerText="БОНУСЪТ Е ДОСТЪПЕН САМО ПРИ НИСЪК БАЛАНС";
+}
+update();
+}
+
+function deposit(){
+balance=START_BALANCE;
+dryMode=false;
+inFree=false;
+free=0;
+totalFree=0;
+freeWin=0;
+spinCounter=0;
+miniPaid=false;
+maxiPaid=false;
+megaPaid=false;
+el.win.innerText=m(0);
+el.status.innerText="DEMO ДЕПОЗИТ: БАЛАНСЪТ Е 20.00 €";
 drawBoard(makeLoseBoard());
 update();
+}
+
+function toggleSound(){
+snd=!snd;
+el.soundBtn.innerText=snd?"ЗВУК ON":"ЗВУК OFF";
+}
+
+function paytable(){
+alert("DIDI BLITZ ТАБЛИЦА при 1€ залог:\\n⚡: 3x=10€, 4x=40€, 5x=600€\\n💶/📸: 3x=8€, 4x=20€, 5x=100€\\n100: 3x=6€, 4x=15€, 5x=50€\\n50: 3x=4€, 4x=10€, 5x=30€\\n30: 3x=2€, 4x=6€, 5x=20€\\n📸 Scatter: 3x = 30 безплатни\\n🚓 Wild замества символите.");
+}
+
+window.onload=function(){
+drawBoard(makeLoseBoard());
+update();
+};
 </script>
 
 </body>
