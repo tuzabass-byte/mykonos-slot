@@ -1,90 +1,446 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vasa Fortune Stable Preview</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, Helvetica, sans-serif;
-      background: radial-gradient(circle at top, #0cf 0%, #023b7a 32%, #020b24 100%);
-      color: white;
-      overflow: hidden;
-    }
-    .game {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px 10px;
-    }
-    .top {
-      width: min(980px, 96vw);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    .jackpot {
-      border: 3px solid #ffd34d;
-      border-radius: 16px;
-      background: linear-gradient(#3b0000, #9b0000, #280000);
-      box-shadow: 0 0 18px rgba(255, 215, 0, .8), inset 0 0 16px rgba(255,255,255,.18);
-      padding: 10px;
-      text-align: center;
-      font-weight: 900;
-    }
-    .jackpot .name { font-size: 20px; letter-spacing: 1px; color: #ffe680; }
-    .jackpot .value { font-size: 28px; color: #fff; text-shadow: 0 0 8px #ff0; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>VASA FORTUNE TOP BASE v2</title>
+<style>
+  :root{
+    --blue:#00d9ff;
+    --deep:#020922;
+    --gold:#ffd76a;
+    --red:#e40012;
+    --green:#21ff8a;
+  }
+  *{box-sizing:border-box; user-select:none; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Arial,Helvetica,sans-serif;background:#020922;color:white;}
+  body{
+    background:
+      radial-gradient(circle at 50% 0%, rgba(0,245,255,.95) 0%, rgba(0,83,170,.9) 27%, rgba(2,9,34,1) 72%),
+      linear-gradient(180deg,#053e9a,#020922);
+  }
+  .game{width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 12px 8px;position:relative;}
+  .glow-bg{position:absolute;inset:-25%;background:radial-gradient(circle,rgba(0,255,255,.22),transparent 58%);filter:blur(20px);animation:pulseBg 3.5s infinite alternate;pointer-events:none;}
+  @keyframes pulseBg{from{transform:scale(.95);opacity:.65}to{transform:scale(1.08);opacity:1}}
 
-    .title {
-      font-size: clamp(34px, 6vw, 72px);
-      font-weight: 1000;
-      letter-spacing: 3px;
-      text-shadow: 0 0 12px #00eaff, 0 5px 0 #071a4d, 0 0 34px #fff;
-      margin: 4px 0;
+  .top{width:min(1040px,98vw);display:grid;grid-template-columns:repeat(3,1fr);gap:10px;z-index:1;}
+  .jackpot{border:3px solid var(--gold);border-radius:18px;background:linear-gradient(180deg,#5b0000,#e00012 52%,#420000);box-shadow:0 0 18px rgba(255,215,0,.85), inset 0 0 18px rgba(255,255,255,.18);text-align:center;padding:8px 6px;position:relative;overflow:hidden;}
+  .jackpot:before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-120%);animation:shine 4s infinite;}
+  @keyframes shine{0%,55%{transform:translateX(-120%)}80%,100%{transform:translateX(120%)}}
+  .jackpot .name{font-weight:1000;font-size:clamp(16px,2.5vw,25px);letter-spacing:1px;color:#fff2a7;text-shadow:0 0 8px #000;}
+  .jackpot .value{font-weight:1000;font-size:clamp(20px,3.2vw,34px);color:white;text-shadow:0 0 10px #ff0;}
+
+  .title{z-index:1;font-size:clamp(34px,6vw,74px);font-weight:1000;letter-spacing:3px;line-height:1;text-shadow:0 0 10px #00f7ff,0 4px 0 #00124a,0 0 35px white;margin:1px 0;}
+  .subtitle{z-index:1;margin-top:-4px;font-weight:900;color:#fff3a0;text-shadow:0 0 10px #000;font-size:clamp(12px,2vw,18px);letter-spacing:2px;}
+
+  .freebar{z-index:1;width:min(880px,96vw);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;border:3px solid var(--gold);border-radius:999px;background:linear-gradient(90deg,#001650,#009dff,#001650);box-shadow:0 0 16px rgba(0,245,255,.9), inset 0 0 14px rgba(255,255,255,.2);padding:7px 14px;font-weight:1000;color:#fff9b8;text-align:center;font-size:clamp(14px,2.4vw,22px);}
+  .freebar span:nth-child(2){color:white;text-shadow:0 0 8px #00f7ff;}
+  .freebar.active{animation:freePulse .65s infinite alternate;}
+  @keyframes freePulse{from{box-shadow:0 0 12px #00eaff}to{box-shadow:0 0 32px #fff200}}
+
+  .slot-wrap{z-index:1;width:min(940px,98vw);padding:14px;border-radius:34px;border:8px solid #ff1c1c;background:linear-gradient(180deg,#870000,#fb0000 50%,#5a0000);box-shadow:0 0 28px rgba(255,0,0,.95), inset 0 0 25px rgba(255,255,255,.25);position:relative;}
+  .slot-wrap.winShake{animation:shake .28s 2;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+  .reels{display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(3,1fr);gap:9px;background:linear-gradient(180deg,#120015,#05000a);padding:11px;border-radius:23px;box-shadow:inset 0 0 28px #000;border:3px solid #2b001c;}
+  .cell{height:clamp(68px,12.3vh,112px);border-radius:18px;border:3px solid #ffd66b;background:radial-gradient(circle at 35% 22%,#fff8d2 0%,#ffc247 28%,#b64500 63%,#2b0000 100%);display:flex;align-items:center;justify-content:center;font-size:clamp(34px,6.4vw,68px);box-shadow:inset 0 0 13px rgba(255,255,255,.75),0 0 9px rgba(255,215,0,.75);transition:transform .15s, filter .15s, box-shadow .15s;}
+  .cell.spinBlur{filter:blur(2px) brightness(1.2);transform:scale(.96);}
+  .cell.hit{animation:hitPulse .45s infinite alternate;border-color:white;box-shadow:0 0 20px #fff200,inset 0 0 18px white;}
+  @keyframes hitPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+
+  .status{z-index:1;width:min(940px,98vw);display:grid;grid-template-columns:1.25fr 1fr 1fr 1.25fr;gap:9px;margin-top:6px;}
+  .box{border:2px solid #86efff;border-radius:13px;background:linear-gradient(180deg,#00246c,#0067d8);box-shadow:0 0 10px rgba(0,234,255,.8),inset 0 0 10px rgba(255,255,255,.12);padding:7px 5px;text-align:center;font-weight:1000;}
+  .box small{display:block;font-size:11px;color:#bdf7ff;letter-spacing:1px;margin-bottom:2px;}
+  .box span{font-size:clamp(14px,2.3vw,22px);}
+
+  .controls{z-index:1;width:min(940px,98vw);display:grid;grid-template-columns:1fr 1fr 2.15fr 1fr 1fr;gap:9px;margin-top:6px;align-items:center;}
+  button{border:0;border-radius:17px;padding:12px 8px;font-size:clamp(14px,2vw,19px);font-weight:1000;color:white;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.38),0 0 12px rgba(255,255,255,.32);text-shadow:0 1px 3px #000;}
+  button:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.38);}
+  button:disabled{opacity:.55;cursor:not-allowed;}
+  .blue{background:linear-gradient(180deg,#00c8ff,#0045b3);}
+  .spin{padding:16px 8px;font-size:clamp(26px,4vw,42px);border:4px solid var(--gold);background:radial-gradient(circle at top,#ff8c8c,#f30012 44%,#650000);color:#fff7b2;letter-spacing:2px;animation:spinGlow 1.2s infinite alternate;}
+  @keyframes spinGlow{from{box-shadow:0 0 12px #ff0,0 6px 0 rgba(0,0,0,.38)}to{box-shadow:0 0 26px #ff0,0 6px 0 rgba(0,0,0,.38)}}
+
+  .bottom{z-index:1;width:min(940px,98vw);display:flex;justify-content:space-around;gap:8px;padding:7px 10px;border-radius:18px 18px 0 0;background:rgba(0,0,30,.68);border:2px solid rgba(126,232,255,.7);font-weight:1000;color:#c8f9ff;font-size:clamp(12px,2vw,17px);}
+
+  .popup{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.65);z-index:10;border-radius:25px;}
+  .popup.active{display:flex;}
+  .popup-card{min-width:min(520px,86vw);padding:25px 28px;border-radius:26px;border:4px solid var(--gold);background:linear-gradient(180deg,#00175c,#00a2ff,#00175c);text-align:center;box-shadow:0 0 35px #00eaff;font-weight:1000;animation:pop .25s ease-out;}
+  @keyframes pop{from{transform:scale(.75);opacity:0}to{transform:scale(1);opacity:1}}
+  .popup-title{font-size:clamp(30px,6vw,62px);color:#fff8a8;text-shadow:0 0 12px #000;}
+  .popup-amount{font-size:clamp(24px,4vw,44px);margin-top:8px;}
+  .popup-text{font-size:clamp(13px,2vw,18px);margin-top:10px;color:#e8fbff;}
+
+  .paytable{position:absolute;inset:0;background:rgba(0,0,0,.78);z-index:20;display:none;align-items:center;justify-content:center;padding:16px;}
+  .paytable.active{display:flex;}
+  .pay-card{width:min(680px,94vw);max-height:88vh;overflow:auto;background:linear-gradient(180deg,#07185b,#003f9f);border:4px solid var(--gold);border-radius:24px;padding:18px;box-shadow:0 0 28px #00eaff;text-align:center;}
+  .pay-card h2{margin:0 0 10px;color:#fff7a6;font-size:30px;}
+  .pay-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;text-align:left;font-weight:900;}
+  .pay-item{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:8px;}
+  .close{margin-top:12px;width:100%;background:linear-gradient(180deg,#ff5a5a,#b00000);}
+
+  @media (max-height:760px){.game{padding:6px 8px 4px}.top{gap:7px}.jackpot{padding:5px}.title{font-size:36px}.subtitle{display:none}.freebar{padding:5px 10px}.slot-wrap{padding:9px;border-width:6px}.reels{gap:6px;padding:8px}.cell{height:60px;font-size:36px}.controls button{padding:8px 5px}.spin{padding:10px}.bottom{padding:5px}}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="glow-bg"></div>
+
+  <div class="top">
+    <div class="jackpot"><div class="name">MEGA</div><div class="value" id="mega">5000.00 €</div></div>
+    <div class="jackpot"><div class="name">MAXI</div><div class="value" id="maxi">1000.00 €</div></div>
+    <div class="jackpot"><div class="name">MINI</div><div class="value" id="mini">100.00 €</div></div>
+  </div>
+
+  <div class="title">VASA FORTUNE</div>
+  <div class="subtitle">TOP BASE v2 • STABLE GAME CORE</div>
+
+  <div class="freebar" id="freebar">
+    <span>FREE SPINS</span>
+    <span id="freeText">READY</span>
+    <span>BONUS 3× 🧿</span>
+  </div>
+
+  <div class="slot-wrap" id="slotWrap">
+    <div class="popup" id="popup" onclick="hidePopup()">
+      <div class="popup-card">
+        <div class="popup-title" id="popupTitle">BIG WIN</div>
+        <div class="popup-amount" id="popupAmount">0.00 €</div>
+        <div class="popup-text" id="popupText">Докосни за затваряне</div>
+      </div>
+    </div>
+    <div class="reels" id="reels"></div>
+  </div>
+
+  <div class="status">
+    <div class="box"><small>STATUS</small><span id="status">READY</span></div>
+    <div class="box"><small>WIN</small><span id="win">0.00 €</span></div>
+    <div class="box"><small>BET</small><span id="bet">1.00 €</span></div>
+    <div class="box"><small>BALANCE</small><span id="balance">1000.00 €</span></div>
+  </div>
+
+  <div class="controls">
+    <button class="blue" id="betMinus" onclick="changeBet(-1)">BET -</button>
+    <button class="blue" id="betPlus" onclick="changeBet(1)">BET +</button>
+    <button class="spin" id="spinBtn" onclick="spin()">SPIN</button>
+    <button class="blue" onclick="togglePaytable()">PAYTABLE</button>
+    <button class="blue" id="soundBtn" onclick="toggleSound()">SOUND ON</button>
+  </div>
+
+  <div class="bottom">
+    <span>MENU</span><span>AUTO</span><span>LINES 5</span><span>INFO</span><span>FULL</span>
+  </div>
+</div>
+
+<div class="paytable" id="paytable">
+  <div class="pay-card">
+    <h2>PAYTABLE</h2>
+    <div class="pay-grid">
+      <div class="pay-item">💎 Premium: 5× = 80 bet</div>
+      <div class="pay-item">7️⃣ Seven: 5× = 55 bet</div>
+      <div class="pay-item">🔔 Bell: 5× = 35 bet</div>
+      <div class="pay-item">⭐ Star: 5× = 24 bet</div>
+      <div class="pay-item">🏛️ Temple: 5× = 18 bet</div>
+      <div class="pay-item">🧿 3+ Scatter = 30 Free Spins</div>
+      <div class="pay-item">Jackpots: rare random hit</div>
+      <div class="pay-item">5 active lines</div>
+    </div>
+    <button class="close" onclick="togglePaytable()">CLOSE</button>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   VASA FORTUNE TOP BASE v2
+   Stable rules:
+   - Do not rewrite design.
+   - Change only CONFIG, weights(), chooseOutcome(), or payout values.
+   ========================================================= */
+
+const CONFIG = {
+  startingBalance: 1000,
+  defaultBet: 1,
+  minBet: 0.20,
+  maxBet: 20,
+  betStep: 0.20,
+  freeSpinsAward: 30,
+  softLimit: 1800,
+  dryMode: false,
+  spinMs: 980,
+  reelDelay: 140
+};
+
+const SYMBOLS = [
+  {id:'cherry', icon:'🍒', pay:6, weight:26},
+  {id:'lemon', icon:'🍋', pay:7, weight:24},
+  {id:'bell', icon:'🔔', pay:14, weight:16},
+  {id:'star', icon:'⭐', pay:18, weight:13},
+  {id:'temple', icon:'🏛️', pay:24, weight:9},
+  {id:'seven', icon:'7️⃣', pay:42, weight:7},
+  {id:'diamond', icon:'💎', pay:70, weight:4},
+  {id:'scatter', icon:'🧿', pay:0, weight:1}
+];
+
+const LINES = [
+  [5,6,7,8,9],      // middle
+  [0,1,2,3,4],      // top
+  [10,11,12,13,14], // bottom
+  [0,6,12,8,4],     // V
+  [10,6,2,8,14]     // inverted V
+];
+
+let balance = CONFIG.startingBalance;
+let bet = CONFIG.defaultBet;
+let win = 0;
+let spinning = false;
+let soundOn = true;
+let freeSpins = 0;
+let totalSpins = 0;
+let board = [];
+let jackpot = {mega:5000, maxi:1000, mini:100};
+
+const $ = id => document.getElementById(id);
+const money = n => Number(n).toFixed(2) + ' €';
+
+function weightedPick(list){
+  const total = list.reduce((s,x)=>s+x.weight,0);
+  let r = Math.random()*total;
+  for(const item of list){ r -= item.weight; if(r <= 0) return item; }
+  return list[list.length-1];
+}
+
+function randomSymbol(noScatter=false){
+  const list = noScatter ? SYMBOLS.filter(s=>s.id !== 'scatter') : SYMBOLS;
+  return weightedPick(list);
+}
+
+function weights(){
+  // Main casino feel control. Lower big/bonus chances when balance is high.
+  const highBalance = balance > CONFIG.softLimit;
+  return {
+    lose: highBalance ? 66 : 55,
+    smallWin: highBalance ? 23 : 30,
+    mediumWin: highBalance ? 8 : 10,
+    bigWin: highBalance ? 2.4 : 3.7,
+    bonus: highBalance ? 0.55 : 1.15,
+    jackpot: highBalance ? 0.05 : 0.15
+  };
+}
+
+function chooseOutcome(){
+  if(CONFIG.dryMode) return 'lose';
+  if(freeSpins > 0){
+    // Free spins feel better, but not too crazy.
+    const r = Math.random()*100;
+    if(r < 48) return 'lose';
+    if(r < 82) return 'smallWin';
+    if(r < 96) return 'mediumWin';
+    return 'bigWin';
+  }
+  const w = weights();
+  const entries = Object.entries(w).map(([id,weight])=>({id,weight}));
+  return weightedPick(entries).id;
+}
+
+function emptyBoard(){
+  return Array.from({length:15},()=>randomSymbol(false));
+}
+
+function makeLoseBoard(){
+  let b;
+  let guard = 0;
+  do {
+    b = Array.from({length:15},()=>randomSymbol(true));
+    guard++;
+  } while(scoreBoard(b).amount > 0 && guard < 60);
+  return b;
+}
+
+function makeWinBoard(type){
+  const b = makeLoseBoard();
+  const line = LINES[Math.floor(Math.random()*LINES.length)];
+  let pool;
+  if(type === 'smallWin') pool = SYMBOLS.filter(s=>['cherry','lemon','bell'].includes(s.id));
+  else if(type === 'mediumWin') pool = SYMBOLS.filter(s=>['bell','star','temple'].includes(s.id));
+  else pool = SYMBOLS.filter(s=>['seven','diamond','temple'].includes(s.id));
+
+  const sym = pool[Math.floor(Math.random()*pool.length)];
+  const count = type === 'smallWin' ? (Math.random()<.7?3:4) : (type === 'mediumWin' ? (Math.random()<.55?4:5) : 5);
+  for(let i=0;i<count;i++) b[line[i]] = sym;
+  return b;
+}
+
+function makeBonusBoard(){
+  const b = makeLoseBoard();
+  const scatter = SYMBOLS.find(s=>s.id==='scatter');
+  const positions = [...Array(15).keys()].sort(()=>Math.random()-.5).slice(0,3 + (Math.random()<.18?1:0));
+  positions.forEach(p=>b[p]=scatter);
+  return b;
+}
+
+function makeJackpotBoard(){
+  const b = makeWinBoard('bigWin');
+  b[7] = SYMBOLS.find(s=>s.id==='diamond');
+  return b;
+}
+
+function scoreBoard(b){
+  let amount = 0;
+  let hits = [];
+  for(const line of LINES){
+    const first = b[line[0]];
+    if(!first || first.id === 'scatter') continue;
+    let count = 1;
+    for(let i=1;i<line.length;i++){
+      if(b[line[i]].id === first.id) count++; else break;
     }
-    .freebar {
-      width: min(880px, 94vw);
-      border: 3px solid #ffe680;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #00164d, #0088ff, #00164d);
-      box-shadow: 0 0 16px #00d9ff;
-      padding: 8px 16px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: 900;
-      color: #fff7b2;
+    if(count >= 3){
+      const mult = count === 3 ? first.pay : count === 4 ? first.pay*2.5 : first.pay*5;
+      amount += bet * mult / 5;
+      hits.push(...line.slice(0,count));
     }
-    .slot-wrap {
-      position: relative;
-      width: min(900px, 96vw);
-      padding: 16px;
-      border: 8px solid #ff1515;
-      border-radius: 34px;
-      background: linear-gradient(#8b0000, #e00000, #5a0000);
-      box-shadow: 0 0 30px rgba(255,0,0,.9), inset 0 0 22px rgba(255,255,255,.3);
+  }
+  return {amount:+amount.toFixed(2), hits:[...new Set(hits)]};
+}
+
+function countScatters(b){ return b.filter(s=>s.id==='scatter').length; }
+
+function renderBoard(extraClass=false){
+  $('reels').innerHTML = '';
+  board.forEach((s,i)=>{
+    const cell = document.createElement('div');
+    cell.className = 'cell' + (extraClass ? ' spinBlur' : '');
+    cell.textContent = s.icon;
+    cell.dataset.index = i;
+    $('reels').appendChild(cell);
+  });
+}
+
+function highlightHits(hits){
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('hit'));
+  hits.forEach(i=>{
+    const c = document.querySelector('.cell[data-index="'+i+'"]');
+    if(c) c.classList.add('hit');
+  });
+}
+
+function updateUI(){
+  $('balance').textContent = money(balance);
+  $('bet').textContent = money(bet);
+  $('win').textContent = money(win);
+  $('mega').textContent = money(jackpot.mega);
+  $('maxi').textContent = money(jackpot.maxi);
+  $('mini').textContent = money(jackpot.mini);
+  $('freeText').textContent = freeSpins > 0 ? freeSpins + ' LEFT' : 'READY';
+  $('freebar').classList.toggle('active', freeSpins > 0);
+  $('betMinus').disabled = spinning || freeSpins > 0;
+  $('betPlus').disabled = spinning || freeSpins > 0;
+  $('spinBtn').disabled = spinning;
+}
+
+function showPopup(title, amount, text){
+  $('popupTitle').textContent = title;
+  $('popupAmount').textContent = amount ? money(amount) : '';
+  $('popupText').textContent = text || 'Докосни за затваряне';
+  $('popup').classList.add('active');
+}
+function hidePopup(){ $('popup').classList.remove('active'); }
+
+function changeBet(dir){
+  if(spinning || freeSpins > 0) return;
+  bet = +(Math.max(CONFIG.minBet, Math.min(CONFIG.maxBet, bet + dir*CONFIG.betStep))).toFixed(2);
+  updateUI();
+}
+
+function spin(){
+  if(spinning) return;
+  if(freeSpins <= 0 && balance < bet){ showPopup('NO CREDIT',0,'Няма достатъчно баланс'); return; }
+
+  spinning = true;
+  hidePopup();
+  $('slotWrap').classList.remove('winShake');
+  document.querySelectorAll('.cell').forEach(c=>c.classList.remove('hit'));
+  win = 0;
+
+  if(freeSpins > 0){
+    freeSpins--;
+    $('status').textContent = 'FREE SPIN';
+  } else {
+    balance = +(balance - bet).toFixed(2);
+    $('status').textContent = 'SPINNING';
+  }
+
+  // Jackpots grow with every paid spin.
+  jackpot.mega += bet * 0.03;
+  jackpot.maxi += bet * 0.015;
+  jackpot.mini += bet * 0.006;
+  updateUI();
+
+  let ticks = 0;
+  const anim = setInterval(()=>{
+    board = emptyBoard();
+    renderBoard(true);
+    ticks++;
+    if(ticks >= 10){
+      clearInterval(anim);
+      finishSpin();
     }
-    .reels {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(3, 1fr);
-      gap: 10px;
-      background: #120014;
-      padding: 12px;
-      border-radius: 22px;
-      box-shadow: inset 0 0 25px #000;
-    }
-    .cell {
-      min-height: clamp(74px, 12vh, 118px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(38px, 7vw, 72px);
-      border-radius: 18px;
-      background: radial-gradient(circle at 30% 20%, #fff, #ffd36b 18%, #b64800 55%, #3b0202 100%);
-      border: 3px solid #ffd34d;
+  },75);
+}
+
+function finishSpin(){
+  totalSpins++;
+  const outcome = chooseOutcome();
+
+  if(outcome === 'bonus') board = makeBonusBoard();
+  else if(outcome === 'jackpot') board = makeJackpotBoard();
+  else if(outcome === 'lose') board = makeLoseBoard();
+  else board = makeWinBoard(outcome);
+
+  renderBoard(false);
+
+  const scored = scoreBoard(board);
+  win = scored.amount;
+
+  const scatters = countScatters(board);
+  if(scatters >= 3 && freeSpins === 0){
+    freeSpins = CONFIG.freeSpinsAward;
+    win += bet * 5;
+    showPopup('FREE SPINS!', win, CONFIG.freeSpinsAward + ' безплатни завъртания');
+  }
+
+  if(outcome === 'jackpot'){
+    let jpType = Math.random() < .72 ? 'mini' : (Math.random() < .88 ? 'maxi' : 'mega');
+    const jpWin = jackpot[jpType];
+    win += jpWin;
+    jackpot[jpType] = jpType === 'mega' ? 5000 : jpType === 'maxi' ? 1000 : 100;
+    showPopup(jpType.toUpperCase() + ' JACKPOT!', win, 'Ударен jackpot');
+  }
+
+  balance = +(balance + win).toFixed(2);
+  highlightHits(scored.hits);
+
+  if(win > 0){
+    $('status').textContent = win >= bet*25 ? 'BIG WIN' : 'WIN';
+    $('slotWrap').classList.add('winShake');
+    if(win >= bet*25 && outcome !== 'jackpot') showPopup('BIG WIN!', win, 'Страхотна печалба');
+  } else {
+    $('status').textContent = freeSpins > 0 ? 'FREE READY' : 'NO WIN';
+  }
+
+  spinning = false;
+  updateUI();
+}
+
+function togglePaytable(){ $('paytable').classList.toggle('active'); }
+function toggleSound(){
+  soundOn = !soundOn;
+  $('soundBtn').textContent = soundOn ? 'SOUND ON' : 'SOUND OFF';
+}
+
+// Start board
+board = emptyBoard();
+renderBoard(false);
+updateUI();
+</script>
+</body>
+</html>
