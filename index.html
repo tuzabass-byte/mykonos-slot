@@ -325,13 +325,15 @@
     // Balanced Didi Blitz feel:
     // more action than Vasa, but bonus and big wins are controlled.
     function weights() {
+      // tuned casino-balanced feel
       return {
-        lose: 58,
-        smallWin: 27,
-        midWin: 9,
+        lose: 68,
+        smallWin: 20,
+        midWin: 6,
         bigWin: 3,
         bonus: 3
       };
+    };
     }
 
     function chooseOutcome() {
@@ -381,7 +383,9 @@
 
     function makeBonusBoard() {
       let board = makeLoseBoard();
-      const positions = [...Array(15).keys()].sort(() => Math.random() - 0.5).slice(0, 3 + Math.floor(Math.random() * 3));
+      // harder bonus trigger
+      const count = 3 + Math.floor(Math.random() * 2); // mostly 3-4 scatters
+      const positions = [...Array(15).keys()].sort(() => Math.random() - 0.5).slice(0, count);
       positions.forEach(i => board[i] = '⚡');
       return board;
     }
@@ -410,11 +414,13 @@
 
       const scatters = board.filter(s => s === '⚡').length;
       if (scatters >= 3) {
-        const award = scatters >= 5 ? 15 : scatters === 4 ? 12 : 10;
+        // tighter bonus rewards
+        const award = scatters >= 5 ? 12 : scatters === 4 ? 10 : 8;
         freeSpins += award;
         multiplier = Math.min(3, multiplier + 1);
         openPopup('BLITZ BONUS!', scatters + ' ⚡ symbols! You won ' + award + ' Free Spins. Multiplier is now x' + multiplier + '.');
         board.forEach((s, i) => { if (s === '⚡') winningCells.add(i); });
+      });
       }
 
       return { totalWin, winningCells };
@@ -479,7 +485,10 @@
 
           if (win > 0) {
             blitzEffect();
-            if (win >= currentBet * 30) openPopup('BIG BLITZ WIN!', 'You won ' + win.toFixed(2) + ' with x' + multiplier + ' multiplier!');
+            // stronger big win impact
+            if (win >= currentBet * 40) {
+              openPopup('BIG BLITZ WIN!', 'You won ' + win.toFixed(2) + ' with x' + multiplier + ' multiplier!');
+            }
           }
 
           updateJackpots();
