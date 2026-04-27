@@ -649,26 +649,21 @@ chat.scrollTop=chat.scrollHeight;
 }catch(e){}
 }
 
-async function loadTop(){
-try{
-let d=await api("players?select=Name,Points&order=Points.desc&limit=1");
-
-if(d[0]){
-topWinner.innerText=d[0].Name+" "+d[0].Points+"€";
-}
-}catch(e){}
-}function fakeWin(){
-let names=["Stefan","Mariana","Marian","Mitko","Vasilka","Didi"];
-let games=["VASA","DIDI","MITKO"];
-let n=names[Math.floor(Math.random()*names.length)];
-let g=games[Math.floor(Math.random()*games.length)];
-let money=Math.floor(Math.random()*25)+5;
-
-bigWinText.innerText="🔥 WIN BETT "+n+" +"+money+"€ на "+g+" 🔥";
-tickerText.innerText=n+" спечели "+money+"€ · Jackpot расте · Покани приятел +5€";
-}
-
 function openGame(g){
+...
+}
+
+function closeGame(){
+...
+}
+
+function randomSymbol(){
+...
+}
+
+async function spin(){
+...
+}
 if(!user)return;
 
 currentGame=g;
