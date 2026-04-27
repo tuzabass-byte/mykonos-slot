@@ -501,7 +501,40 @@ regRef.value=ref;
 loadPlayers();
 autoFillRef();
 
-async function loadPlayers(){
+async function loadPlayers(){async function loadPlayers(){
+try{
+let r=await fetch(URL+"players?select=id,Name,Pin,Points,ref_code,ref_by&order=id.asc",{
+headers:{
+apikey:KEY,
+Authorization:"Bearer "+KEY
+}
+});
+
+let d=await r.json();
+
+playerSelect.innerHTML="";
+
+if(!Array.isArray(d) || d.length===0){
+let o=document.createElement("option");
+o.textContent="Няма играчи";
+playerSelect.appendChild(o);
+return;
+}
+
+d.forEach(p=>{
+let o=document.createElement("option");
+o.value=p.Name;
+o.textContent=p.Name;
+playerSelect.appendChild(o);
+});
+
+}catch(e){
+playerSelect.innerHTML="";
+let o=document.createElement("option");
+o.textContent="Грешка база";
+playerSelect.appendChild(o);
+}
+}
 let r=await fetch(URL+"players",{headers:{apikey:KEY}});
 let d=await r.json();
 
