@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Friends Bet Casino</title>
+
 <style>
 body {
     margin: 0;
@@ -12,28 +13,43 @@ body {
     text-align: center;
 }
 
-header {
-    padding: 20px;
-    font-size: 40px;
+/* LOGO STYLE */
+.logo {
+    margin-top: 20px;
+    font-size: 50px;
     font-weight: bold;
-    color: #00d9ff;
-    text-shadow: 0 0 15px #00d9ff, 0 0 30px #0077ff;
 }
 
+.logo span:nth-child(1) {
+    color: #00d9ff;
+    text-shadow: 0 0 20px #00d9ff;
+}
+
+.logo span:nth-child(2) {
+    color: red;
+    text-shadow: 0 0 20px red;
+}
+
+.logo span:nth-child(3) {
+    color: gold;
+    text-shadow: 0 0 15px gold;
+}
+
+/* GAME BUTTONS */
 .container {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 
 .game-btn {
     display: inline-block;
     margin: 20px;
     padding: 20px 40px;
-    font-size: 20px;
+    font-size: 22px;
     border-radius: 15px;
     background: red;
     color: white;
     text-decoration: none;
-    box-shadow: 0 0 15px red;
+    box-shadow: 0 0 20px red;
     transition: 0.3s;
 }
 
@@ -43,20 +59,24 @@ header {
 }
 
 .footer {
-    margin-top: 50px;
-    opacity: 0.6;
+    margin-top: 60px;
+    opacity: 0.5;
 }
 </style>
 </head>
 
 <body>
 
-<header>🎰 Friends Bet Casino 🎰</header>
+<div class="logo">
+    <span>Friends</span> 
+    <span>Bet</span> 
+    <span>Casino</span>
+</div>
 
 <div class="container">
-    <a href="vasa-fortune.html" class="game-btn">Vasa Fortune</a>
-    <a href="didi-blitz.html" class="game-btn">Didi Blitz</a>
-    <a href="mitko-koch-bells.html" class="game-btn">Mitko Koch Bells</a>
+    <a href="vasa-fortune.html" class="game-btn">🎰 Vasa Fortune</a>
+    <a href="didi-blitz.html" class="game-btn">⚡ Didi Blitz</a>
+    <a href="mitko-koch-bells.html" class="game-btn">🔔 Mitko Koch Bells</a>
 </div>
 
 <div class="footer">
