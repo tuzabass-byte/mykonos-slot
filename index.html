@@ -503,8 +503,12 @@ autoFillRef();
 
 async function loadPlayers(){async function loadPlayers(){
 try{
-let r=await fetch(URL+"players?select=id,Name,Pin,Points,ref_code,ref_by&order=id.asc",{
+let r=await fetch(URL+"players?Name=eq."+encodeURIComponent(playerSelect.value),{
 headers:{
+apikey:KEY,
+Authorization:"Bearer "+KEY
+}
+});
 apikey:KEY,
 Authorization:"Bearer "+KEY
 }
