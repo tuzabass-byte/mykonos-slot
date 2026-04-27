@@ -1,50 +1,544 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vasa Fortune TOP</title>
-<style>
-body{margin:0;font-family:Arial;background:radial-gradient(circle,#00cfff,#001a4d,#000);color:#fff;text-align:center}
-.slot{max-width:420px;margin:auto;padding:10px}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:#900;padding:10px;border-radius:15px;border:3px solid gold}
-.cell{height:70px;background:#fff;color:#000;font-size:30px;display:flex;align-items:center;justify-content:center;border-radius:10px}
-.win{background:gold}
-button{padding:12px;font-weight:bold;border-radius:10px;border:none;margin:5px}
-.spin{background:red;color:#fff;font-size:20px}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Didi Blitz TOP</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.35), transparent 12%),
+        radial-gradient(circle at 20% 20%, #7d2cff 0%, transparent 25%),
+        radial-gradient(circle at 80% 15%, #00eaff 0%, transparent 25%),
+        linear-gradient(180deg, #090024 0%, #03000d 55%, #000 100%);
+      color: white;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .game {
+      width: 100%;
+      max-width: 460px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .game:before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0%, transparent 45%, rgba(0,234,255,.22) 47%, transparent 50%, transparent 100%),
+        linear-gradient(60deg, transparent 0%, transparent 58%, rgba(255,255,255,.18) 60%, transparent 63%, transparent 100%);
+      pointer-events: none;
+      animation: lightningBg 3.8s infinite;
+    }
+
+    @keyframes lightningBg {
+      0%, 88%, 100% { opacity: .15; }
+      90% { opacity: .9; }
+      92% { opacity: .2; }
+      94% { opacity: .75; }
+    }
+
+    .title {
+      text-align: center;
+      font-size: 38px;
+      font-weight: 1000;
+      letter-spacing: 1px;
+      color: #fff35c;
+      text-shadow: 0 0 8px #00eaff, 0 0 18px #8b2cff, 0 0 32px #00eaff;
+      margin-top: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 900;
+      color: #bdf7ff;
+      margin-top: 2px;
+      text-shadow: 0 0 8px #00eaff;
+    }
+
+    .jackpots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin: 10px 0;
+    }
+
+    .jp {
+      background: linear-gradient(180deg, rgba(62,0,140,.95), rgba(0,30,86,.95));
+      border: 2px solid #00eaff;
+      border-radius: 14px;
+      text-align: center;
+      padding: 8px 4px;
+      box-shadow: 0 0 13px #00eaff, inset 0 0 12px rgba(255,255,255,.15);
+    }
+
+    .jp span { display: block; font-size: 12px; color: #fff; font-weight: 900; }
+    .jp b { display: block; margin-top: 4px; color: #fff35c; font-size: 16px; }
+
+    .bonusbar {
+      background: linear-gradient(90deg, #21005c, #00aaff, #21005c);
+      border: 2px solid #fff35c;
+      box-shadow: 0 0 14px #00eaff;
+      border-radius: 14px;
+      padding: 8px;
+      text-align: center;
+      font-weight: 1000;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .slot-frame {
+      background: linear-gradient(145deg, #2b005f, #1267ff 45%, #12002d);
+      border: 4px solid #00eaff;
+      border-radius: 24px;
+      padding: 12px;
+      box-shadow: 0 0 26px #00eaff, inset 0 0 18px rgba(255,255,255,.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slot-frame.blitz {
+      animation: frameHit .22s 3;
+    }
+
+    @keyframes frameHit {
+      from { filter: brightness(1); transform: scale(1); }
+      to { filter: brightness(1.8); transform: scale(1.015); }
+    }
+
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(3, 76px);
+      gap: 7px;
+      background: rgba(0,0,0,.65);
+      border-radius: 16px;
+      padding: 8px;
+      border: 3px solid rgba(255,255,255,.25);
+    }
+
+    .cell {
+      background: radial-gradient(circle, #ffffff 0%, #dbf9ff 60%, #7adfff 100%);
+      border-radius: 13px;
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 35px;
+      font-weight: 1000;
+      box-shadow: inset 0 0 9px #fff, 0 4px 8px rgba(0,0,0,.45);
+      transition: transform .12s, filter .12s;
+    }
+
+    .cell.win {
+      background: radial-gradient(circle, #fff 0%, #fff35c 60%, #ff9d00 100%);
+      animation: winPulse .38s infinite alternate;
+      box-shadow: 0 0 18px #fff35c, inset 0 0 10px #fff;
+    }
+
+    .cell.scatter {
+      background: radial-gradient(circle, #ffffff 0%, #baffff 55%, #7d2cff 100%);
+      animation: scatterFlash .35s infinite alternate;
+      box-shadow: 0 0 22px #00eaff, inset 0 0 10px #fff;
+    }
+
+    @keyframes winPulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+    @keyframes scatterFlash { from { filter: brightness(1); } to { filter: brightness(1.7); transform: rotate(-2deg) scale(1.08); } }
+
+    .status {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+      margin: 10px 0;
+    }
+
+    .box {
+      background: rgba(0,0,0,.5);
+      border: 1px solid #00eaff;
+      border-radius: 12px;
+      padding: 8px 4px;
+      text-align: center;
+      box-shadow: inset 0 0 8px rgba(0,234,255,.35);
+    }
+
+    .box small { display: block; color: #bdf7ff; font-size: 11px; font-weight: 900; }
+    .box strong { display: block; color: #fff35c; font-size: 16px; margin-top: 4px; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1.45fr 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 18px;
+      padding: 14px 8px;
+      font-weight: 1000;
+      color: white;
+      cursor: pointer;
+      text-shadow: 0 1px 2px #000;
+      box-shadow: 0 5px 0 rgba(0,0,0,.42), 0 0 12px rgba(255,255,255,.25);
+    }
+
+    button:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,.42); }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+
+    .betbtn { background: linear-gradient(#8d38ff, #230078); font-size: 17px; }
+    .spin { background: linear-gradient(#fff35c, #ff7a00 45%, #ff006a); color: #fff; font-size: 25px; border: 3px solid #00eaff; }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .smallbtn { background: linear-gradient(#142164, #030013); border: 1px solid #00eaff; font-size: 12px; padding: 10px 5px; }
+
+    .popup {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,.72);
+      z-index: 10;
+      padding: 20px;
+    }
+
+    .popup.show { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 380px;
+      background: linear-gradient(#21005c, #003c88 55%, #050017);
+      border: 3px solid #fff35c;
+      border-radius: 22px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 0 35px #00eaff;
+    }
+
+    .modal h2 { color: #fff35c; margin-bottom: 12px; text-shadow: 0 0 12px #00eaff; }
+    .modal p { line-height: 1.45; margin-bottom: 16px; }
+    .close { background: linear-gradient(#00eaff, #003d96); width: 100%; }
+  </style>
 </head>
 <body>
-<div class="slot">
-<h2>VASA FORTUNE TOP</h2>
-<div id="reels" class="reels"></div>
-<p>Balance: <span id="bal">1000</span></p>
-<p>Win: <span id="win">0</span></p>
-<button class="spin" onclick="spin()">SPIN</button>
-</div>
-<script>
-const symbols=['🍒','🍋','🍊','🍇','🔔','⭐','💎','7️⃣','🧿'];
-let balance=1000,win=0,free=0;
-const reels=document.getElementById('reels');
-function rand(){return symbols[Math.floor(Math.random()*symbols.length)]}
-function draw(b){reels.innerHTML='';b.forEach(s=>{let d=document.createElement('div');d.className='cell';d.textContent=s;reels.appendChild(d)})}
-function weights(){return{lose:75,small:15,big:7,bonus:3}}
-function outcome(){let w=weights(),r=Math.random()*100;if(r<w.bonus)return'bonus';if(r<w.bonus+w.big)return'big';if(r<w.bonus+w.big+w.small)return'small';return'lose'}
-function loseBoard(){let b=Array.from({length:15},rand);return b}
-function winBoard(type){let b=loseBoard();let line=[0,1,2,3,4];let sym=type==='big'?'💎':'⭐';line.forEach(i=>b[i]=sym);return b}
-function bonusBoard(){let b=loseBoard();[0,3,7,10,14].forEach(i=>b[i]='🧿');return b}
-function spin(){if(balance<=0&&free<=0)return alert('No balance');win=0;if(free>0){free--}else{balance--}
-let out=outcome();let b;
-if(out==='bonus'){b=bonusBoard();free+=30}
-else if(out==='big'){b=winBoard('big');win=balance*0.5}
-else if(out==='small'){b=winBoard('small');win=5}
-else b=loseBoard();
-balance+=win;
-draw(b);
-document.getElementById('bal').textContent=balance;
-document.getElementById('win').textContent=win;
-}
-draw(loseBoard());
-</script>
+  <div class="game">
+    <div>
+      <div class="title">DIDI BLITZ</div>
+      <div class="subtitle">BALANCED ELECTRIC SLOT</div>
+
+      <div class="jackpots">
+        <div class="jp"><span>BLITZ MAX</span><b id="mega">2500.00</b></div>
+        <div class="jp"><span>SUPER</span><b id="maxi">500.00</b></div>
+        <div class="jp"><span>MINI</span><b id="mini">75.00</b></div>
+      </div>
+
+      <div class="bonusbar" id="bonusbar">BLITZ FREE SPINS: 0 | MULTI x1</div>
+
+      <div class="slot-frame" id="slotFrame">
+        <div class="reels" id="reels"></div>
+      </div>
+
+      <div class="status">
+        <div class="box"><small>BALANCE</small><strong id="balance">1000.00</strong></div>
+        <div class="box"><small>BET</small><strong id="bet">1.00</strong></div>
+        <div class="box"><small>WIN</small><strong id="win">0.00</strong></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="controls">
+        <button class="betbtn" onclick="changeBet(-1)">BET-</button>
+        <button class="spin" onclick="spin()" id="spinBtn">SPIN</button>
+        <button class="betbtn" onclick="changeBet(1)">BET+</button>
+      </div>
+
+      <div class="bottom">
+        <button class="smallbtn" onclick="openPaytable()">PAYTABLE</button>
+        <button class="smallbtn" onclick="toggleSound()" id="soundBtn">SOUND ON</button>
+        <button class="smallbtn" onclick="resetGame()">RESET</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="modal">
+      <h2 id="popTitle">BLITZ!</h2>
+      <p id="popText"></p>
+      <button class="close" onclick="closePopup()">OK</button>
+    </div>
+  </div>
+
+  <script>
+    const symbols = ['🍒','🍋','🍊','🍇','🔔','⭐','💎','7️⃣','⚡'];
+    const betSteps = [1, 2, 5, 10, 20, 50];
+    const lines = [
+      [0,1,2,3,4],
+      [5,6,7,8,9],
+      [10,11,12,13,14],
+      [0,6,12,8,4],
+      [10,6,2,8,14]
+    ];
+
+    let balance = 1000;
+    let betIndex = 0;
+    let win = 0;
+    let spinning = false;
+    let freeSpins = 0;
+    let multiplier = 1;
+    let soundOn = true;
+    let dryMode = false;
+
+    const reels = document.getElementById('reels');
+    const frame = document.getElementById('slotFrame');
+
+    function init() {
+      reels.innerHTML = '';
+      makeLoseBoard().forEach(sym => {
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.textContent = sym;
+        reels.appendChild(div);
+      });
+      updateUI();
+    }
+
+    // Balanced Didi Blitz feel:
+    // more action than Vasa, but bonus and big wins are controlled.
+    function weights() {
+      return {
+        lose: 58,
+        smallWin: 27,
+        midWin: 9,
+        bigWin: 3,
+        bonus: 3
+      };
+    }
+
+    function chooseOutcome() {
+      const w = weights();
+      const total = w.lose + w.smallWin + w.midWin + w.bigWin + w.bonus;
+      const r = Math.random() * total;
+      if (r < w.bonus) return 'bonus';
+      if (r < w.bonus + w.bigWin) return 'bigWin';
+      if (r < w.bonus + w.bigWin + w.midWin) return 'midWin';
+      if (r < w.bonus + w.bigWin + w.midWin + w.smallWin) return 'smallWin';
+      return 'lose';
+    }
+
+    function randomSymbol() {
+      const pool = ['🍒','🍋','🍊','🍇','🔔','⭐','💎','7️⃣','⚡'];
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function makeLoseBoard() {
+      let board = Array.from({length: 15}, randomSymbol);
+      lines.forEach(line => {
+        while (line.every(i => board[i] === board[line[0]])) {
+          board[line[2]] = randomSymbol();
+        }
+      });
+      if (board.filter(s => s === '⚡').length >= 3) {
+        board[board.indexOf('⚡')] = '🍋';
+      }
+      return board;
+    }
+
+    function makeWinBoard(type = 'smallWin') {
+      let board = makeLoseBoard();
+      const line = lines[Math.floor(Math.random() * lines.length)];
+      let sym = '🔔';
+      if (type === 'smallWin') sym = ['🍒','🍋','🍊','🍇'][Math.floor(Math.random() * 4)];
+      if (type === 'midWin') sym = ['🔔','⭐'][Math.floor(Math.random() * 2)];
+      if (type === 'bigWin') sym = Math.random() < .55 ? '💎' : '7️⃣';
+      line.forEach(i => board[i] = sym);
+
+      if (type === 'bigWin') {
+        const second = lines[(lines.indexOf(line) + 2) % lines.length];
+        second.forEach(i => board[i] = '⭐');
+      }
+      return board;
+    }
+
+    function makeBonusBoard() {
+      let board = makeLoseBoard();
+      const positions = [...Array(15).keys()].sort(() => Math.random() - 0.5).slice(0, 3 + Math.floor(Math.random() * 3));
+      positions.forEach(i => board[i] = '⚡');
+      return board;
+    }
+
+    function symbolMultiplier(sym) {
+      if (sym === '💎') return 22;
+      if (sym === '7️⃣') return 18;
+      if (sym === '⭐') return 10;
+      if (sym === '🔔') return 7;
+      return 4;
+    }
+
+    function evaluate(board) {
+      let totalWin = 0;
+      let winningCells = new Set();
+      const currentBet = betSteps[betIndex];
+
+      lines.forEach(line => {
+        const first = board[line[0]];
+        const match = line.every(i => board[i] === first);
+        if (match) {
+          line.forEach(i => winningCells.add(i));
+          totalWin += currentBet * symbolMultiplier(first) * multiplier;
+        }
+      });
+
+      const scatters = board.filter(s => s === '⚡').length;
+      if (scatters >= 3) {
+        const award = scatters >= 5 ? 15 : scatters === 4 ? 12 : 10;
+        freeSpins += award;
+        multiplier = Math.min(3, multiplier + 1);
+        openPopup('BLITZ BONUS!', scatters + ' ⚡ symbols! You won ' + award + ' Free Spins. Multiplier is now x' + multiplier + '.');
+        board.forEach((s, i) => { if (s === '⚡') winningCells.add(i); });
+      }
+
+      return { totalWin, winningCells };
+    }
+
+    function renderBoard(board, winningCells = new Set()) {
+      const cells = document.querySelectorAll('.cell');
+      board.forEach((sym, i) => {
+        cells[i].textContent = sym;
+        if (sym === '⚡' && winningCells.has(i)) cells[i].className = 'cell scatter';
+        else cells[i].className = winningCells.has(i) ? 'cell win' : 'cell';
+      });
+    }
+
+    function blitzEffect() {
+      frame.classList.remove('blitz');
+      void frame.offsetWidth;
+      frame.classList.add('blitz');
+      setTimeout(() => frame.classList.remove('blitz'), 700);
+    }
+
+    function spin() {
+      if (spinning) return;
+      const currentBet = betSteps[betIndex];
+
+      if (balance < currentBet && freeSpins <= 0) {
+        openPopup('NO BALANCE', 'Not enough balance.');
+        return;
+      }
+
+      spinning = true;
+      document.getElementById('spinBtn').disabled = true;
+      win = 0;
+
+      if (freeSpins > 0) {
+        freeSpins--;
+      } else {
+        balance -= currentBet;
+        multiplier = 1;
+      }
+      updateUI();
+
+      let ticks = 0;
+      const anim = setInterval(() => {
+        renderBoard(Array.from({length: 15}, randomSymbol));
+        ticks++;
+        if (ticks >= 10) {
+          clearInterval(anim);
+
+          const outcome = dryMode ? 'lose' : chooseOutcome();
+          let board;
+          if (outcome === 'bonus') board = makeBonusBoard();
+          else if (outcome === 'bigWin') board = makeWinBoard('bigWin');
+          else if (outcome === 'midWin') board = makeWinBoard('midWin');
+          else if (outcome === 'smallWin') board = makeWinBoard('smallWin');
+          else board = makeLoseBoard();
+
+          const result = evaluate(board);
+          win = result.totalWin;
+          balance += win;
+          renderBoard(board, result.winningCells);
+
+          if (win > 0) {
+            blitzEffect();
+            if (win >= currentBet * 30) openPopup('BIG BLITZ WIN!', 'You won ' + win.toFixed(2) + ' with x' + multiplier + ' multiplier!');
+          }
+
+          updateJackpots();
+          updateUI();
+          spinning = false;
+          document.getElementById('spinBtn').disabled = false;
+        }
+      }, 55);
+    }
+
+    function changeBet(dir) {
+      betIndex += dir;
+      if (betIndex < 0) betIndex = 0;
+      if (betIndex >= betSteps.length) betIndex = betSteps.length - 1;
+      updateUI();
+    }
+
+    function updateJackpots() {
+      document.getElementById('mega').textContent = (2500 + Math.random() * 35).toFixed(2);
+      document.getElementById('maxi').textContent = (500 + Math.random() * 14).toFixed(2);
+      document.getElementById('mini').textContent = (75 + Math.random() * 4).toFixed(2);
+    }
+
+    function updateUI() {
+      document.getElementById('balance').textContent = balance.toFixed(2);
+      document.getElementById('bet').textContent = betSteps[betIndex].toFixed(2);
+      document.getElementById('win').textContent = win.toFixed(2);
+      document.getElementById('bonusbar').textContent = 'BLITZ FREE SPINS: ' + freeSpins + ' | MULTI x' + multiplier;
+    }
+
+    function openPopup(title, text) {
+      document.getElementById('popTitle').textContent = title;
+      document.getElementById('popText').textContent = text;
+      document.getElementById('popup').classList.add('show');
+    }
+
+    function closePopup() {
+      document.getElementById('popup').classList.remove('show');
+    }
+
+    function openPaytable() {
+      openPopup('PAYTABLE', '5 same symbols on any active line pay. 3+ ⚡ symbols trigger Blitz Free Spins. During Free Spins the multiplier can grow up to x3.');
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById('soundBtn').textContent = soundOn ? 'SOUND ON' : 'SOUND OFF';
+    }
+
+    function resetGame() {
+      balance = 1000;
+      win = 0;
+      freeSpins = 0;
+      multiplier = 1;
+      betIndex = 0;
+      init();
+    }
+
+    init();
+  </script>
 </body>
 </html>
