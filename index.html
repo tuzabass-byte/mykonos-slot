@@ -1,435 +1,90 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mykonos Casino</title>
-
-<style>
-*{box-sizing:border-box}
-
-body{
-margin:0;
-font-family:Arial,sans-serif;
-color:white;
-background:
-linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.94)),
-url("https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=1200&q=80");
-background-size:cover;
-background-position:center;
-background-attachment:fixed;
-}
-
-.app{
-max-width:430px;
-margin:auto;
-padding:14px 12px 95px;
-}
-
-.hidden{display:none!important}
-
-.logo{
-text-align:center;
-font-size:34px;
-font-weight:900;
-color:#ffe66b;
-text-shadow:0 0 10px #ff2a00,0 0 26px #ffd000,0 0 42px #00eaff;
-margin:18px 0 6px;
-}
-
-.subLogo{
-text-align:center;
-color:#9ffcff;
-font-weight:900;
-font-size:13px;
-margin-bottom:12px;
-}
-
-.card{
-background:rgba(0,0,0,.74);
-border:2px solid #ffd447;
-border-radius:22px;
-padding:16px;
-margin:14px 0;
-box-shadow:0 0 22px rgba(255,212,71,.55);
-}
-
-input,select,button{
-width:100%;
-padding:14px;
-margin:8px 0;
-border-radius:15px;
-font-size:16px;
-}
-
-input,select{
-background:#111;
-color:white;
-border:1px solid #ffd447;
-}
-
-button{
-border:0;
-background:linear-gradient(135deg,#fff06b,#ffb000,#ff4b00);
-color:#111;
-font-weight:900;
-cursor:pointer;
-box-shadow:0 0 15px rgba(255,191,0,.65);
-}
-
-button:active{transform:scale(.97)}
-
-.status{
-text-align:center;
-color:#ffe66b;
-font-weight:900;
-min-height:24px;
-}
-
-.hero{
-background:linear-gradient(120deg,#ffd500,#ff5c00 60%,#ff0066);
-color:#111;
-border-radius:24px;
-padding:18px;
-box-shadow:0 0 28px rgba(255,122,24,.95);
-}
-
-.hero h2{
-margin:0;
-font-size:24px;
-}
-
-.hero .bal{
-font-size:30px;
-font-weight:900;
-margin-top:10px;
-}
-
-.liveWin{
-font-size:20px;
-font-weight:900;
-color:#ffcc00;
-text-shadow:0 0 10px red,0 0 20px orange;
-white-space:nowrap;
-overflow:hidden;
-margin:10px 0;
-background:rgba(0,0,0,.68);
-border:1px solid #ffd447;
-border-radius:14px;
-padding:9px;
-}
-
-.liveWin span{
-display:inline-block;
-padding-left:100%;
-animation:move 13s linear infinite;
-}
-
-@keyframes move{
-from{transform:translateX(0)}
-to{transform:translateX(-100%)}
-}
-
-.quickGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.banner{
-border-radius:18px;
-padding:12px;
-font-weight:900;
-min-height:80px;
-display:flex;
-align-items:center;
-justify-content:center;
-text-align:center;
-box-shadow:0 0 20px gold,0 0 40px orange;
-}
-
-.bonusBanner{
-background:linear-gradient(135deg,#1bffd7,#0066ff);
-}
-
-.jackpotBanner{
-background:linear-gradient(135deg,#fff261,#ff7900,#ff1f00);
-color:#111;
-}
-
-.winnerBanner{
-background:linear-gradient(135deg,#ff42df,#6200ff);
-}
-
-.invinviteBanner{
-background:linear-gradient(135deg,#20ff62,#007425);
-color:#061606;
-}
-
-.games{
-display:grid;
-gap:12px;
-}
-
-.gameCard{
-display:block;
-text-decoration:none;
-color:white;
-min-height:125px;
-border-radius:18px;
-padding:14px;
-border:2px solid #ffd447;
-box-shadow:0 0 18px rgba(255,212,71,.55);
-}
-
-.gameCard.vasa{background:linear-gradient(135deg,#003a88,#00112e)}
-.gameCard.didi{background:linear-gradient(135deg,#4b0000,#c40000)}
-.gameCard.mitko{background:linear-gradient(135deg,#5b2100,#ff7a00)}
-
-.gameTitle{
-font-size:24px;
-font-weight:900;
-margin-bottom:6px;
-}
-
-.gameSub{
-font-size:13px;
-color:#eee;
-margin-bottom:15px;
-}
-
-.playBtn{
-display:inline-block;
-width:110px;
-padding:8px;
-border-radius:999px;
-background:#ffd447;
-color:#111;
-text-align:center;
-font-weight:900;
-}
-
-.chat{
-height:140px;
-overflow:auto;
-background:black;
-padding:8px;
-border-radius:10px;
-border:1px solid #ffd447;
-}
-
-.msg{
-font-size:13px;
-margin:4px 0;
-}
-
-.name{
-color:#ffd447;
-font-weight:900;
-}
-
-.inputRow{
-display:flex;
-gap:6px;
-}
-
-.inputRow input{
-flex:1;
-margin:0;
-}
-
-.inputRow button{
-width:90px;
-margin:0;
-}
-
-.logoutBtn{
-background:red;
-color:white;
-margin-top:10px;
-}
-
-.linkBox{
-word-break:break-all;
-background:#111;
-border:1px solid #ffd447;
-border-radius:12px;
-padding:10px;
-font-size:13px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="app">
-
-<div class="logo">🎰 MYKONOS CASINO</div>
-<div class="subLogo">FINAL LOBBY</div>
-
-<!-- LOGIN -->
-<div id="loginBox" class="card">
-
-<select id="playerSelect"></select>
-<input id="pinInput" placeholder="PIN">
-<button onclick="login()">ВЛЕЗ</button>
-
-<hr>
-
-<input id="regName" placeholder="Име">
-<input id="regPin" placeholder="PIN">
-<button onclick="register()">РЕГИСТРАЦИЯ</button>
-
-<div id="loginStatus" class="status"></div>
-
-</div>
-
-<!-- LOBBY -->
-<div id="lobbyBox" class="hidden">
-
-<div class="hero">
-<h2 id="welcomeText">Добре дошъл</h2>
-<div class="bal">Баланс: <span id="balanceText">0€</span></div>
-</div>
-
-<div class="liveWin">
-<span id="liveWinText">Добре дошли 🎰</span>
-</div>
-
-<div class="quickGrid">
-
-<div class="banner bonusBanner" onclick="dailyBonus()">
-🎁 БОНУС +5€
-</div>
-
-<div class="banner jackpotBanner">
-💰 JACKPOT 12 000€
-</div>
-
-<div class="banner winnerBanner">
-🏆 ТОП <span id="topWinner">---</span>
-</div>
-
-<div class="banner inviteBanner">
-🔗 ПОКАНИ ПРИЯТЕЛ
-</div>
-
-</div>
-
-<div class="card">
-<h3>🎮 Игри</h3>
-
-<div class="games">
-
-<a href="vasa.html" class="gameCard vasa">
-<div class="gameTitle">🔥 VASA</div>
-<div class="gameSub">Free Spins</div>
-<div class="playBtn">ИГРАЙ</div>
-</a>
-
-<a href="didi.html" class="gameCard didi">
-<div class="gameTitle">🚨 DIDI</div>
-<div class="gameSub">Police Bonus</div>
-<div class="playBtn">ИГРАЙ</div>
-</a>
-
-<a href="mitko.html" class="gameCard mitko">
-<div class="gameTitle">👨‍🍳 MITKO</div>
-<div class="gameSub">Bell Bonus</div>
-<div class="playBtn">ИГРАЙ</div>
-</a>
-
-</div>
-</div>
-
-<div class="card">
-<div id="chat" class="chat"></div>
-
-<div class="inputRow">
-<input id="msgInput">
-<button onclick="sendMsg()">SEND</button>
-</div>
-</div>
-
-<div class="card">
-<div id="myLink" class="linkBox"></div>
-</div>
-
-<button class="logoutBtn" onclick="logout()">ИЗХОД</button>
-
-</div>
-</div>
-
-<script>
-const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="PASTE_YOUR_KEY";
-
-let user=null;
-
-function headers(){
-return {apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
-}
-
-async function api(p,o={}){
-let r=await fetch(URL+p,{...o,headers:headers()});
-return await r.json();
-}
-
-function money(v){return Number(v||0)+"€"}
-
-async function loadPlayers(){
-let d=await api("players");
-playerSelect.innerHTML="";
-d.forEach(p=>{
-let o=document.createElement("option");
-o.value=p.Name;
-o.textContent=p.Name;
-playerSelect.appendChild(o);
-});
-}
-
-async function login(){
-let name=playerSelect.value;
-let pin=pinInput.value;
-
-let d=await api("players?Name=eq."+name);
-
-if(!d[0] || d[0].Pin!=pin){
-alert("Грешен PIN");
-return;
-}
-
-user=d[0];
-
-loginBox.classList.add("hidden");
-lobbyBox.classList.remove("hidden");
-
-balanceText.innerText=money(user.Points);
-welcomeText.innerText=user.Name+" в играта 🎰";
-
-}
-
-async function register(){
-await api("players",{
-method:"POST",
-body:JSON.stringify({
-Name:regName.value,
-Pin:regPin.value,
-Points:10
-})
-});
-
-alert("OK");
-loadPlayers();
-}
-
-function logout(){
-location.reload();
-}
-
-loadPlayers();
-</script>
-
-</body>
-</html>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vasa Fortune Stable Preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #0cf 0%, #023b7a 32%, #020b24 100%);
+      color: white;
+      overflow: hidden;
+    }
+    .game {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 10px;
+    }
+    .top {
+      width: min(980px, 96vw);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .jackpot {
+      border: 3px solid #ffd34d;
+      border-radius: 16px;
+      background: linear-gradient(#3b0000, #9b0000, #280000);
+      box-shadow: 0 0 18px rgba(255, 215, 0, .8), inset 0 0 16px rgba(255,255,255,.18);
+      padding: 10px;
+      text-align: center;
+      font-weight: 900;
+    }
+    .jackpot .name { font-size: 20px; letter-spacing: 1px; color: #ffe680; }
+    .jackpot .value { font-size: 28px; color: #fff; text-shadow: 0 0 8px #ff0; }
+
+    .title {
+      font-size: clamp(34px, 6vw, 72px);
+      font-weight: 1000;
+      letter-spacing: 3px;
+      text-shadow: 0 0 12px #00eaff, 0 5px 0 #071a4d, 0 0 34px #fff;
+      margin: 4px 0;
+    }
+    .freebar {
+      width: min(880px, 94vw);
+      border: 3px solid #ffe680;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #00164d, #0088ff, #00164d);
+      box-shadow: 0 0 16px #00d9ff;
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff7b2;
+    }
+    .slot-wrap {
+      position: relative;
+      width: min(900px, 96vw);
+      padding: 16px;
+      border: 8px solid #ff1515;
+      border-radius: 34px;
+      background: linear-gradient(#8b0000, #e00000, #5a0000);
+      box-shadow: 0 0 30px rgba(255,0,0,.9), inset 0 0 22px rgba(255,255,255,.3);
+    }
+    .reels {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 10px;
+      background: #120014;
+      padding: 12px;
+      border-radius: 22px;
+      box-shadow: inset 0 0 25px #000;
+    }
+    .cell {
+      min-height: clamp(74px, 12vh, 118px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(38px, 7vw, 72px);
+      border-radius: 18px;
+      background: radial-gradient(circle at 30% 20%, #fff, #ffd36b 18%, #b64800 55%, #3b0202 100%);
+      border: 3px solid #ffd34d;
