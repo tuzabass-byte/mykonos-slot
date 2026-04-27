@@ -1,193 +1,119 @@
 <!DOCTYPE html>
 <html lang="bg">
 <head>
-<meta charset="UTF-8">
-<title>Friends Bet Casino</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Friends Bet Login</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #132c5c, #050915);
+      font-family: Arial, sans-serif;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0b0b2a;
-  color:white;
-  text-align:center;
-}
+    .box {
+      width: 340px;
+      background: rgba(0, 0, 0, 0.65);
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 0 25px #00aaff;
+      text-align: center;
+    }
 
-h1{margin-top:20px}
+    h1 {
+      margin-bottom: 20px;
+      color: #00d9ff;
+    }
 
-button{
-  padding:12px;
-  margin:5px;
-  border:none;
-  border-radius:10px;
-  background:red;
-  color:white;
-  cursor:pointer;
-}
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
 
-input{
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  border:none;
-}
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #e00022;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-#game{
-  display:none;
-}
+    button:hover {
+      background: #ff0033;
+    }
 
-.reels{
-  display:flex;
-  justify-content:center;
-  gap:15px;
-  margin:30px;
-}
-
-.reel{
-  font-size:50px;
-}
-</style>
+    #msg {
+      margin-top: 15px;
+      color: #ff7070;
+      min-height: 22px;
+    }
+  </style>
 </head>
 
 <body>
+  <div class="box">
+    <h1>Friends Bet</h1>
 
-<h1>🎰 Friends Bet Casino</h1>
+    <input id="name" type="text" placeholder="Name" />
+    <input id="pin" type="password" placeholder="Pin" />
 
-<div id="loginBox">
-  <input id="name" placeholder="Име"><br>
-  <input id="pin" placeholder="PIN"><br>
-  <button onclick="login()">Вход</button>
-</div>
+    <button onclick="login()">LOGIN</button>
 
-<h2 id="user"></h2>
-<h3 id="balance"></h3>
-
-<button onclick="startGame()">ИГРАЙ</button>
-
-<!-- GAME -->
-<div id="game">
-  <h1>🎰 SLOT</h1>
-
-  <div class="reels">
-    <div id="r1">🍒</div>
-    <div id="r2">🍋</div>
-    <div id="r3">🍇</div>
+    <div id="msg"></div>
   </div>
 
-  <button onclick="spin()">SPIN</button>
-  <br><br>
-  <button onclick="back()">⬅ Назад</button>
-</div>
+  <script>
+    const SUPABASE_URL = "ТВОЯ_SUPABASE_URL";
+    const SUPABASE_ANON_KEY = "ТВОЯ_SUPABASE_ANON_KEY";
 
-<script>
-const sb = supabase.createClient(
-"https://xjcvntplrbjsaozkduqd.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo"
-);
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let player = null;
+    async function login() {
+      const name = document.getElementById("name").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const msg = document.getElementById("msg");
 
-// LOGIN
-async function login(){
+      msg.textContent = "";
 
-  let name = document.getElementById("name").value;
-  let pin = document.getElementById("pin").value;
+      if (!name || !pin) {
+        msg.textContent = "Въведи Name и Pin.";
+        return;
+      }
 
-  let {data} = await sb
-    .from("players")
-    .select("*")
-    .eq("Name", name)
-    .eq("Pin", pin)
-    .single();
+      const { data, error } = await sb
+        .from("players")
+        .select("id, Name, Pin, balance, ref_code, ref_by")
+        .eq("Name", name)
+        .eq("Pin", pin)
+        .single();
 
-  if(!data){
-    alert("грешно име или PIN");
-    return;
-  }
+      if (error || !data) {
+        msg.textContent = "Грешно име или PIN.";
+        return;
+      }
 
-  player = data;
-  localStorage.setItem("player", JSON.stringify(player));
+      sessionStorage.setItem("player_id", data.id);
+      sessionStorage.setItem("player_name", data.Name);
 
-  update();
-}
-
-// LOAD USER
-function update(){
-
-  if(!player){
-    let p = localStorage.getItem("player");
-    if(p) player = JSON.parse(p);
-  }
-
-  if(player){
-    document.getElementById("user").innerText =
-      "Добре дошъл " + player.Name;
-
-    document.getElementById("balance").innerText =
-      "Баланс: " + player.balance;
-  }
-}
-
-// GAME
-function startGame(){
-
-  if(!player){
-    alert("влез първо");
-    return;
-  }
-
-  document.getElementById("game").style.display="block";
-}
-
-// SPIN
-async function spin(){
-
-  if(player.balance <= 0){
-    alert("нямаш пари");
-    return;
-  }
-
-  player.balance -= 1;
-
-  let arr=["🍒","🍋","🍇","⭐","💎"];
-
-  let a=arr[Math.random()*5|0];
-  let b=arr[Math.random()*5|0];
-  let c=arr[Math.random()*5|0];
-
-  r1.innerText=a;
-  r2.innerText=b;
-  r3.innerText=c;
-
-  let win=0;
-
-  if(a==b && b==c){
-    win=5;
-    alert("печалба!");
-  }
-
-  player.balance += win;
-
-  await sb
-    .from("players")
-    .update({balance: player.balance})
-    .eq("id", player.id);
-
-  localStorage.setItem("player", JSON.stringify(player));
-
-  update();
-}
-
-// BACK
-function back(){
-  document.getElementById("game").style.display="none";
-}
-
-// INIT
-update();
-</script>
-
+      window.location.href = "lucky-fruits.html";
+    }
+  </script>
 </body>
 </html>
