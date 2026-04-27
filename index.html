@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Mykonos Casino VIP PRO</title>
+<title>Mykonos Casino FINAL</title>
 
 <style>
 *{box-sizing:border-box}
@@ -89,7 +89,9 @@ text-align:center;
 color:#ffe66b;
 font-weight:900;
 min-height:24px;
-}.hero{
+}
+
+.hero{
 background:linear-gradient(120deg,#ffd500,#ff5c00 60%,#ff0066);
 color:#111;
 border-radius:24px;
@@ -99,11 +101,11 @@ box-shadow:0 0 28px rgba(255,122,24,.95);
 
 .hero h2{
 margin:0;
-font-size:22px;
+font-size:24px;
 }
 
 .hero .bal{
-font-size:28px;
+font-size:30px;
 font-weight:900;
 margin-top:10px;
 }
@@ -150,9 +152,7 @@ animation:bigmove 10s linear infinite;
 @keyframes bigmove{
 from{transform:translateX(0)}
 to{transform:translateX(-100%)}
-}
-
-.quickGrid{
+}.quickGrid{
 display:grid;
 grid-template-columns:1fr 1fr;
 gap:10px;
@@ -183,16 +183,13 @@ color:#111;
 background:linear-gradient(135deg,#ff42df,#6200ff);
 }
 
-.missionBanner{
-background:linear-gradient(135deg,#20ff62,#007425);
-color:#061606;
-}.games{
+.games{
 display:grid;
 gap:12px;
 }
 
 .gameCard{
-min-height:110px;
+min-height:120px;
 border-radius:18px;
 padding:14px;
 border:2px solid #ffd447;
@@ -208,7 +205,7 @@ font-weight:900;
 }
 
 .playBtn{
-width:100px;
+width:110px;
 padding:8px;
 border-radius:999px;
 background:#ffd447;
@@ -241,6 +238,28 @@ width:90px;
 margin:0;
 }
 
+.slotBox{
+background:black;
+border:2px solid gold;
+border-radius:20px;
+padding:15px;
+text-align:center;
+}
+
+.reels{
+font-size:40px;
+letter-spacing:10px;
+margin:10px 0;
+}
+
+.spinBtn{
+background:gold;
+color:black;
+font-weight:900;
+padding:12px;
+border-radius:12px;
+}
+
 .logoutBtn{
 background:red;
 color:white;
@@ -248,15 +267,14 @@ margin-top:10px;
 }
 
 </style>
-</head>
-
-<body>
+</head><body>
 
 <div class="app">
 
 <div class="logo">🎰 MYKONOS CASINO VIP</div>
 <div class="subLogo">REAL PLAY • REAL FUN • VIP MODE</div>
 
+<!-- LOGIN -->
 <div id="loginBox" class="card">
 
 <h3>🔐 Вход</h3>
@@ -279,6 +297,7 @@ margin-top:10px;
 
 </div>
 
+<!-- LOBBY -->
 <div id="lobbyBox" class="hidden">
 
 <div class="hero">
@@ -291,7 +310,7 @@ margin-top:10px;
 </div>
 
 <div class="ticker">
-<span id="tickerText">Добре дошли в казиното 🎰</span>
+<span id="tickerText">Добре дошли 🎰</span>
 </div>
 
 <div class="quickGrid">
@@ -308,10 +327,6 @@ margin-top:10px;
 🏆 ТОП: <span id="topWinner"></span>
 </div>
 
-<div class="banner missionBanner">
-🎯 ПОКАНИ ПРИЯТЕЛ
-</div>
-
 </div>
 
 <div class="card">
@@ -319,22 +334,35 @@ margin-top:10px;
 
 <div class="games">
 
-<div class="gameCard">
+<div class="gameCard" onclick="openGame('vasa')">
 <div class="gameTitle">VASA</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
-<div class="gameCard">
+<div class="gameCard" onclick="openGame('didi')">
 <div class="gameTitle">DIDI</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
-<div class="gameCard">
+<div class="gameCard" onclick="openGame('mitko')">
 <div class="gameTitle">MITKO</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
 </div>
+</div>
+
+<div id="gameBox" class="card hidden">
+
+<h3 id="gameTitle">Игра</h3>
+
+<div class="slotBox">
+<div class="reels" id="reels">🍒 🍒 🍒</div>
+<button class="spinBtn" onclick="spin()">SPIN</button>
+</div>
+
+<button onclick="closeGame()">⬅ Назад</button>
+
 </div>
 
 <div class="card">
@@ -356,12 +384,20 @@ margin-top:10px;
 
 <button class="logoutBtn" onclick="logout()">ИЗХОД</button>
 
-</div><script>
+    </div><script>
 
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
 const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
 let user=null;
+let currentGame=null;
+let spinning=false;
+
+const symbols={
+vasa:["🍒","♞","🔔","💎","BAR","7"],
+didi:["30","50","100","📸","💶","⚡"],
+mitko:["🍲","🔪","🥩","🧂","🔥","🔔"]
+};
 
 function headers(){
 return {
@@ -369,6 +405,20 @@ apikey:KEY,
 Authorization:"Bearer "+KEY,
 "Content-Type":"application/json"
 };
+}
+
+async function api(path,options={}){
+let r=await fetch(URL+path,{
+...options,
+headers:{...headers(),...(options.headers||{})}
+});
+
+if(!r.ok){
+throw new Error(await r.text());
+}
+
+if(r.status===204)return null;
+return await r.json();
 }
 
 function makeRefCode(name){
@@ -384,16 +434,11 @@ let p=new URLSearchParams(location.search);
 return p.get("ref") || "";
 }
 
-async function api(path,options={}){
-let r=await fetch(URL+path,{
-...options,
-headers:{...headers(),...(options.headers||{})}
-});
-if(!r.ok){
-throw new Error(await r.text());
+function autoReferral(){
+let ref=urlRef();
+if(ref){
+regRef.value=ref;
 }
-if(r.status===204)return null;
-return await r.json();
 }
 
 async function loadPlayers(){
@@ -425,17 +470,9 @@ loginStatus.innerText="Не зарежда играчите";
 }
 }
 
-function autoReferral(){
-let ref=urlRef();
-if(ref){
-regRef.value=ref;
-}
-}
-
 loadPlayers();
 autoReferral();async function login(){
 
-try{
 let name=playerSelect.value;
 let pin=pinInput.value.trim();
 
@@ -444,7 +481,14 @@ alert("Няма избран играч");
 return;
 }
 
-let d=await api("players?select=id,Name,Pin,Points,ref_code,ref_by&Name=eq."+encodeURIComponent(name));
+let d;
+
+try{
+d=await api("players?select=id,Name,Pin,Points,ref_code,ref_by&Name=eq."+encodeURIComponent(name));
+}catch(e){
+alert("Не мога да заредя профила");
+return;
+}
 
 if(!d[0] || String(d[0].Pin).trim()!==pin){
 alert("Грешен PIN");
@@ -456,11 +500,13 @@ user=d[0];
 if(!user.ref_code){
 user.ref_code=makeRefCode(user.Name);
 
+try{
 await api("players?id=eq."+user.id,{
 method:"PATCH",
 headers:{Prefer:"return=minimal"},
 body:JSON.stringify({ref_code:user.ref_code})
 });
+}catch(e){}
 }
 
 loginBox.classList.add("hidden");
@@ -470,21 +516,17 @@ welcomeText.innerText=user.Name+" вече си в играта 🎰";
 balanceText.innerText=Number(user.Points||0)+"€";
 myLink.innerText=inviteLink();
 
-await sendSystem(user.Name+" вече е в играта 🎰");
+try{await sendSystem(user.Name+" вече е в играта 🎰");}catch(e){}
+try{loadChat();}catch(e){}
+try{loadTop();}catch(e){}
+try{fakeWin();}catch(e){}
 
-loadChat();
-fakeWin();
 setInterval(loadChat,2000);
 setInterval(fakeWin,9000);
-
-}catch(e){
-alert("Грешка при вход");
-}
 }
 
 async function register(){
 
-try{
 let name=regName.value.trim();
 let pin=regPin.value.trim();
 let ref=regRef.value.trim();
@@ -496,6 +538,7 @@ return;
 
 let code=makeRefCode(name);
 
+try{
 await api("players",{
 method:"POST",
 headers:{Prefer:"return=minimal"},
@@ -507,8 +550,13 @@ ref_code:code,
 ref_by:ref || null
 })
 });
+}catch(e){
+alert("Грешка при регистрация");
+return;
+}
 
 if(ref){
+try{
 let invitedBy=await api("players?select=id,Name,Points,ref_code&ref_code=eq."+encodeURIComponent(ref));
 
 if(invitedBy[0]){
@@ -522,14 +570,21 @@ body:JSON.stringify({Points:newPoints})
 
 await sendSystem(invitedBy[0].Name+" получи +5€ за покана 🎁");
 }
+}catch(e){}
 }
 
 alert("Регистрация успешна!");
 loadPlayers();
+}async function savePoints(){
+if(!user)return;
 
-}catch(e){
-alert("Грешка при регистрация");
-}
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({
+Points:Math.round(Number(user.Points||0))
+})
+});
 }
 
 async function dailyBonus(){
@@ -538,21 +593,20 @@ if(!user)return;
 user.Points=Number(user.Points||0)+5;
 balanceText.innerText=user.Points+"€";
 
-await api("players?id=eq."+user.id,{
-method:"PATCH",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({Points:user.Points})
-});
-
+try{
+await savePoints();
 await sendSystem(user.Name+" взе дневен бонус +5€ 🎁");
-loadTop();
+await loadTop();
+}catch(e){}
 }
 
 async function sendMsg(){
 if(!user)return;
+
 let text=msgInput.value.trim();
 if(!text)return;
 
+try{
 await api("chat_messages",{
 method:"POST",
 headers:{Prefer:"return=minimal"},
@@ -564,6 +618,7 @@ message:text
 
 msgInput.value="";
 loadChat();
+}catch(e){}
 }
 
 async function sendSystem(t){
@@ -575,7 +630,9 @@ player_name:"SYSTEM",
 message:t
 })
 });
-}async function loadChat(){
+}
+
+async function loadChat(){
 try{
 let d=await api("chat_messages?select=player_name,message,created_at&order=created_at.desc&limit=20");
 
@@ -589,7 +646,6 @@ chat.innerHTML+=`
 });
 
 chat.scrollTop=chat.scrollHeight;
-
 }catch(e){}
 }
 
@@ -600,11 +656,8 @@ let d=await api("players?select=Name,Points&order=Points.desc&limit=1");
 if(d[0]){
 topWinner.innerText=d[0].Name+" "+d[0].Points+"€";
 }
-
 }catch(e){}
-}
-
-function fakeWin(){
+}function fakeWin(){
 let names=["Stefan","Mariana","Marian","Mitko","Vasilka","Didi"];
 let games=["VASA","DIDI","MITKO"];
 let n=names[Math.floor(Math.random()*names.length)];
@@ -615,7 +668,83 @@ bigWinText.innerText="🔥 WIN BETT "+n+" +"+money+"€ на "+g+" 🔥";
 tickerText.innerText=n+" спечели "+money+"€ · Jackpot расте · Покани приятел +5€";
 }
 
-function logout(){
+function openGame(g){
+if(!user)return;
+
+currentGame=g;
+
+gameBox.classList.remove("hidden");
+gameTitle.innerText=
+g==="vasa" ? "🔥 VASA FORTUNE" :
+g==="didi" ? "🚨 DIDI BLITZ" :
+"👨‍🍳 MITKO BELLS";
+
+reels.innerText="🎰 🎰 🎰";
+
+sendSystem(user.Name+" отвори "+gameTitle.innerText+" 🎮").catch(()=>{});
+}
+
+function closeGame(){
+gameBox.classList.add("hidden");
+currentGame=null;
+}
+
+function randomSymbol(){
+let arr=symbols[currentGame] || symbols.vasa;
+return arr[Math.floor(Math.random()*arr.length)];
+}
+
+async function spin(){
+if(spinning || !user || !currentGame)return;
+
+let bet=1;
+
+if(Number(user.Points||0)<bet){
+alert("Няма достатъчно баланс");
+return;
+}
+
+spinning=true;
+
+user.Points=Number(user.Points||0)-bet;
+balanceText.innerText=user.Points+"€";
+await savePoints();
+
+reels.innerText="🔄 🔄 🔄";
+
+setTimeout(async()=>{
+let a=randomSymbol();
+let b=randomSymbol();
+let c=randomSymbol();
+
+reels.innerText=a+" "+b+" "+c;
+
+let win=0;
+
+if(a===b && b===c){
+win=10;
+}else if(a===b || b===c || a===c){
+win=2;
+}
+
+if(win>0){
+user.Points=Number(user.Points||0)+win;
+balanceText.innerText=user.Points+"€";
+await savePoints();
+
+await sendSystem("🔥 "+user.Name+" спечели "+win+"€ на "+gameTitle.innerText);
+bigWinText.innerText="🔥 WIN BETT "+user.Name+" +"+win+"€ на "+gameTitle.innerText+" 🔥";
+tickerText.innerText=user.Name+" спечели "+win+"€ · Jackpot расте · Покани приятел +5€";
+}else{
+tickerText.innerText=user.Name+" завъртя на "+gameTitle.innerText+" · опитай пак 😄";
+}
+
+spinning=false;
+loadChat();
+loadTop();
+
+},900);
+}function logout(){
 location.reload();
 }
 
