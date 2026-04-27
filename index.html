@@ -2,308 +2,434 @@
 <html lang="bg">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Vasa Fortune</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mykonos Casino</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:radial-gradient(circle at top,#003cff,#06123d 45%,#000);color:white}
-.app{max-width:430px;margin:auto;padding:12px}
-.logo{text-align:center;font-size:30px;font-weight:900;color:#ffdd25;text-shadow:0 0 18px #00eaff}
-.card{background:#000b;border:2px solid #ffdd25;border-radius:16px;padding:12px;margin:10px 0;box-shadow:0 0 20px #00eaff}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:#050505;padding:6px;border:3px solid #ffdd25;border-radius:14px}
-.cell{height:66px;background:radial-gradient(circle,#333,#000);border:1px solid #ffdd25;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900}
-.cell.win{background:#ffdd25;color:#111;animation:flash .35s infinite alternate}
-@keyframes flash{to{filter:brightness(1.8);box-shadow:inset 0 0 25px white}}
-.spin .cell{animation:spin .08s linear infinite}
-@keyframes spin{from{transform:translateY(-6px);filter:blur(2px)}to{transform:translateY(6px);filter:blur(2px)}}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
-.stat{background:#111;border:1px solid #ffdd25;border-radius:10px;padding:7px}
-.stat small{display:block;color:#ccc;font-size:11px}.stat b{font-size:18px}
-.status{text-align:center;font-size:18px;font-weight:900;color:#ffdd25;min-height:28px}
-.controls{display:flex;gap:10px;align-items:center;justify-content:center}
-button{padding:12px;border:0;border-radius:12px;font-weight:900;background:linear-gradient(#ffdd25,#ff8500);color:#111;cursor:pointer}
-.spinBtn{width:105px;height:105px;border-radius:50%;font-size:20px;background:radial-gradient(circle,#ff3030,#7a0000);color:white;border:5px solid white;box-shadow:0 0 25px red}
-.freeBox{display:none;background:#ffdd25;color:#111;text-align:center;font-weight:900;border-radius:10px;padding:8px;margin:8px 0}
-.back{background:#111;color:white;border:1px solid #ffdd25;width:100%;margin-top:10px}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+color:white;
+background:
+linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.94)),
+url("https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=1200&q=80");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.app{
+max-width:430px;
+margin:auto;
+padding:14px 12px 95px;
+}
+
+.hidden{display:none!important}
+
+.logo{
+text-align:center;
+font-size:34px;
+font-weight:900;
+color:#ffe66b;
+text-shadow:0 0 10px #ff2a00,0 0 26px #ffd000,0 0 42px #00eaff;
+margin:18px 0 6px;
+}
+
+.subLogo{
+text-align:center;
+color:#9ffcff;
+font-weight:900;
+font-size:13px;
+margin-bottom:12px;
+}
+
+.card{
+background:rgba(0,0,0,.74);
+border:2px solid #ffd447;
+border-radius:22px;
+padding:16px;
+margin:14px 0;
+box-shadow:0 0 22px rgba(255,212,71,.55);
+}
+
+input,select,button{
+width:100%;
+padding:14px;
+margin:8px 0;
+border-radius:15px;
+font-size:16px;
+}
+
+input,select{
+background:#111;
+color:white;
+border:1px solid #ffd447;
+}
+
+button{
+border:0;
+background:linear-gradient(135deg,#fff06b,#ffb000,#ff4b00);
+color:#111;
+font-weight:900;
+cursor:pointer;
+box-shadow:0 0 15px rgba(255,191,0,.65);
+}
+
+button:active{transform:scale(.97)}
+
+.status{
+text-align:center;
+color:#ffe66b;
+font-weight:900;
+min-height:24px;
+}
+
+.hero{
+background:linear-gradient(120deg,#ffd500,#ff5c00 60%,#ff0066);
+color:#111;
+border-radius:24px;
+padding:18px;
+box-shadow:0 0 28px rgba(255,122,24,.95);
+}
+
+.hero h2{
+margin:0;
+font-size:24px;
+}
+
+.hero .bal{
+font-size:30px;
+font-weight:900;
+margin-top:10px;
+}
+
+.liveWin{
+font-size:20px;
+font-weight:900;
+color:#ffcc00;
+text-shadow:0 0 10px red,0 0 20px orange;
+white-space:nowrap;
+overflow:hidden;
+margin:10px 0;
+background:rgba(0,0,0,.68);
+border:1px solid #ffd447;
+border-radius:14px;
+padding:9px;
+}
+
+.liveWin span{
+display:inline-block;
+padding-left:100%;
+animation:move 13s linear infinite;
+}
+
+@keyframes move{
+from{transform:translateX(0)}
+to{transform:translateX(-100%)}
+}
+
+.quickGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.banner{
+border-radius:18px;
+padding:12px;
+font-weight:900;
+min-height:80px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+box-shadow:0 0 20px gold,0 0 40px orange;
+}
+
+.bonusBanner{
+background:linear-gradient(135deg,#1bffd7,#0066ff);
+}
+
+.jackpotBanner{
+background:linear-gradient(135deg,#fff261,#ff7900,#ff1f00);
+color:#111;
+}
+
+.winnerBanner{
+background:linear-gradient(135deg,#ff42df,#6200ff);
+}
+
+.invinviteBanner{
+background:linear-gradient(135deg,#20ff62,#007425);
+color:#061606;
+}
+
+.games{
+display:grid;
+gap:12px;
+}
+
+.gameCard{
+display:block;
+text-decoration:none;
+color:white;
+min-height:125px;
+border-radius:18px;
+padding:14px;
+border:2px solid #ffd447;
+box-shadow:0 0 18px rgba(255,212,71,.55);
+}
+
+.gameCard.vasa{background:linear-gradient(135deg,#003a88,#00112e)}
+.gameCard.didi{background:linear-gradient(135deg,#4b0000,#c40000)}
+.gameCard.mitko{background:linear-gradient(135deg,#5b2100,#ff7a00)}
+
+.gameTitle{
+font-size:24px;
+font-weight:900;
+margin-bottom:6px;
+}
+
+.gameSub{
+font-size:13px;
+color:#eee;
+margin-bottom:15px;
+}
+
+.playBtn{
+display:inline-block;
+width:110px;
+padding:8px;
+border-radius:999px;
+background:#ffd447;
+color:#111;
+text-align:center;
+font-weight:900;
+}
+
+.chat{
+height:140px;
+overflow:auto;
+background:black;
+padding:8px;
+border-radius:10px;
+border:1px solid #ffd447;
+}
+
+.msg{
+font-size:13px;
+margin:4px 0;
+}
+
+.name{
+color:#ffd447;
+font-weight:900;
+}
+
+.inputRow{
+display:flex;
+gap:6px;
+}
+
+.inputRow input{
+flex:1;
+margin:0;
+}
+
+.inputRow button{
+width:90px;
+margin:0;
+}
+
+.logoutBtn{
+background:red;
+color:white;
+margin-top:10px;
+}
+
+.linkBox{
+word-break:break-all;
+background:#111;
+border:1px solid #ffd447;
+border-radius:12px;
+padding:10px;
+font-size:13px;
+}
+
 </style>
 </head>
+
 <body>
 
 <div class="app">
-<div class="logo">🔥 VASA FORTUNE 🔥</div>
+
+<div class="logo">🎰 MYKONOS CASINO</div>
+<div class="subLogo">FINAL LOBBY</div>
+
+<!-- LOGIN -->
+<div id="loginBox" class="card">
+
+<select id="playerSelect"></select>
+<input id="pinInput" placeholder="PIN">
+<button onclick="login()">ВЛЕЗ</button>
+
+<hr>
+
+<input id="regName" placeholder="Име">
+<input id="regPin" placeholder="PIN">
+<button onclick="register()">РЕГИСТРАЦИЯ</button>
+
+<div id="loginStatus" class="status"></div>
+
+</div>
+
+<!-- LOBBY -->
+<div id="lobbyBox" class="hidden">
+
+<div class="hero">
+<h2 id="welcomeText">Добре дошъл</h2>
+<div class="bal">Баланс: <span id="balanceText">0€</span></div>
+</div>
+
+<div class="liveWin">
+<span id="liveWinText">Добре дошли 🎰</span>
+</div>
+
+<div class="quickGrid">
+
+<div class="banner bonusBanner" onclick="dailyBonus()">
+🎁 БОНУС +5€
+</div>
+
+<div class="banner jackpotBanner">
+💰 JACKPOT 12 000€
+</div>
+
+<div class="banner winnerBanner">
+🏆 ТОП <span id="topWinner">---</span>
+</div>
+
+<div class="banner inviteBanner">
+🔗 ПОКАНИ ПРИЯТЕЛ
+</div>
+
+</div>
 
 <div class="card">
-<div id="freeBox" class="freeBox"></div>
-<div id="reels" class="reels"></div>
+<h3>🎮 Игри</h3>
 
-<div class="status" id="status">ГОТОВ</div>
+<div class="games">
 
-<div class="stats">
-<div class="stat"><small>БАЛАНС</small><b id="bal">0€</b></div>
-<div class="stat"><small>ЗАЛОГ</small><b id="bet">1€</b></div>
-<div class="stat"><small>ПЕЧАЛБА</small><b id="win">0€</b></div>
+<a href="vasa.html" class="gameCard vasa">
+<div class="gameTitle">🔥 VASA</div>
+<div class="gameSub">Free Spins</div>
+<div class="playBtn">ИГРАЙ</div>
+</a>
+
+<a href="didi.html" class="gameCard didi">
+<div class="gameTitle">🚨 DIDI</div>
+<div class="gameSub">Police Bonus</div>
+<div class="playBtn">ИГРАЙ</div>
+</a>
+
+<a href="mitko.html" class="gameCard mitko">
+<div class="gameTitle">👨‍🍳 MITKO</div>
+<div class="gameSub">Bell Bonus</div>
+<div class="playBtn">ИГРАЙ</div>
+</a>
+
 </div>
 </div>
 
-<div class="controls">
-<button onclick="changeBet(-1)">BET-</button>
-<button class="spinBtn" onclick="spin()">SPIN</button>
-<button onclick="changeBet(1)">BET+</button>
+<div class="card">
+<div id="chat" class="chat"></div>
+
+<div class="inputRow">
+<input id="msgInput">
+<button onclick="sendMsg()">SEND</button>
+</div>
 </div>
 
-<button class="back" onclick="location.href='index.html'">⬅ НАЗАД</button>
+<div class="card">
+<div id="myLink" class="linkBox"></div>
+</div>
+
+<button class="logoutBtn" onclick="logout()">ИЗХОД</button>
+
+</div>
 </div>
 
 <script>
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const KEY="PASTE_YOUR_KEY";
 
 let user=null;
-let balance=20;
-let bets=[0.5,1,2,5,10];
-let bi=1;
-let spinning=false;
-let freeSpins=0;
-let freeWin=0;
-let audioCtx=null;
-
-const symbols=["🍒","🍋","🔔","💎","7","BAR","🃏","🎁"];
 
 function headers(){
 return {apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"};
 }
 
-async function api(path,opt={}){
-let r=await fetch(URL+path,{...opt,headers:{...headers(),...(opt.headers||{})}});
-if(!r.ok)throw new Error(await r.text());
-if(r.status===204)return null;
+async function api(p,o={}){
+let r=await fetch(URL+p,{...o,headers:headers()});
 return await r.json();
 }
 
-function money(v){return Number(v||0).toFixed(2)+"€"}
+function money(v){return Number(v||0)+"€"}
 
-function sound(type){
-try{
-if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-let o=audioCtx.createOscillator();
-let g=audioCtx.createGain();
-o.connect(g);g.connect(audioCtx.destination);
-o.frequency.value=type==="win"?900:type==="bonus"?1200:type==="spin"?250:130;
-g.gain.setValueAtTime(.22,audioCtx.currentTime);
-g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.45);
-o.start();o.stop(audioCtx.currentTime+.45);
-}catch(e){}
-}
-
-async function loadUser(){
-let id=localStorage.getItem("casino_player_id");
-
-if(id){
-let d=await api("players?select=id,Name,Points&id=eq."+id);
-if(d[0]){
-user=d[0];
-balance=Number(user.Points||0);
-}
-}
-
-update();
-drawBoard(makeLoseBoard());
-}
-
-async function saveBalance(){
-if(!user)return;
-await api("players?id=eq."+user.id,{
-method:"PATCH",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({Points:Math.round(balance)})
+async function loadPlayers(){
+let d=await api("players");
+playerSelect.innerHTML="";
+d.forEach(p=>{
+let o=document.createElement("option");
+o.value=p.Name;
+o.textContent=p.Name;
+playerSelect.appendChild(o);
 });
 }
 
-async function sendSystem(t){
-try{
-await api("chat_messages",{
-method:"POST",
-headers:{Prefer:"return=minimal"},
-body:JSON.stringify({player_name:"SYSTEM",message:t})
-});
-}catch(e){}
-}
+async function login(){
+let name=playerSelect.value;
+let pin=pinInput.value;
 
-function update(){
-bal.innerText=money(balance);
-bet.innerText=money(bets[bi]);
-freeBox.style.display=freeSpins>0?"block":"none";
-freeBox.innerText=freeSpins>0?`🎁 FREE SPINS: ${freeSpins} · СПЕЧЕЛЕНО: ${money(freeWin)}`:"";
-}
+let d=await api("players?Name=eq."+name);
 
-function changeBet(d){
-if(spinning||freeSpins>0)return;
-bi=Math.max(0,Math.min(bets.length-1,bi+d));
-sound("spin");
-update();
-}
-
-function randomSym(){
-let pool=[
-"🍒","🍒","🍒","🍋","🍋","🍋",
-"🔔","🔔","💎","💎","7","BAR",
-"🃏","🎁"
-];
-return pool[Math.floor(Math.random()*pool.length)];
-}
-
-function makeBoard(){
-let b=[];
-for(let r=0;r<3;r++){
-let row=[];
-for(let c=0;c<5;c++)row.push(randomSym());
-b.push(row);
-}
-return b;
-}
-
-function drawBoard(b){
-reels.innerHTML="";
-for(let c=0;c<5;c++){
-for(let r=0;r<3;r++){
-let cell=document.createElement("div");
-cell.className="cell";
-cell.innerText=b[r][c];
-reels.appendChild(cell);
-}
-}
-}
-
-function readCells(){
-return [...document.querySelectorAll(".cell")];
-}
-
-function isWild(s){return s==="🃏"}
-
-function evalLine(b,line){
-let base=null,count=0,cells=[];
-for(let c=0;c<5;c++){
-let r=line[c],s=b[r][c];
-if(s==="🎁")break;
-if(base===null && !isWild(s))base=s;
-if(base===null && isWild(s)){count++;cells.push([r,c]);continue}
-if(s===base||isWild(s)){count++;cells.push([r,c])}else break;
-}
-if(!base||count<3)return null;
-let pay=count===5?10:count===4?5:2;
-if(base==="7")pay*=3;
-if(base==="BAR")pay*=4;
-if(base==="💎")pay*=2;
-return {pay,cells};
-}
-
-function evaluate(b){
-let lines=[
-[0,0,0,0,0],
-[1,1,1,1,1],
-[2,2,2,2,2],
-[0,1,2,1,0],
-[2,1,0,1,2]
-];
-
-let total=0,winners=[];
-lines.forEach(line=>{
-let res=evalLine(b,line);
-if(res){
-total+=res.pay*bets[bi];
-winners.push(...res.cells);
-}
-});
-
-let scat=b.flat().filter(x=>x==="🎁").length;
-if(scat>=3){
-freeSpins+=10;
-status.innerText="🎁 FREE SPINS ОТКЛЮЧЕНИ!";
-sound("bonus");
-}
-
-return {total,winners};
-}
-
-function mark(cells){
-let all=readCells();
-cells.forEach(([r,c])=>{
-let idx=c*3+r;
-if(all[idx])all[idx].classList.add("win");
-});
-}
-
-function makeLoseBoard(){
-return [
-["🍒","🍋","🔔","💎","7"],
-["🍋","🔔","💎","7","BAR"],
-["🔔","💎","7","BAR","🍒"]
-];
-}
-
-async function spin(){
-if(spinning)return;
-
-let bet=bets[bi];
-let isFree=freeSpins>0;
-
-if(!isFree && balance<bet){
-alert("Нямаш баланс");
+if(!d[0] || d[0].Pin!=pin){
+alert("Грешен PIN");
 return;
 }
 
-spinning=true;
-win.innerText=money(0);
-status.innerText=isFree?"FREE SPIN":"ВЪРТИ...";
-sound("spin");
+user=d[0];
 
-if(isFree){
-freeSpins--;
-}else{
-balance-=bet;
-await saveBalance();
+loginBox.classList.add("hidden");
+lobbyBox.classList.remove("hidden");
+
+balanceText.innerText=money(user.Points);
+welcomeText.innerText=user.Name+" в играта 🎰";
+
 }
 
-update();
+async function register(){
+await api("players",{
+method:"POST",
+body:JSON.stringify({
+Name:regName.value,
+Pin:regPin.value,
+Points:10
+})
+});
 
-reels.classList.add("spin");
-
-setTimeout(async()=>{
-let b=makeBoard();
-drawBoard(b);
-reels.classList.remove("spin");
-
-let result=evaluate(b);
-let total=result.total;
-
-if(total>0){
-balance+=total;
-freeWin+=isFree?total:0;
-win.innerText=money(total);
-status.innerText="🔥 ПЕЧАЛБА "+money(total);
-mark(result.winners);
-sound("win");
-await saveBalance();
-
-if(user){
-await sendSystem("🔥 "+user.Name+" спечели "+money(total)+" на VASA FORTUNE");
-}
-}else{
-status.innerText=isFree?"FREE SPIN БЕЗ ПЕЧАЛБА":"ОПИТАЙ ПАК 😄";
-sound("lose");
+alert("OK");
+loadPlayers();
 }
 
-if(freeSpins===0 && freeWin>0){
-status.innerText="🎁 FREE SPINS КРАЙ: "+money(freeWin);
-freeWin=0;
+function logout(){
+location.reload();
 }
 
-update();
-spinning=false;
-},1000);
-}
-
-loadUser();
+loadPlayers();
 </script>
+
 </body>
 </html>
