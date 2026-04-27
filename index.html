@@ -21,18 +21,6 @@ background-attachment:fixed;
 overflow-x:hidden;
 }
 
-body:before{
-content:"";
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 20% 10%,rgba(0,255,255,.22),transparent 25%),
-radial-gradient(circle at 80% 15%,rgba(255,215,0,.22),transparent 28%),
-radial-gradient(circle at 50% 95%,rgba(255,0,100,.18),transparent 35%);
-pointer-events:none;
-z-index:0;
-}
-
 .app{
 max-width:430px;
 margin:auto;
@@ -41,20 +29,15 @@ position:relative;
 z-index:1;
 }
 
-.hidden{
-display:none!important;
-}
+.hidden{display:none!important}
 
 .logo{
 text-align:center;
-font-size:33px;
+font-size:34px;
 font-weight:900;
 color:#ffe66b;
-text-shadow:
-0 0 10px #ff2a00,
-0 0 24px #ffd000,
-0 0 42px #00eaff;
-margin:12px 0 10px;
+text-shadow:0 0 10px #ff2a00,0 0 26px #ffd000,0 0 42px #00eaff;
+margin:18px 0 8px;
 letter-spacing:1px;
 }
 
@@ -63,28 +46,24 @@ text-align:center;
 font-size:13px;
 font-weight:900;
 color:#9ffcff;
-margin-bottom:10px;
+margin-bottom:14px;
 text-shadow:0 0 8px #00eaff;
 }
 
 .card{
-background:rgba(0,0,0,.68);
-border:2px solid rgba(255,215,70,.95);
-border-radius:20px;
-padding:14px;
-margin:12px 0;
-box-shadow:
-0 0 18px rgba(255,215,70,.45),
-inset 0 0 18px rgba(255,255,255,.04);
-backdrop-filter:blur(5px);
+background:rgba(0,0,0,.72);
+border:2px solid #ffd447;
+border-radius:22px;
+padding:16px;
+margin:14px 0;
+box-shadow:0 0 22px rgba(255,212,71,.55);
 }
 
 input,select,button{
 width:100%;
 padding:14px;
-margin:7px 0;
-border:0;
-border-radius:14px;
+margin:8px 0;
+border-radius:15px;
 font-size:16px;
 }
 
@@ -95,82 +74,46 @@ border:1px solid #ffd447;
 }
 
 button{
+border:0;
 background:linear-gradient(135deg,#fff06b,#ffb000,#ff4b00);
 color:#111;
 font-weight:900;
 cursor:pointer;
-box-shadow:0 0 14px rgba(255,191,0,.65);
+box-shadow:0 0 15px rgba(255,191,0,.65);
 }
 
-button:active{
-transform:scale(.97);
-}
+button:active{transform:scale(.97)}
 
 .status{
 text-align:center;
 color:#ffe66b;
 font-weight:900;
 min-height:24px;
-}
-
-.hero{
-position:relative;
-overflow:hidden;
-background:linear-gradient(120deg,#ffd500,#ff5c00 58%,#ff0066);
+}.hero{
+background:linear-gradient(120deg,#ffd500,#ff5c00 60%,#ff0066);
 color:#111;
 border-radius:24px;
 padding:18px;
 box-shadow:0 0 28px rgba(255,122,24,.95);
 }
 
-.hero:after{
-content:"";
-position:absolute;
-top:-70px;
-left:-120px;
-width:130px;
-height:260px;
-background:rgba(255,255,255,.38);
-transform:rotate(28deg);
-animation:shine 3.2s infinite;
-}
-
-@keyframes shine{
-0%{left:-140px}
-55%{left:520px}
-100%{left:520px}
-}
-
-.heroTop{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-position:relative;
-z-index:1;
-}
-
 .hero h2{
 margin:0;
-font-size:23px;
-}
-
-.hero small{
-font-weight:900;
+font-size:22px;
 }
 
 .hero .bal{
-font-size:29px;
+font-size:28px;
 font-weight:900;
-margin-top:9px;
-position:relative;
-z-index:1;
-}.ticker{
+margin-top:10px;
+}
+
+.ticker{
 background:#02040c;
 border:1px solid #00eaff;
 color:#77ffff;
 border-radius:14px;
-padding:9px;
+padding:8px;
 overflow:hidden;
 white-space:nowrap;
 font-weight:900;
@@ -217,82 +160,56 @@ gap:10px;
 
 .banner{
 border-radius:18px;
-padding:13px;
+padding:12px;
 font-weight:900;
-min-height:86px;
+min-height:80px;
 display:flex;
-flex-direction:column;
+align-items:center;
 justify-content:center;
-box-shadow:0 0 18px gold,0 0 35px orange;
+text-align:center;
+box-shadow:0 0 20px gold,0 0 40px orange;
 }
 
 .bonusBanner{
 background:linear-gradient(135deg,#1bffd7,#0066ff);
 }
 
-.winnerBanner{
-background:linear-gradient(135deg,#ff42df,#6200ff);
-}
-
 .jackpotBanner{
 background:linear-gradient(135deg,#fff261,#ff7900,#ff1f00);
 color:#111;
-animation:pulse 1.4s infinite alternate;
+}
+
+.winnerBanner{
+background:linear-gradient(135deg,#ff42df,#6200ff);
 }
 
 .missionBanner{
 background:linear-gradient(135deg,#20ff62,#007425);
 color:#061606;
-}
-
-@keyframes pulse{
-from{filter:brightness(1)}
-to{filter:brightness(1.25);box-shadow:0 0 30px #ffd447}
-}
-
-.sectionTitle{
-font-size:21px;
-font-weight:900;
-margin:6px 0 10px;
-text-shadow:0 0 8px #ffd447;
-}
-
-.games{
+}.games{
 display:grid;
-gap:13px;
+gap:12px;
 }
 
 .gameCard{
-min-height:124px;
-border-radius:20px;
-padding:15px;
+min-height:110px;
+border-radius:18px;
+padding:14px;
 border:2px solid #ffd447;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
-box-shadow:0 0 20px rgba(255,212,71,.55);
-cursor:pointer;
-transition:.2s;
-}
-
-.gameCard:hover{
-transform:scale(1.04);
+box-shadow:0 0 18px rgba(255,212,71,.55);
 }
 
 .gameTitle{
-font-size:25px;
+font-size:24px;
 font-weight:900;
-text-shadow:0 0 10px black;
-}
-
-.gameSub{
-font-size:13px;
-color:#eee;
 }
 
 .playBtn{
-width:115px;
-padding:9px;
+width:100px;
+padding:8px;
 border-radius:999px;
 background:#ffd447;
 color:#111;
@@ -300,37 +217,18 @@ text-align:center;
 font-weight:900;
 }
 
-.vasa{background:linear-gradient(135deg,#003a88,#00112e);}
-.didi{background:linear-gradient(135deg,#461100,#c40000);}
-.mitko{background:linear-gradient(135deg,#5b2100,#ff7a00);}.leaderRow{
-display:flex;
-justify-content:space-between;
-padding:6px 0;
-border-bottom:1px solid rgba(255,255,255,.1);
-}
-
 .chat{
 height:130px;
 overflow:auto;
 background:black;
 padding:8px;
-border-radius:12px;
+border-radius:10px;
 border:1px solid #ffd447;
-}
-
-.msg{
-font-size:13px;
-margin:4px 0;
-}
-
-.name{
-color:#ffd447;
-font-weight:900;
 }
 
 .inputRow{
 display:flex;
-gap:5px;
+gap:6px;
 }
 
 .inputRow input{
@@ -359,7 +257,6 @@ margin-top:10px;
 <div class="logo">🎰 MYKONOS CASINO VIP</div>
 <div class="subLogo">REAL PLAY • REAL FUN • VIP MODE</div>
 
-<!-- LOGIN -->
 <div id="loginBox" class="card">
 
 <h3>🔐 Вход</h3>
@@ -382,19 +279,15 @@ margin-top:10px;
 
 </div>
 
-<!-- LOBBY -->
 <div id="lobbyBox" class="hidden">
 
 <div class="hero">
-<div class="heroTop">
-<small id="welcomeText">Добре дошъл</small>
-</div>
-<h2>VIP Lobby 💎</h2>
+<h2 id="welcomeText">Добре дошъл</h2>
 <div class="bal">Баланс: <span id="balanceText">0€</span></div>
 </div>
 
 <div class="bigWin">
-<span id="bigWinText">🔥 WIN BETT STEFAN +12€ 🔥</span>
+<span id="bigWinText">🔥 WIN BETT STEFAN +20€ 🔥</span>
 </div>
 
 <div class="ticker">
@@ -422,25 +315,22 @@ margin-top:10px;
 </div>
 
 <div class="card">
-<div class="sectionTitle">🎮 Игри</div>
+<h3>🎮 Игри</h3>
 
 <div class="games">
 
-<div class="gameCard vasa" onclick="openGame('VASA')">
+<div class="gameCard">
 <div class="gameTitle">VASA</div>
-<div class="gameSub">Classic Slot</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
-<div class="gameCard didi" onclick="openGame('DIDI')">
+<div class="gameCard">
 <div class="gameTitle">DIDI</div>
-<div class="gameSub">Fast Spin</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
-<div class="gameCard mitko" onclick="openGame('MITKO')">
+<div class="gameCard">
 <div class="gameTitle">MITKO</div>
-<div class="gameSub">Bell Bonus</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
@@ -448,24 +338,19 @@ margin-top:10px;
 </div>
 
 <div class="card">
-<div class="sectionTitle">🏆 Топ играчи</div>
-<div id="leaderboard"></div>
-</div>
-
-<div class="card">
-<div class="sectionTitle">💬 Чат</div>
+<h3>💬 Чат</h3>
 
 <div id="chat" class="chat"></div>
 
 <div class="inputRow">
-<input id="msgInput" placeholder="пиши...">
+<input id="msgInput">
 <button onclick="sendMsg()">SEND</button>
 </div>
 
 </div>
 
 <div class="card">
-<div class="sectionTitle">🔗 Твоят линк</div>
+<h3>🔗 Твоят линк</h3>
 <div id="myLink"></div>
 </div>
 
@@ -474,47 +359,46 @@ margin-top:10px;
 </div><script>
 
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9constconst KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo"; KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";.eyJpc3MiOiJzdXJhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
 let user=null;
 
+function headers(){
+return {
+apikey:KEY,
+Authorization:"Bearer "+KEY,
+"Content-Type":"application/json"
+};
+}
+
 function makeRefCode(name){
-return name.replace(/\s+/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
+return name.replace(/\s+/g,"").toUpperCase()+Math.floor(100+Math.random()*900);
 }
 
-function getInviteLink(){
-return location.origin + location.pathname + "?ref=" + user.ref_code;
+function inviteLink(){
+return location.origin+location.pathname+"?ref="+encodeURIComponent(user.ref_code);
 }
 
-function getUrlRef(){
-let params=new URLSearchParams(window.location.search);
-return params.get("ref") || "";
+function urlRef(){
+let p=new URLSearchParams(location.search);
+return p.get("ref") || "";
 }
 
-function autoFillRef(){
-let ref=getUrlRef();
-if(ref){
-regRef.value=ref;
+async function api(path,options={}){
+let r=await fetch(URL+path,{
+...options,
+headers:{...headers(),...(options.headers||{})}
+});
+if(!r.ok){
+throw new Error(await r.text());
 }
+if(r.status===204)return null;
+return await r.json();
 }
 
-loadPlayers();
-autoFillRef();
-
-async function loadPlayers(){async function loadPlayers(){
+async function loadPlayers(){
 try{
-let r=await fetch(URL+"players?Name=eq."+encodeURIComponent(playerSelect.value),{
-headers:{
-apikey:KEY,
-Authorization:"Bearer "+KEY
-}
-});
-apikey:KEY,
-Authorization:"Bearer "+KEY
-}
-});
-
-let d=await r.json();
+let d=await api("players?select=id,Name,Pin,Points,ref_code,ref_by&order=id.asc");
 
 playerSelect.innerHTML="";
 
@@ -537,26 +421,32 @@ playerSelect.innerHTML="";
 let o=document.createElement("option");
 o.textContent="Грешка база";
 playerSelect.appendChild(o);
+loginStatus.innerText="Не зарежда играчите";
 }
 }
-let r=await fetch(URL+"players",{headers:{apikey:KEY}});
-let d=await r.json();
 
-playerSelect.innerHTML="";
-d.forEach(p=>{
-let o=document.createElement("option");
-o.value=p.Name;
-o.textContent=p.Name;
-playerSelect.appendChild(o);
-});
+function autoReferral(){
+let ref=urlRef();
+if(ref){
+regRef.value=ref;
+}
 }
 
-async function login(){
+loadPlayers();
+autoReferral();async function login(){
 
-let r=await fetch(URL+"players?Name=eq."+encodeURIComponent(playerSelect.value),{headers:{apikey:KEY}});
-let d=await r.json();
+try{
+let name=playerSelect.value;
+let pin=pinInput.value.trim();
 
-if(!d[0] || String(d[0].Pin).trim()!==pinInput.value.trim()){
+if(!name || name==="Няма играчи" || name==="Грешка база"){
+alert("Няма избран играч");
+return;
+}
+
+let d=await api("players?select=id,Name,Pin,Points,ref_code,ref_by&Name=eq."+encodeURIComponent(name));
+
+if(!d[0] || String(d[0].Pin).trim()!==pin){
 alert("Грешен PIN");
 return;
 }
@@ -566,12 +456,9 @@ user=d[0];
 if(!user.ref_code){
 user.ref_code=makeRefCode(user.Name);
 
-await fetch(URL+"players?Name=eq."+encodeURIComponent(user.Name),{
+await api("players?id=eq."+user.id,{
 method:"PATCH",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{Prefer:"return=minimal"},
 body:JSON.stringify({ref_code:user.ref_code})
 });
 }
@@ -580,21 +467,24 @@ loginBox.classList.add("hidden");
 lobbyBox.classList.remove("hidden");
 
 welcomeText.innerText=user.Name+" вече си в играта 🎰";
-balanceText.innerText=user.Points+"€";
-myLink.innerText=getInviteLink();
+balanceText.innerText=Number(user.Points||0)+"€";
+myLink.innerText=inviteLink();
 
-sendSystem(user.Name+" вече е в играта 🎰");
+await sendSystem(user.Name+" вече е в играта 🎰");
 
 loadChat();
-loadTop();
-loadLeaderboard();
 fakeWin();
 setInterval(loadChat,2000);
 setInterval(fakeWin,9000);
+
+}catch(e){
+alert("Грешка при вход");
+}
 }
 
 async function register(){
 
+try{
 let name=regName.value.trim();
 let pin=regPin.value.trim();
 let ref=regRef.value.trim();
@@ -606,12 +496,9 @@ return;
 
 let code=makeRefCode(name);
 
-await fetch(URL+"players",{
+await api("players",{
 method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{Prefer:"return=minimal"},
 body:JSON.stringify({
 Name:name,
 Pin:pin,
@@ -622,49 +509,56 @@ ref_by:ref || null
 });
 
 if(ref){
-let r=await fetch(URL+"players?ref_code=eq."+encodeURIComponent(ref),{headers:{apikey:KEY}});
-let d=await r.json();
+let invitedBy=await api("players?select=id,Name,Points,ref_code&ref_code=eq."+encodeURIComponent(ref));
 
-if(d[0]){
-let newPoints=Number(d[0].Points||0)+5;
+if(invitedBy[0]){
+let newPoints=Number(invitedBy[0].Points||0)+5;
 
-await fetch(URL+"players?ref_code=eq."+encodeURIComponent(ref),{
+await api("players?id=eq."+invitedBy[0].id,{
 method:"PATCH",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{Prefer:"return=minimal"},
 body:JSON.stringify({Points:newPoints})
 });
 
-sendSystem(d[0].Name+" получи +5€ за покана 🎁");
+await sendSystem(invitedBy[0].Name+" получи +5€ за покана 🎁");
 }
 }
 
 alert("Регистрация успешна!");
 loadPlayers();
+
+}catch(e){
+alert("Грешка при регистрация");
+}
 }
 
-function dailyBonus(){
+async function dailyBonus(){
 if(!user)return;
+
 user.Points=Number(user.Points||0)+5;
 balanceText.innerText=user.Points+"€";
-sendSystem(user.Name+" взе дневен бонус +5€ 🎁");
+
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({Points:user.Points})
+});
+
+await sendSystem(user.Name+" взе дневен бонус +5€ 🎁");
 loadTop();
 }
 
 async function sendMsg(){
-if(!msgInput.value.trim())return;
+if(!user)return;
+let text=msgInput.value.trim();
+if(!text)return;
 
-await fetch(URL+"chat_messages",{
+await api("chat_messages",{
 method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{Prefer:"return=minimal"},
 body:JSON.stringify({
 player_name:user.Name,
-message:msgInput.value.trim()
+message:text
 })
 });
 
@@ -673,52 +567,41 @@ loadChat();
 }
 
 async function sendSystem(t){
-await fetch(URL+"chat_messages",{
+await api("chat_messages",{
 method:"POST",
-headers:{
-apikey:KEY,
-"Content-Type":"application/json"
-},
+headers:{Prefer:"return=minimal"},
 body:JSON.stringify({
 player_name:"SYSTEM",
 message:t
 })
 });
 }async function loadChat(){
-let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{headers:{apikey:KEY}});
-let d=await r.json();
+try{
+let d=await api("chat_messages?select=player_name,message,created_at&order=created_at.desc&limit=20");
 
 chat.innerHTML="";
+
 d.reverse().forEach(x=>{
-chat.innerHTML+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
+chat.innerHTML+=`
+<div class="msg">
+<span class="name">${x.player_name}:</span> ${x.message}
+</div>`;
 });
 
 chat.scrollTop=chat.scrollHeight;
+
+}catch(e){}
 }
 
 async function loadTop(){
-let r=await fetch(URL+"players?order=Points.desc&limit=1",{headers:{apikey:KEY}});
-let d=await r.json();
+try{
+let d=await api("players?select=Name,Points&order=Points.desc&limit=1");
 
 if(d[0]){
 topWinner.innerText=d[0].Name+" "+d[0].Points+"€";
 }
-}
 
-async function loadLeaderboard(){
-let r=await fetch(URL+"players?order=Points.desc&limit=5",{headers:{apikey:KEY}});
-let d=await r.json();
-
-leaderboard.innerHTML="";
-
-d.forEach((p,i)=>{
-let medal=i===0?"🥇":i===1?"🥈":i===2?"🥉":"⭐";
-leaderboard.innerHTML+=`
-<div class="leaderRow">
-<span>${medal} ${p.Name}</span>
-<b>${p.Points}€</b>
-</div>`;
-});
+}catch(e){}
 }
 
 function fakeWin(){
@@ -730,18 +613,13 @@ let money=Math.floor(Math.random()*25)+5;
 
 bigWinText.innerText="🔥 WIN BETT "+n+" +"+money+"€ на "+g+" 🔥";
 tickerText.innerText=n+" спечели "+money+"€ · Jackpot расте · Покани приятел +5€";
-
-sendSystem("🔥 WIN BETT "+n+" +"+money+"€ на "+g);
-}
-
-function openGame(g){
-sendSystem(user.Name+" отвори "+g+" 🎮");
-alert("Следващата стъпка: тук ще вържем истинската игра "+g);
 }
 
 function logout(){
 location.reload();
 }
+
+loadTop();
 
 </script>
 </body>
