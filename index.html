@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,7 @@
 
 <style>
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{
   margin:0;
   font-family:Arial,sans-serif;
@@ -31,12 +32,16 @@ body::before{
   100%{background-position:500px 500px,-200px 600px,600px -100px}
 }
 .navbar{
+  position:sticky;
+  top:0;
+  z-index:5;
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:18px 40px;
-  background:rgba(0,0,0,.5);
+  background:rgba(0,0,0,.72);
   border-bottom:2px solid rgba(0,217,255,.4);
+  backdrop-filter:blur(8px);
 }
 .logo{
   font-size:34px;
@@ -45,17 +50,41 @@ body::before{
 .friends{color:#00d9ff;text-shadow:0 0 18px #00d9ff}
 .bet{color:#ff1b1b;text-shadow:0 0 18px red}
 .casino{color:gold;text-shadow:0 0 18px gold}
-.menu button{
-  margin-left:12px;
-  padding:10px 18px;
+.menu a,.menu button{
+  margin-left:10px;
+  padding:10px 15px;
   border:0;
   border-radius:12px;
   background:#111;
   color:white;
   cursor:pointer;
-  box-shadow:0 0 12px #00d9ff;
+  text-decoration:none;
+  box-shadow:0 0 12px rgba(0,217,255,.7);
 }
-.menu button:hover{transform:scale(1.06)}
+.menu a:hover,.menu button:hover{transform:scale(1.06);color:#00d9ff}
+.ticker{
+  width:100%;
+  overflow:hidden;
+  background:linear-gradient(90deg,#8b0000,#111,#004b7a);
+  border-bottom:1px solid rgba(255,215,0,.4);
+  box-shadow:0 0 18px rgba(255,0,0,.5);
+}
+.ticker-track{
+  white-space:nowrap;
+  padding:12px 0;
+  animation:ticker 18s linear infinite;
+  font-size:18px;
+  font-weight:bold;
+}
+@keyframes ticker{
+  0%{transform:translateX(100%)}
+  100%{transform:translateX(-100%)}
+}
+.profile{
+  text-align:center;
+  padding:20px;
+  font-size:20px;
+}
 .hero{
   width:90%;
   max-width:1150px;
@@ -113,7 +142,7 @@ body::before{
   grid-template-columns:repeat(3,1fr);
   gap:18px;
 }
-.banner,.card{
+.banner,.card,.chat-box{
   border-radius:22px;
   background:linear-gradient(145deg,#111,#1c1c33);
   border:1px solid rgba(255,255,255,.15);
@@ -153,6 +182,47 @@ body::before{
   font-weight:bold;
   box-shadow:0 0 20px red;
 }
+.chat-section{
+  width:90%;
+  max-width:850px;
+  margin:40px auto;
+}
+.chat-box{
+  padding:22px;
+}
+.messages{
+  height:220px;
+  overflow-y:auto;
+  background:rgba(0,0,0,.35);
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.msg{
+  margin:8px 0;
+  padding:10px;
+  background:rgba(0,217,255,.12);
+  border-radius:12px;
+}
+.chat-row{
+  display:flex;
+  gap:10px;
+}
+.chat-row input{
+  flex:1;
+  padding:14px;
+  border-radius:12px;
+  border:0;
+}
+.chat-row button{
+  padding:14px 22px;
+  border:0;
+  border-radius:12px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 .modal{
   display:none;
   position:fixed;
@@ -190,14 +260,7 @@ body::before{
   font-weight:bold;
   cursor:pointer;
 }
-.close{
-  background:#333!important;
-}
-.profile{
-  text-align:center;
-  padding:20px;
-  font-size:20px;
-}
+.close{background:#333!important}
 .footer{
   text-align:center;
   padding:30px;
@@ -205,9 +268,12 @@ body::before{
 }
 @media(max-width:850px){
   .navbar{flex-direction:column;gap:15px}
+  .menu{text-align:center}
+  .menu a,.menu button{margin:5px}
   .banners,.games{grid-template-columns:1fr}
   .hero h1{font-size:38px}
   .hero::after{font-size:95px}
+  .chat-row{flex-direction:column}
 }
 </style>
 </head>
@@ -220,10 +286,21 @@ body::before{
     <span class="bet">Bet</span>
     <span class="casino">Casino</span>
   </div>
+
   <div class="menu">
+    <a href="#home">Home</a>
+    <a href="#slots">Slots</a>
+    <a href="#bonus">Bonus</a>
+    <a href="#chat">Chat</a>
     <button onclick="openModal('loginModal')">Login</button>
     <button onclick="openModal('registerModal')">Register</button>
     <button onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ticker-track" id="movingBanner">
+    🎰 Добре дошъл в Friends Bet Casino! 🔥 Вземи своя бонус и влез в играта! 👑
   </div>
 </div>
 
@@ -232,13 +309,13 @@ body::before{
   <div id="balanceInfo">Balance: 0 Credits</div>
 </div>
 
-<section class="hero">
-  <h1>Welcome Bonus</h1>
-  <p>Start with 10,000 demo credits and enjoy the Friends Bet Casino experience.</p>
+<section class="hero" id="home">
+  <h1 id="welcomeTitle">Welcome Bonus</h1>
+  <p id="welcomeText">Start with 10,000 demo credits and enjoy the Friends Bet Casino experience.</p>
   <button class="main-btn" onclick="claimBonus()">CLAIM BONUS</button>
 </section>
 
-<div class="banners">
+<div class="banners" id="bonus">
   <div class="banner">
     <h3>🎁 Daily Bonus</h3>
     <p>Get free demo credits every day.</p>
@@ -253,7 +330,7 @@ body::before{
   </div>
 </div>
 
-<h2 class="section-title">Choose Your Game</h2>
+<h2 class="section-title" id="slots">Choose Your Game</h2>
 
 <div class="games">
   <div class="card">
@@ -278,6 +355,17 @@ body::before{
   </div>
 </div>
 
+<section class="chat-section" id="chat">
+  <h2 class="section-title">Casino Chat</h2>
+  <div class="chat-box">
+    <div class="messages" id="messages"></div>
+    <div class="chat-row">
+      <input id="chatInput" placeholder="Write message...">
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</section>
+
 <div class="footer">
   Friends Bet Casino • Demo Casino • Just for Fun
 </div>
@@ -295,6 +383,7 @@ body::before{
 <div class="modal" id="registerModal">
   <div class="box">
     <h2>Register</h2>
+    <input id="regName" type="text" placeholder="Your name">
     <input id="regEmail" type="email" placeholder="Email">
     <input id="regPassword" type="password" placeholder="Password">
     <button onclick="register()">Create Account</button>
@@ -315,6 +404,14 @@ function getCurrentUser(){
   return localStorage.getItem("friendsBetCurrentUser");
 }
 
+function getMessages(){
+  return JSON.parse(localStorage.getItem("friendsBetChat") || "[]");
+}
+
+function saveMessages(messages){
+  localStorage.setItem("friendsBetChat", JSON.stringify(messages));
+}
+
 function openModal(id){
   document.getElementById(id).style.display = "flex";
 }
@@ -324,11 +421,12 @@ function closeModal(id){
 }
 
 function register(){
+  const name = document.getElementById("regName").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value.trim();
 
-  if(!email || !password){
-    alert("Enter email and password");
+  if(!name || !email || !password){
+    alert("Enter name, email and password");
     return;
   }
 
@@ -340,6 +438,7 @@ function register(){
   }
 
   users[email] = {
+    name: name,
     password: password,
     balance: 10000,
     bonusClaimed: false
@@ -399,18 +498,80 @@ function claimBonus(){
   alert("Bonus claimed! +10,000 credits");
 }
 
+function sendMessage(){
+  const email = getCurrentUser();
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+
+  if(!email){
+    alert("Please login to use chat");
+    openModal("loginModal");
+    return;
+  }
+
+  if(!text) return;
+
+  const users = getUsers();
+  const name = users[email].name || email;
+
+  const messages = getMessages();
+  messages.push({
+    name: name,
+    text: text,
+    time: new Date().toLocaleTimeString()
+  });
+
+  saveMessages(messages);
+  input.value = "";
+  renderMessages();
+}
+
+function renderMessages(){
+  const box = document.getElementById("messages");
+  const messages = getMessages();
+
+  if(messages.length === 0){
+    box.innerHTML = '<div class="msg">🎰 Welcome to the casino chat!</div>';
+    return;
+  }
+
+  box.innerHTML = messages.map(m =>
+    '<div class="msg"><b>' + m.name + '</b> <small>' + m.time + '</small><br>' + m.text + '</div>'
+  ).join("");
+
+  box.scrollTop = box.scrollHeight;
+}
+
 function updateUI(){
   const email = getCurrentUser();
   const users = getUsers();
 
   if(email && users[email]){
-    document.getElementById("userInfo").innerText = "Logged in: " + email;
+    const name = users[email].name || email;
+
+    document.getElementById("userInfo").innerText = "Добре дошъл, " + name;
     document.getElementById("balanceInfo").innerText =
       "Balance: " + users[email].balance + " Credits";
+
+    document.getElementById("welcomeTitle").innerText =
+      "Добре дошъл, " + name + "!";
+
+    document.getElementById("welcomeText").innerText =
+      "Ти вече си в играта. Вземи бонуса си и избери слот.";
+
+    document.getElementById("movingBanner").innerText =
+      "🎰 Добре дошъл, " + name + "! 🔥 Ти вече си в играта! 🎁 Вземи своя бонус днес! 👑 Friends Bet Casino";
   } else {
     document.getElementById("userInfo").innerText = "Not logged in";
     document.getElementById("balanceInfo").innerText = "Balance: 0 Credits";
+    document.getElementById("welcomeTitle").innerText = "Welcome Bonus";
+    document.getElementById("welcomeText").innerText =
+      "Start with 10,000 demo credits and enjoy the Friends Bet Casino experience.";
+    document.getElementById("movingBanner").innerText =
+      "🎰 Добре дошъл в Friends Bet Casino! 🔥 Вземи своя бонус и влез в играта! 👑";
   }
+
+  renderMessages();
 }
 
 updateUI();
