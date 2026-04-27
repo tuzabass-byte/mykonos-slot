@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Mykonos Casino VIP</title>
+<title>Mykonos Casino VIP PRO</title>
 
 <style>
 *{box-sizing:border-box}
@@ -11,8 +11,13 @@
 body{
 margin:0;
 font-family:Arial,sans-serif;
-color:#fff;
-background:radial-gradient(circle at top,#1b65b8,#071433 36%,#02040c 78%);
+color:white;
+background:
+linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.92)),
+url("https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=1200&q=80");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
 overflow-x:hidden;
 }
 
@@ -21,10 +26,11 @@ content:"";
 position:fixed;
 inset:0;
 background:
-radial-gradient(circle at 20% 15%,rgba(0,255,255,.22),transparent 25%),
-radial-gradient(circle at 85% 20%,rgba(255,209,0,.20),transparent 24%),
-radial-gradient(circle at 50% 95%,rgba(255,0,102,.16),transparent 34%);
+radial-gradient(circle at 20% 10%,rgba(0,255,255,.22),transparent 25%),
+radial-gradient(circle at 80% 15%,rgba(255,215,0,.22),transparent 28%),
+radial-gradient(circle at 50% 95%,rgba(255,0,100,.18),transparent 35%);
 pointer-events:none;
+z-index:0;
 }
 
 .app{
@@ -35,24 +41,42 @@ position:relative;
 z-index:1;
 }
 
-.hidden{display:none!important}
+.hidden{
+display:none!important;
+}
 
 .logo{
 text-align:center;
-font-size:32px;
+font-size:33px;
 font-weight:900;
 color:#ffe66b;
-text-shadow:0 0 12px #ff2a00,0 0 26px #ffd000,0 0 42px #00eaff;
+text-shadow:
+0 0 10px #ff2a00,
+0 0 24px #ffd000,
+0 0 42px #00eaff;
 margin:12px 0 10px;
+letter-spacing:1px;
+}
+
+.subLogo{
+text-align:center;
+font-size:13px;
+font-weight:900;
+color:#9ffcff;
+margin-bottom:10px;
+text-shadow:0 0 8px #00eaff;
 }
 
 .card{
-background:rgba(0,0,0,.62);
+background:rgba(0,0,0,.68);
 border:2px solid rgba(255,215,70,.95);
 border-radius:20px;
 padding:14px;
 margin:12px 0;
-box-shadow:0 0 18px rgba(255,215,70,.45);
+box-shadow:
+0 0 18px rgba(255,215,70,.45),
+inset 0 0 18px rgba(255,255,255,.04);
+backdrop-filter:blur(5px);
 }
 
 input,select,button{
@@ -64,14 +88,23 @@ border-radius:14px;
 font-size:16px;
 }
 
+input,select{
+background:#111;
+color:white;
+border:1px solid #ffd447;
+}
+
 button{
 background:linear-gradient(135deg,#fff06b,#ffb000,#ff4b00);
 color:#111;
 font-weight:900;
 cursor:pointer;
+box-shadow:0 0 14px rgba(255,191,0,.65);
 }
 
-button:active{transform:scale(.97)}
+button:active{
+transform:scale(.97);
+}
 
 .status{
 text-align:center;
@@ -87,13 +120,52 @@ background:linear-gradient(120deg,#ffd500,#ff5c00 58%,#ff0066);
 color:#111;
 border-radius:24px;
 padding:18px;
-box-shadow:0 0 26px rgba(255,122,24,.9);
+box-shadow:0 0 28px rgba(255,122,24,.95);
 }
 
-.hero h2{margin:0;font-size:22px}
-.hero .bal{font-size:28px;font-weight:900;margin-top:9px}
+.hero:after{
+content:"";
+position:absolute;
+top:-70px;
+left:-120px;
+width:130px;
+height:260px;
+background:rgba(255,255,255,.38);
+transform:rotate(28deg);
+animation:shine 3.2s infinite;
+}
 
-.ticker{
+@keyframes shine{
+0%{left:-140px}
+55%{left:520px}
+100%{left:520px}
+}
+
+.heroTop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+position:relative;
+z-index:1;
+}
+
+.hero h2{
+margin:0;
+font-size:23px;
+}
+
+.hero small{
+font-weight:900;
+}
+
+.hero .bal{
+font-size:29px;
+font-weight:900;
+margin-top:9px;
+position:relative;
+z-index:1;
+}.ticker{
 background:#02040c;
 border:1px solid #00eaff;
 color:#77ffff;
@@ -116,6 +188,27 @@ from{transform:translateX(0)}
 to{transform:translateX(-100%)}
 }
 
+.bigWin{
+font-size:22px;
+font-weight:900;
+color:#ffcc00;
+text-shadow:0 0 10px red,0 0 20px orange;
+white-space:nowrap;
+overflow:hidden;
+margin:10px 0;
+}
+
+.bigWin span{
+display:inline-block;
+padding-left:100%;
+animation:bigmove 10s linear infinite;
+}
+
+@keyframes bigmove{
+from{transform:translateX(0)}
+to{transform:translateX(-100%)}
+}
+
 .quickGrid{
 display:grid;
 grid-template-columns:1fr 1fr;
@@ -130,29 +223,44 @@ min-height:86px;
 display:flex;
 flex-direction:column;
 justify-content:center;
+box-shadow:0 0 18px gold,0 0 35px orange;
 }
 
-.bonusBanner{background:linear-gradient(135deg,#1bffd7,#0066ff)}
-.winnerBanner{background:linear-gradient(135deg,#ff42df,#6200ff)}
+.bonusBanner{
+background:linear-gradient(135deg,#1bffd7,#0066ff);
+}
+
+.winnerBanner{
+background:linear-gradient(135deg,#ff42df,#6200ff);
+}
+
 .jackpotBanner{
 background:linear-gradient(135deg,#fff261,#ff7900,#ff1f00);
 color:#111;
 animation:pulse 1.4s infinite alternate;
 }
-.missionBanner{background:linear-gradient(135deg,#20ff62,#007425);color:#061606}
+
+.missionBanner{
+background:linear-gradient(135deg,#20ff62,#007425);
+color:#061606;
+}
 
 @keyframes pulse{
 from{filter:brightness(1)}
-to{filter:brightness(1.25);box-shadow:0 0 24px #ffd447}
+to{filter:brightness(1.25);box-shadow:0 0 30px #ffd447}
 }
 
 .sectionTitle{
 font-size:21px;
 font-weight:900;
 margin:6px 0 10px;
+text-shadow:0 0 8px #ffd447;
 }
 
-.games{display:grid;gap:13px}
+.games{
+display:grid;
+gap:13px;
+}
 
 .gameCard{
 min-height:124px;
@@ -162,17 +270,25 @@ border:2px solid #ffd447;
 display:flex;
 flex-direction:column;
 justify-content:space-between;
-box-shadow:0 0 20px rgba(255,212,71,.35);
+box-shadow:0 0 20px rgba(255,212,71,.55);
 cursor:pointer;
+transition:.2s;
+}
+
+.gameCard:hover{
+transform:scale(1.04);
 }
 
 .gameTitle{
 font-size:25px;
 font-weight:900;
-text-shadow:0 0 10px #000;
+text-shadow:0 0 10px black;
 }
 
-.gameSub{font-size:13px;color:#eee}
+.gameSub{
+font-size:13px;
+color:#eee;
+}
 
 .playBtn{
 width:115px;
@@ -184,128 +300,123 @@ text-align:center;
 font-weight:900;
 }
 
-.vasa{background:linear-gradient(135deg,#003a88,#00112e)}
-.didi{background:linear-gradient(135deg,#461100,#c40000)}
-.mitko{background:linear-gradient(135deg,#5b2100,#ff7a00)}
-
-.leaderRow,.feedRow{
+.vasa{background:linear-gradient(135deg,#003a88,#00112e);}
+.didi{background:linear-gradient(135deg,#461100,#c40000);}
+.mitko{background:linear-gradient(135deg,#5b2100,#ff7a00);}.leaderRow{
 display:flex;
 justify-content:space-between;
-gap:8px;
-padding:7px 0;
-border-bottom:1px solid rgba(255,255,255,.12);
-font-size:14px;
+padding:6px 0;
+border-bottom:1px solid rgba(255,255,255,.1);
 }
 
 .chat{
-height:135px;
+height:130px;
 overflow:auto;
-border:1px solid rgba(255,255,255,.25);
-background:rgba(0,0,0,.55);
+background:black;
 padding:8px;
-border-radius:14px;
+border-radius:12px;
+border:1px solid #ffd447;
 }
 
-.msg{font-size:13px;margin:4px 0}
-.name{color:#ffd447;font-weight:900}
+.msg{
+font-size:13px;
+margin:4px 0;
+}
+
+.name{
+color:#ffd447;
+font-weight:900;
+}
 
 .inputRow{
 display:flex;
-gap:7px;
-margin-top:8px;
+gap:5px;
 }
 
-.inputRow input{flex:1;margin:0}
-.inputRow button{width:92px;margin:0}
-
-.inviteBox{
-background:rgba(255,255,255,.08);
-border:1px solid rgba(255,255,255,.2);
-border-radius:14px;
-padding:10px;
-font-size:13px;
-word-break:break-all;
+.inputRow input{
+flex:1;
+margin:0;
 }
 
-.logoutBtn{background:#d91414;color:#fff}
-
-.toast{
-position:fixed;
-left:50%;
-top:16px;
-transform:translateX(-50%) translateY(-90px);
-max-width:390px;
-width:calc(100% - 30px);
-background:#050505;
-border:2px solid #ffd447;
-border-radius:18px;
-padding:12px;
-z-index:30;
-text-align:center;
-font-weight:900;
-box-shadow:0 0 25px #ffd447;
-transition:.35s;
+.inputRow button{
+width:90px;
+margin:0;
 }
 
-.toast.show{transform:translateX(-50%) translateY(0)}
+.logoutBtn{
+background:red;
+color:white;
+margin-top:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="toast" class="toast"></div>
-
 <div class="app">
 
 <div class="logo">🎰 MYKONOS CASINO VIP</div>
+<div class="subLogo">REAL PLAY • REAL FUN • VIP MODE</div>
 
+<!-- LOGIN -->
 <div id="loginBox" class="card">
-<h2>🔐 VIP Вход</h2>
 
-<select id="playerSelect">
-<option value="">Зареждане...</option>
-</select>
+<h3>🔐 Вход</h3>
 
-<input id="pinInput" type="password" placeholder="PIN код">
-<button onclick="login()">ВЛЕЗ В КАЗИНОТО</button>
-<div id="loginStatus" class="status"></div>
+<select id="playerSelect"></select>
+<input id="pinInput" placeholder="PIN">
+<button onclick="login()">ВЛЕЗ</button>
 
 <hr>
 
 <h3>🆕 Регистрация</h3>
+
 <input id="regName" placeholder="Име">
-<input id="regPin" type="password" placeholder="PIN">
-<input id="regRef" placeholder="Referral код / автоматично от линка">
+<input id="regPin" placeholder="PIN">
+<input id="regRef" placeholder="Referral код">
+
 <button onclick="register()">РЕГИСТРАЦИЯ</button>
-<div id="regStatus" class="status"></div>
+
+<div id="loginStatus" class="status"></div>
+
 </div>
 
+<!-- LOBBY -->
 <div id="lobbyBox" class="hidden">
 
 <div class="hero">
+<div class="heroTop">
 <small id="welcomeText">Добре дошъл</small>
+</div>
 <h2>VIP Lobby 💎</h2>
 <div class="bal">Баланс: <span id="balanceText">0€</span></div>
 </div>
 
+<div class="bigWin">
+<span id="bigWinText">🔥 WIN BETT STEFAN +12€ 🔥</span>
+</div>
+
 <div class="ticker">
-<span id="tickerText">🔥 Добре дошли във VIP казиното · 🎁 Дневен бонус · 💰 Jackpot расте...</span>
+<span id="tickerText">Добре дошли в казиното 🎰</span>
 </div>
 
 <div class="quickGrid">
-<div class="banner bonusBanner" onclick="dailyBonus()">🎁 ДНЕВЕН БОНУС<br><small>+5€ веднъж на ден</small></div>
-<div class="banner jackpotBanner">💰 JACKPOT<br><span <div class="banner jackpotBanner">
-💰 JACKPOT<br>
-<span>12 500€</span>
+
+<div class="banner bonusBanner" onclick="dailyBonus()">
+🎁 БОНУС +5€
+</div>
+
+<div class="banner jackpotBanner">
+💰 JACKPOT 12 000€
 </div>
 
 <div class="banner winnerBanner">
-🏆 ПОСЛЕДЕН ПЕЧЕЛИВШ<br>
-<span id="topWinner">---</span>
+🏆 ТОП: <span id="topWinner"></span>
 </div>
 
 <div class="banner missionBanner">
-🎯 ПОКАНИ ПРИЯТЕЛ +5€
+🎯 ПОКАНИ ПРИЯТЕЛ
 </div>
 
 </div>
@@ -317,13 +428,13 @@ transition:.35s;
 
 <div class="gameCard vasa" onclick="openGame('VASA')">
 <div class="gameTitle">VASA</div>
-<div class="gameSub">Classic Slots</div>
+<div class="gameSub">Classic Slot</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
 <div class="gameCard didi" onclick="openGame('DIDI')">
 <div class="gameTitle">DIDI</div>
-<div class="gameSub">Hot Spins</div>
+<div class="gameSub">Fast Spin</div>
 <div class="playBtn">ИГРАЙ</div>
 </div>
 
@@ -344,7 +455,7 @@ transition:.35s;
 <div class="card">
 <div class="sectionTitle">💬 Чат</div>
 
-<div class="chat" id="chat"></div>
+<div id="chat" class="chat"></div>
 
 <div class="inputRow">
 <input id="msgInput" placeholder="пиши...">
@@ -363,22 +474,32 @@ transition:.35s;
 </div><script>
 
 const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
+const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXJhYmFzZSIsInJlZiI6InhqY3ZudHBscmJqc2FvemtkdXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3OTAzNzgsImV4cCI6MjA5MjM2NjM3OH0.R3-y_nHTDpXc0MCESafhS8XE-MtgE4-4V42ac7Z7gdo";
 
 let user=null;
 
-// 🔥 генерира чист код
 function makeRefCode(name){
 return name.replace(/\s+/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
 }
 
-// 🔗 линк
 function getInviteLink(){
 return location.origin + location.pathname + "?ref=" + user.ref_code;
 }
 
-// load players
+function getUrlRef(){
+let params=new URLSearchParams(window.location.search);
+return params.get("ref") || "";
+}
+
+function autoFillRef(){
+let ref=getUrlRef();
+if(ref){
+regRef.value=ref;
+}
+}
+
 loadPlayers();
+autoFillRef();
 
 async function loadPlayers(){
 let r=await fetch(URL+"players",{headers:{apikey:KEY}});
@@ -393,26 +514,27 @@ playerSelect.appendChild(o);
 });
 }
 
-// LOGIN
 async function login(){
 
-let r=await fetch(URL+"players?Name=eq."+playerSelect.value,{headers:{apikey:KEY}});
+let r=await fetch(URL+"players?Name=eq."+encodeURIComponent(playerSelect.value),{headers:{apikey:KEY}});
 let d=await r.json();
 
-if(!d[0] || String(d[0].Pin)!=pinInput.value){
+if(!d[0] || String(d[0].Pin).trim()!==pinInput.value.trim()){
 alert("Грешен PIN");
 return;
 }
 
 user=d[0];
 
-// auto ref ако няма
 if(!user.ref_code){
 user.ref_code=makeRefCode(user.Name);
 
-await fetch(URL+"players?Name=eq."+user.Name,{
+await fetch(URL+"players?Name=eq."+encodeURIComponent(user.Name),{
 method:"PATCH",
-headers:{apikey:KEY,"Content-Type":"application/json"},
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
 body:JSON.stringify({ref_code:user.ref_code})
 });
 }
@@ -420,27 +542,28 @@ body:JSON.stringify({ref_code:user.ref_code})
 loginBox.classList.add("hidden");
 lobbyBox.classList.remove("hidden");
 
-welcomeText.innerText="Здравей, "+user.Name;
+welcomeText.innerText=user.Name+" вече си в играта 🎰";
 balanceText.innerText=user.Points+"€";
-
 myLink.innerText=getInviteLink();
 
-sendSystem(user.Name+" влезе в казиното 🎰");
+sendSystem(user.Name+" вече е в играта 🎰");
 
 loadChat();
-setInterval(loadChat,2000);
 loadTop();
+loadLeaderboard();
+fakeWin();
+setInterval(loadChat,2000);
+setInterval(fakeWin,9000);
 }
 
-// REGISTER
 async function register(){
 
-let name=regName.value;
-let pin=regPin.value;
-let ref=regRef.value;
+let name=regName.value.trim();
+let pin=regPin.value.trim();
+let ref=regRef.value.trim();
 
 if(!name || !pin){
-alert("Попълни всичко");
+alert("Попълни име и PIN");
 return;
 }
 
@@ -448,7 +571,10 @@ let code=makeRefCode(name);
 
 await fetch(URL+"players",{
 method:"POST",
-headers:{apikey:KEY,"Content-Type":"application/json"},
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
 Name:name,
 Pin:pin,
@@ -458,16 +584,20 @@ ref_by:ref || null
 })
 });
 
-// referral бонус
 if(ref){
-let r=await fetch(URL+"players?ref_code=eq."+ref,{headers:{apikey:KEY}});
+let r=await fetch(URL+"players?ref_code=eq."+encodeURIComponent(ref),{headers:{apikey:KEY}});
 let d=await r.json();
 
 if(d[0]){
-await fetch(URL+"players?ref_code=eq."+ref,{
+let newPoints=Number(d[0].Points||0)+5;
+
+await fetch(URL+"players?ref_code=eq."+encodeURIComponent(ref),{
 method:"PATCH",
-headers:{apikey:KEY,"Content-Type":"application/json"},
-body:JSON.stringify({Points:d[0].Points+5})
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({Points:newPoints})
 });
 
 sendSystem(d[0].Name+" получи +5€ за покана 🎁");
@@ -478,43 +608,46 @@ alert("Регистрация успешна!");
 loadPlayers();
 }
 
-// бонус
 function dailyBonus(){
-user.Points+=5;
+if(!user)return;
+user.Points=Number(user.Points||0)+5;
 balanceText.innerText=user.Points+"€";
-sendSystem(user.Name+" взе +5€ бонус 🎁");
+sendSystem(user.Name+" взе дневен бонус +5€ 🎁");
+loadTop();
 }
 
-// чат
 async function sendMsg(){
-if(!msgInput.value)return;
+if(!msgInput.value.trim())return;
 
 await fetch(URL+"chat_messages",{
 method:"POST",
-headers:{apikey:KEY,"Content-Type":"application/json"},
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
 player_name:user.Name,
-message:msgInput.value
+message:msgInput.value.trim()
 })
 });
 
 msgInput.value="";
+loadChat();
 }
 
-// system
 async function sendSystem(t){
 await fetch(URL+"chat_messages",{
 method:"POST",
-headers:{apikey:KEY,"Content-Type":"application/json"},
+headers:{
+apikey:KEY,
+"Content-Type":"application/json"
+},
 body:JSON.stringify({
 player_name:"SYSTEM",
 message:t
 })
 });
-}
-
-// load chat
-async function loadChat(){
+}async function loadChat(){
 let r=await fetch(URL+"chat_messages?order=created_at.desc&limit=20",{headers:{apikey:KEY}});
 let d=await r.json();
 
@@ -522,9 +655,10 @@ chat.innerHTML="";
 d.reverse().forEach(x=>{
 chat.innerHTML+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
 });
+
+chat.scrollTop=chat.scrollHeight;
 }
 
-// top player
 async function loadTop(){
 let r=await fetch(URL+"players?order=Points.desc&limit=1",{headers:{apikey:KEY}});
 let d=await r.json();
@@ -534,12 +668,40 @@ topWinner.innerText=d[0].Name+" "+d[0].Points+"€";
 }
 }
 
-// game click
-function openGame(g){
-sendSystem(user.Name+" отвори "+g+" 🎮");
+async function loadLeaderboard(){
+let r=await fetch(URL+"players?order=Points.desc&limit=5",{headers:{apikey:KEY}});
+let d=await r.json();
+
+leaderboard.innerHTML="";
+
+d.forEach((p,i)=>{
+let medal=i===0?"🥇":i===1?"🥈":i===2?"🥉":"⭐";
+leaderboard.innerHTML+=`
+<div class="leaderRow">
+<span>${medal} ${p.Name}</span>
+<b>${p.Points}€</b>
+</div>`;
+});
 }
 
-// logout
+function fakeWin(){
+let names=["Stefan","Mariana","Marian","Mitko","Vasilka","Didi"];
+let games=["VASA","DIDI","MITKO"];
+let n=names[Math.floor(Math.random()*names.length)];
+let g=games[Math.floor(Math.random()*games.length)];
+let money=Math.floor(Math.random()*25)+5;
+
+bigWinText.innerText="🔥 WIN BETT "+n+" +"+money+"€ на "+g+" 🔥";
+tickerText.innerText=n+" спечели "+money+"€ · Jackpot расте · Покани приятел +5€";
+
+sendSystem("🔥 WIN BETT "+n+" +"+money+"€ на "+g);
+}
+
+function openGame(g){
+sendSystem(user.Name+" отвори "+g+" 🎮");
+alert("Следващата стъпка: тук ще вържем истинската игра "+g);
+}
+
 function logout(){
 location.reload();
 }
