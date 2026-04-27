@@ -3,103 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Didi Blitz FIXED</title>
+<title>Didi Blitz FINAL</title>
+
 <style>
-body{margin:0;font-family:Arial;background:radial-gradient(circle,#7d2cff,#001a4d,#000);color:#fff;text-align:center}
-.slot{max-width:420px;margin:auto;padding:10px}
-.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;background:#111;padding:10px;border-radius:15px;border:3px solid #00eaff}
-.cell{height:70px;background:#fff;color:#000;font-size:30px;display:flex;align-items:center;justify-content:center;border-radius:10px}
-.win{background:gold}
-button{padding:12px;font-weight:bold;border-radius:10px;border:none;margin:5px}
-.spin{background:red;color:#fff;font-size:20px}
+body{
+margin:0;
+font-family:Arial;
+background:radial-gradient(circle,#7d2cff,#001a4d,#000);
+color:#fff;
+text-align:center;
+}
+
+.slot{
+max-width:420px;
+margin:auto;
+padding:10px;
+}
+
+.reels{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:6px;
+background:#111;
+padding:10px;
+border-radius:15px;
+border:3px solid #00eaff;
+}
+
+.cell{
+height:70px;
+background:#fff;
+color:#000;
+font-size:30px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+font-weight:bold;
+}
+
+.win{
+background:gold;
+}
+
+button{
+padding:12px;
+font-weight:bold;
+border-radius:10px;
+border:none;
+margin:5px;
+cursor:pointer;
+}
+
+.spin{
+background:red;
+color:#fff;
+font-size:20px;
+}
 </style>
 </head>
+
 <body>
+
 <div class="slot">
 <h2>DIDI BLITZ</h2>
+
 <div id="reels" class="reels"></div>
+
 <p>Balance: <span id="bal">1000</span></p>
 <p>Win: <span id="win">0</span></p>
+
 <button class="spin" onclick="spin()">SPIN</button>
 </div>
+
 <script>
 const symbols=['🍒','🍋','🍊','🍇','🔔','⭐','💎','7️⃣','⚡'];
-let balance=1000,win=0;
-const reels=document.getElementById('reels');
 
-function rand(){return symbols[Math.floor(Math.random()*symbols.length)]}
+let balance=1000;
+let win=0;
 
-function draw(b){
-  reels.innerHTML='';
-  b.forEach(s=>{
-    let d=document.createElement('div');
-    d.className='cell';
-    d.textContent=s;
-    reels.appendChild(d);
-  });
+function rand(){
+return symbols[Math.floor(Math.random()*symbols.length)];
 }
 
-function weights(){return{lose:68,small:20,big:8,bonus:4}}
+function draw(board){
+const reels=document.getElementById('reels');
+reels.innerHTML='';
+board.forEach(s=>{
+let d=document.createElement('div');
+d.className='cell';
+d.textContent=s;
+reels.appendChild(d);
+});
+}
+
+function weights(){
+return{
+lose:65,
+small:20,
+big:10,
+bonus:5
+};
+}
 
 function outcome(){
-  let w=weights(),r=Math.random()*100;
-  if(r<w.bonus)return'bonus';
-  if(r<w.bonus+w.big)return'big';
-  if(r<w.bonus+w.big+w.small)return'small';
-  return'lose';
+let w=weights();
+let r=Math.random()*100;
+
+if(r<w.bonus)return'bonus';
+if(r<w.bonus+w.big)return'big';
+if(r<w.bonus+w.big+w.small)return'small';
+return'lose';
 }
 
-function loseBoard(){return Array.from({length:15},rand)}
+function loseBoard(){
+return Array.from({length:15},rand);
+}
 
 function winBoard(type){
-  let b=loseBoard();
-  let line=[0,1,2,3,4];
-  let sym=type==='big'?'💎':'⭐';
-  line.forEach(i=>b[i]=sym);
-  return b;
+let b=loseBoard();
+let line=[0,1,2,3,4];
+
+let sym= type==='big' ? '💎' : '⭐';
+line.forEach(i=>b[i]=sym);
+
+return b;
 }
 
 function bonusBoard(){
-  let b=loseBoard();
-  [0,3,7].forEach(i=>b[i]='⚡');
-  return b;
+let b=loseBoard();
+[0,3,7].forEach(i=>b[i]='⚡');
+return b;
 }
 
 function spin(){
-  if(balance<=0)return alert('No balance');
-  win=0;
-  balance--;
-
-  let out=outcome();
-  let b;
-
-  if(out==='bonus'){
-    b=bonusBoard();
-    win=20;
-  }
-  else if(out==='big'){
-    b=winBoard('big');
-    win=50;
-  }
-  else if(out==='small'){
-    b=winBoard('small');
-    win=5;
-  }
-  else{
-    b=loseBoard();
-  }
-
-  balance+=win;
-  draw(b);
-
-  document.getElementById('bal').textContent=balance;
-  document.getElementById('win').textContent=win;
+if(balance<=0){
+alert('No balance');
+return;
 }
 
-// ✅ FIXED INIT
-window.onload = () => {
-  draw(loseBoard());
-};
+win=0;
+balance--;
+
+let out=outcome();
+let board;
+
+if(out==='bonus'){
+board=bonusBoard();
+win=20;
+}
+else if(out==='big'){
+board=winBoard('big');
+win=50;
+}
+else if(out==='small'){
+board=winBoard('small');
+win=5;
+}
+else{
+board=loseBoard();
+}
+
+balance+=win;
+
+draw(board);
+
+document.getElementById('bal').textContent=balance;
+document.getElementById('win').textContent=win;
+}
+
+// ✅ гарантирано зареждане
+window.addEventListener('DOMContentLoaded', () => {
+draw(loseBoard());
+});
 </script>
+
 </body>
 </html>
