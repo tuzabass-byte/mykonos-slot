@@ -43,16 +43,13 @@ body::before{
   border-bottom:2px solid rgba(0,217,255,.4);
   backdrop-filter:blur(8px);
 }
-.logo{
-  font-size:34px;
-  font-weight:bold;
-}
+.logo{font-size:34px;font-weight:bold}
 .friends{color:#00d9ff;text-shadow:0 0 18px #00d9ff}
 .bet{color:#ff1b1b;text-shadow:0 0 18px red}
 .casino{color:gold;text-shadow:0 0 18px gold}
 .menu a,.menu button{
-  margin-left:10px;
-  padding:10px 15px;
+  margin-left:8px;
+  padding:10px 14px;
   border:0;
   border-radius:12px;
   background:#111;
@@ -62,17 +59,17 @@ body::before{
   box-shadow:0 0 12px rgba(0,217,255,.7);
 }
 .menu a:hover,.menu button:hover{transform:scale(1.06);color:#00d9ff}
+
 .ticker{
   width:100%;
   overflow:hidden;
   background:linear-gradient(90deg,#8b0000,#111,#004b7a);
   border-bottom:1px solid rgba(255,215,0,.4);
-  box-shadow:0 0 18px rgba(255,0,0,.5);
 }
 .ticker-track{
   white-space:nowrap;
   padding:12px 0;
-  animation:ticker 18s linear infinite;
+  animation:ticker 22s linear infinite;
   font-size:18px;
   font-weight:bold;
 }
@@ -80,6 +77,7 @@ body::before{
   0%{transform:translateX(100%)}
   100%{transform:translateX(-100%)}
 }
+
 .profile{
   text-align:center;
   padding:20px;
@@ -112,14 +110,14 @@ body::before{
   text-shadow:0 0 25px red;
 }
 .hero h1{
-  font-size:54px;
+  font-size:52px;
   margin:0;
   text-shadow:0 0 25px #00d9ff;
 }
 .hero p{
   font-size:22px;
   opacity:.85;
-  max-width:560px;
+  max-width:620px;
 }
 .main-btn{
   margin-top:18px;
@@ -134,6 +132,7 @@ body::before{
   box-shadow:0 0 25px red;
 }
 .main-btn:hover{transform:scale(1.08);box-shadow:0 0 45px red}
+
 .banners,.games{
   width:90%;
   max-width:1150px;
@@ -149,12 +148,37 @@ body::before{
   box-shadow:0 0 18px rgba(0,217,255,.25);
   transition:.3s;
 }
-.banner{padding:22px}
+.banner{
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.banner::after{
+  content:"";
+  position:absolute;
+  inset:-60%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);
+  transform:rotate(25deg);
+  transition:.6s;
+}
+.banner:hover::after{left:100%}
 .banner:hover,.card:hover{
   transform:translateY(-8px) scale(1.03);
   box-shadow:0 0 28px rgba(255,215,0,.5);
 }
-.banner h3{color:gold;margin:0}
+.banner h3{color:gold;margin:0;font-size:22px}
+.banner p{opacity:.85}
+.banner button{
+  margin-top:10px;
+  padding:10px 18px;
+  border:0;
+  border-radius:12px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 0 14px red;
+}
 .section-title{
   text-align:center;
   margin-top:45px;
@@ -182,14 +206,41 @@ body::before{
   font-weight:bold;
   box-shadow:0 0 20px red;
 }
+.promo-box{
+  width:90%;
+  max-width:850px;
+  margin:30px auto;
+  padding:25px;
+  border-radius:24px;
+  background:linear-gradient(145deg,#111,#1a1a38);
+  border:1px solid rgba(255,215,0,.35);
+  box-shadow:0 0 20px rgba(255,215,0,.25);
+  text-align:center;
+}
+.promo-box input{
+  width:70%;
+  max-width:360px;
+  padding:14px;
+  border:0;
+  border-radius:14px;
+  margin-top:10px;
+}
+.promo-box button{
+  padding:14px 22px;
+  border:0;
+  border-radius:14px;
+  background:red;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  margin-left:8px;
+}
 .chat-section{
   width:90%;
   max-width:850px;
   margin:40px auto;
 }
-.chat-box{
-  padding:22px;
-}
+.chat-box{padding:22px}
 .messages{
   height:220px;
   overflow-y:auto;
@@ -204,10 +255,7 @@ body::before{
   background:rgba(0,217,255,.12);
   border-radius:12px;
 }
-.chat-row{
-  display:flex;
-  gap:10px;
-}
+.chat-row{display:flex;gap:10px}
 .chat-row input{
   flex:1;
   padding:14px;
@@ -264,16 +312,23 @@ body::before{
 .footer{
   text-align:center;
   padding:30px;
-  opacity:.6;
+  opacity:.75;
+}
+.warning{
+  color:#ffd700;
+  font-size:14px;
+  margin-top:8px;
 }
 @media(max-width:850px){
   .navbar{flex-direction:column;gap:15px}
   .menu{text-align:center}
   .menu a,.menu button{margin:5px}
   .banners,.games{grid-template-columns:1fr}
-  .hero h1{font-size:38px}
+  .hero h1{font-size:36px}
   .hero::after{font-size:95px}
   .chat-row{flex-direction:column}
+  .promo-box input{width:100%}
+  .promo-box button{width:100%;margin:10px 0 0}
 }
 </style>
 </head>
@@ -288,106 +343,139 @@ body::before{
   </div>
 
   <div class="menu">
-    <a href="#home">Home</a>
-    <a href="#slots">Slots</a>
-    <a href="#bonus">Bonus</a>
-    <a href="#chat">Chat</a>
-    <button onclick="openModal('loginModal')">Login</button>
-    <button onclick="openModal('registerModal')">Register</button>
-    <button onclick="logout()">Logout</button>
+    <a href="#home">Начало</a>
+    <a href="#bonus">Бонуси</a>
+    <a href="#slots">Игри</a>
+    <a href="#chat">Чат</a>
+    <button onclick="openModal('loginModal')">Вход</button>
+    <button onclick="openModal('registerModal')">Регистрация</button>
+    <button onclick="logout()">Изход</button>
   </div>
 </div>
 
 <div class="ticker">
   <div class="ticker-track" id="movingBanner">
-    🎰 Добре дошъл в Friends Bet Casino! 🔥 Вземи своя бонус и влез в играта! 👑
+    🎰 Добре дошъл във Friends Bet Casino! 🎁 Вземи welcome бонус • 🔥 Дневен бонус • 👥 Покани приятел и вземи 5 € demo бонус • 🎟️ Промо код: FRIENDS5
   </div>
 </div>
 
 <div class="profile">
-  <div id="userInfo">Not logged in</div>
-  <div id="balanceInfo">Balance: 0 Credits</div>
+  <div id="userInfo">Не си влязъл в профила</div>
+  <div id="balanceInfo">Баланс: 0 кредита</div>
 </div>
 
 <section class="hero" id="home">
-  <h1 id="welcomeTitle">Welcome Bonus</h1>
-  <p id="welcomeText">Start with 10,000 demo credits and enjoy the Friends Bet Casino experience.</p>
-  <button class="main-btn" onclick="claimBonus()">CLAIM BONUS</button>
+  <h1 id="welcomeTitle">Добре дошъл бонус</h1>
+  <p id="welcomeText">Регистрирай се и вземи 10 000 demo кредита + безплатни игри за старт.</p>
+  <button class="main-btn" onclick="claimWelcomeBonus()">ВЗЕМИ БОНУСА</button>
 </section>
 
-<div class="banners" id="bonus">
+<h2 class="section-title" id="bonus">Бонуси и промоции</h2>
+
+<div class="banners">
   <div class="banner">
-    <h3>🎁 Daily Bonus</h3>
-    <p>Get free demo credits every day.</p>
+    <h3>🎁 Welcome бонус</h3>
+    <p>10 000 demo кредита + 20 безплатни игри при първа регистрация.</p>
+    <button onclick="claimWelcomeBonus()">Вземи</button>
   </div>
+
   <div class="banner">
-    <h3>🔥 Hot Slots</h3>
-    <p>Play the most exciting games first.</p>
+    <h3>🔥 Дневен бонус</h3>
+    <p>Всеки ден можеш да вземеш 1 000 demo кредита за игра.</p>
+    <button onclick="claimDailyBonus()">Вземи днес</button>
   </div>
+
   <div class="banner">
-    <h3>👑 VIP Club</h3>
-    <p>Unlock special casino style rewards.</p>
+    <h3>💳 Бонус при депозит</h3>
+    <p>Demo оферта: +50% бонус при депозит в кредити.</p>
+    <button onclick="demoDepositBonus()">Demo депозит</button>
+  </div>
+
+  <div class="banner">
+    <h3>🎟️ Безплатни игри</h3>
+    <p>Активирай 10 free spins за избрана слот игра.</p>
+    <button onclick="claimFreeSpins()">Вземи free spins</button>
+  </div>
+
+  <div class="banner">
+    <h3>👥 Покани приятел</h3>
+    <p>Покани приятел с твоя промо код и вземи 5 € demo бонус.</p>
+    <button onclick="inviteFriend()">Покани</button>
+  </div>
+
+  <div class="banner">
+    <h3>👑 VIP клуб</h3>
+    <p>Събирай кредити и отключвай VIP награди в сайта.</p>
+    <button onclick="vipInfo()">Виж VIP</button>
   </div>
 </div>
 
-<h2 class="section-title" id="slots">Choose Your Game</h2>
+<div class="promo-box">
+  <h2>🎟️ Въведи промо код</h2>
+  <p>Пробвай код: <b>FRIENDS5</b></p>
+  <input id="promoInput" placeholder="Напиши промо код">
+  <button onclick="usePromoCode()">Активирай</button>
+</div>
+
+<h2 class="section-title" id="slots">Избери игра</h2>
 
 <div class="games">
   <div class="card">
     <div class="icon">🎰</div>
     <h3>Vasa Fortune</h3>
-    <p>Coming soon</p>
-    <div class="play">PLAY NOW</div>
+    <p>Очаквайте скоро</p>
+    <div class="play">ИГРАЙ</div>
   </div>
 
   <div class="card">
     <div class="icon">⚡</div>
     <h3>Didi Blitz</h3>
-    <p>Coming soon</p>
-    <div class="play">PLAY NOW</div>
+    <p>Очаквайте скоро</p>
+    <div class="play">ИГРАЙ</div>
   </div>
 
   <div class="card">
     <div class="icon">🔔</div>
     <h3>Mitko Koch Bells</h3>
-    <p>Coming soon</p>
-    <div class="play">PLAY NOW</div>
+    <p>Очаквайте скоро</p>
+    <div class="play">ИГРАЙ</div>
   </div>
 </div>
 
 <section class="chat-section" id="chat">
-  <h2 class="section-title">Casino Chat</h2>
+  <h2 class="section-title">Казино чат</h2>
   <div class="chat-box">
     <div class="messages" id="messages"></div>
     <div class="chat-row">
-      <input id="chatInput" placeholder="Write message...">
-      <button onclick="sendMessage()">Send</button>
+      <input id="chatInput" placeholder="Напиши съобщение...">
+      <button onclick="sendMessage()">Изпрати</button>
     </div>
   </div>
 </section>
 
 <div class="footer">
-  Friends Bet Casino • Demo Casino • Just for Fun
+  Friends Bet Casino • Демо казино • Без реални пари • Само за забавление
+  <div class="warning">Този сайт е demo проект. Няма реални депозити, тегления или хазарт с истински пари.</div>
 </div>
 
 <div class="modal" id="loginModal">
   <div class="box">
-    <h2>Login</h2>
-    <input id="loginEmail" type="email" placeholder="Email">
-    <input id="loginPassword" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button class="close" onclick="closeModal('loginModal')">Close</button>
+    <h2>Вход</h2>
+    <input id="loginEmail" type="email" placeholder="Имейл">
+    <input id="loginPassword" type="password" placeholder="Парола">
+    <button onclick="login()">Влез</button>
+    <button class="close" onclick="closeModal('loginModal')">Затвори</button>
   </div>
 </div>
 
 <div class="modal" id="registerModal">
   <div class="box">
-    <h2>Register</h2>
-    <input id="regName" type="text" placeholder="Your name">
-    <input id="regEmail" type="email" placeholder="Email">
-    <input id="regPassword" type="password" placeholder="Password">
-    <button onclick="register()">Create Account</button>
-    <button class="close" onclick="closeModal('registerModal')">Close</button>
+    <h2>Регистрация</h2>
+    <input id="regName" type="text" placeholder="Твоето име">
+    <input id="regEmail" type="email" placeholder="Имейл">
+    <input id="regPassword" type="password" placeholder="Парола">
+    <button onclick="register()">Създай профил</button>
+    <button class="close" onclick="closeModal('registerModal')">Затвори</button>
   </div>
 </div>
 
@@ -420,28 +508,50 @@ function closeModal(id){
   document.getElementById(id).style.display = "none";
 }
 
+function todayKey(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function requireLogin(){
+  const email = getCurrentUser();
+  if(!email){
+    alert("Първо влез в профила си.");
+    openModal("loginModal");
+    return null;
+  }
+  return email;
+}
+
 function register(){
   const name = document.getElementById("regName").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value.trim();
 
   if(!name || !email || !password){
-    alert("Enter name, email and password");
+    alert("Попълни име, имейл и парола.");
     return;
   }
 
   const users = getUsers();
 
   if(users[email]){
-    alert("This account already exists");
+    alert("Този профил вече съществува.");
     return;
   }
+
+  const personalPromo = "FRIEND-" + name.toUpperCase().replace(/\s/g,"").slice(0,6);
 
   users[email] = {
     name: name,
     password: password,
     balance: 10000,
-    bonusClaimed: false
+    freeSpins: 20,
+    welcomeClaimed: true,
+    dailyBonusDate: "",
+    promoUsed: false,
+    inviteBonusClaimed: false,
+    promoCode: personalPromo,
+    vipLevel: 1
   };
 
   saveUsers(users);
@@ -449,7 +559,7 @@ function register(){
 
   closeModal("registerModal");
   updateUI();
-  alert("Account created! You received 10,000 demo credits.");
+  alert("Профилът е създаден! Получи 10 000 кредита + 20 безплатни игри.");
 }
 
 function login(){
@@ -459,14 +569,14 @@ function login(){
   const users = getUsers();
 
   if(!users[email] || users[email].password !== password){
-    alert("Wrong email or password");
+    alert("Грешен имейл или парола.");
     return;
   }
 
   localStorage.setItem("friendsBetCurrentUser", email);
   closeModal("loginModal");
   updateUI();
-  alert("Logged in successfully");
+  alert("Успешен вход.");
 }
 
 function logout(){
@@ -474,28 +584,128 @@ function logout(){
   updateUI();
 }
 
-function claimBonus(){
-  const email = getCurrentUser();
-
-  if(!email){
-    alert("Please login first");
-    openModal("loginModal");
-    return;
-  }
+function claimWelcomeBonus(){
+  const email = requireLogin();
+  if(!email) return;
 
   const users = getUsers();
 
-  if(users[email].bonusClaimed){
-    alert("Bonus already claimed");
+  if(users[email].welcomeClaimed){
+    alert("Welcome бонусът вече е взет.");
     return;
   }
 
   users[email].balance += 10000;
-  users[email].bonusClaimed = true;
+  users[email].freeSpins += 20;
+  users[email].welcomeClaimed = true;
 
   saveUsers(users);
   updateUI();
-  alert("Bonus claimed! +10,000 credits");
+  alert("Взе welcome бонус: +10 000 кредита и +20 безплатни игри.");
+}
+
+function claimDailyBonus(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const users = getUsers();
+  const today = todayKey();
+
+  if(users[email].dailyBonusDate === today){
+    alert("Дневният бонус вече е взет днес.");
+    return;
+  }
+
+  users[email].balance += 1000;
+  users[email].dailyBonusDate = today;
+
+  saveUsers(users);
+  updateUI();
+  alert("Взе дневен бонус: +1 000 кредита.");
+}
+
+function demoDepositBonus(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const users = getUsers();
+  const demoDeposit = 5000;
+  const bonus = 2500;
+
+  users[email].balance += demoDeposit + bonus;
+
+  saveUsers(users);
+  updateUI();
+  alert("Demo депозит: +5 000 кредита. Бонус +50%: +2 500 кредита.");
+}
+
+function claimFreeSpins(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const users = getUsers();
+
+  users[email].freeSpins += 10;
+
+  saveUsers(users);
+  updateUI();
+  alert("Получаваш 10 безплатни игри.");
+}
+
+function inviteFriend(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const users = getUsers();
+  const code = users[email].promoCode || "FRIENDS5";
+
+  alert("Твоят промо код е: " + code + "\\nКогато приятел го използва, взимаш 5 € demo бонус.");
+}
+
+function vipInfo(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const users = getUsers();
+  const balance = users[email].balance;
+
+  let level = 1;
+  if(balance >= 50000) level = 3;
+  else if(balance >= 25000) level = 2;
+
+  users[email].vipLevel = level;
+  saveUsers(users);
+  updateUI();
+
+  alert("Твоето VIP ниво е: " + level + "\\nКолкото повече demo кредити имаш, толкова по-висок VIP статус.");
+}
+
+function usePromoCode(){
+  const email = requireLogin();
+  if(!email) return;
+
+  const code = document.getElementById("promoInput").value.trim().toUpperCase();
+  const users = getUsers();
+
+  if(!code){
+    alert("Въведи промо код.");
+    return;
+  }
+
+  if(users[email].promoUsed){
+    alert("Вече си използвал промо код.");
+    return;
+  }
+
+  if(code === "FRIENDS5" || code.startsWith("FRIEND-")){
+    users[email].balance += 5000;
+    users[email].promoUsed = true;
+    saveUsers(users);
+    updateUI();
+    alert("Промо кодът е активиран: +5 000 demo кредита.");
+  } else {
+    alert("Невалиден промо код.");
+  }
 }
 
 function sendMessage(){
@@ -504,7 +714,7 @@ function sendMessage(){
   const text = input.value.trim();
 
   if(!email){
-    alert("Please login to use chat");
+    alert("Влез в профила, за да пишеш в чата.");
     openModal("loginModal");
     return;
   }
@@ -531,7 +741,7 @@ function renderMessages(){
   const messages = getMessages();
 
   if(messages.length === 0){
-    box.innerHTML = '<div class="msg">🎰 Welcome to the casino chat!</div>';
+    box.innerHTML = '<div class="msg">🎰 Добре дошли в казино чата!</div>';
     return;
   }
 
@@ -547,28 +757,32 @@ function updateUI(){
   const users = getUsers();
 
   if(email && users[email]){
-    const name = users[email].name || email;
+    const u = users[email];
+    const name = u.name || email;
 
-    document.getElementById("userInfo").innerText = "Добре дошъл, " + name;
+    document.getElementById("userInfo").innerText =
+      "Добре дошъл, " + name + " • VIP ниво " + (u.vipLevel || 1);
+
     document.getElementById("balanceInfo").innerText =
-      "Balance: " + users[email].balance + " Credits";
+      "Баланс: " + u.balance + " кредита • Безплатни игри: " + (u.freeSpins || 0);
 
     document.getElementById("welcomeTitle").innerText =
       "Добре дошъл, " + name + "!";
 
     document.getElementById("welcomeText").innerText =
-      "Ти вече си в играта. Вземи бонуса си и избери слот.";
+      "Ти вече си в играта. Провери бонусите, използвай промо код и избери слот.";
 
     document.getElementById("movingBanner").innerText =
-      "🎰 Добре дошъл, " + name + "! 🔥 Ти вече си в играта! 🎁 Вземи своя бонус днес! 👑 Friends Bet Casino";
+      "🎰 Добре дошъл, " + name + "! 🔥 Дневен бонус те чака • 🎟️ Промо код FRIENDS5 • 👥 Покани приятел с код " + (u.promoCode || "FRIENDS5") + " и вземи 5 € demo бонус!";
   } else {
-    document.getElementById("userInfo").innerText = "Not logged in";
-    document.getElementById("balanceInfo").innerText = "Balance: 0 Credits";
-    document.getElementById("welcomeTitle").innerText = "Welcome Bonus";
+    document.getElementById("userInfo").innerText = "Не си влязъл в профила";
+    document.getElementById("balanceInfo").innerText = "Баланс: 0 кредита";
+    document.getElementById("welcomeTitle").innerText = "Добре дошъл бонус";
     document.getElementById("welcomeText").innerText =
-      "Start with 10,000 demo credits and enjoy the Friends Bet Casino experience.";
+      "Регистрирай се и вземи 10 000 demo кредита + безплатни игри за старт.";
+
     document.getElementById("movingBanner").innerText =
-      "🎰 Добре дошъл в Friends Bet Casino! 🔥 Вземи своя бонус и влез в играта! 👑";
+      "🎰 Добре дошъл във Friends Bet Casino! 🎁 Welcome бонус • 🔥 Дневен бонус • 👥 Покани приятел и вземи 5 € demo бонус • 🎟️ Промо код: FRIENDS5";
   }
 
   renderMessages();
