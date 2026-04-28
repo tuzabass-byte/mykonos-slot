@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mykonos Casino Luxury</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+color:white;
+background:
+linear-gradient(rgba(0,0,0,.72),rgba(0,0,0,.95)),
+url("https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=1600&q=80");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+}
+
+.app{max-width:1180px;margin:auto;padding:20px}
+
+.logo{
+text-align:center;
+font-size:54px;
+font-weight:900;
+color:#ffd21f;
+text-shadow:0 0 10px red,0 0 28px gold,0 0 45px #00eaff;
+}
+
+.subLogo{
+text-align:center;
+font-size:22px;
+font-weight:900;
+color:#55dfff;
+letter-spacing:4px;
+margin-bottom:18px;
+}
+
+.topUserBar{
+display:none;
+margin:0 auto 18px;
+max-width:850px;
+background:linear-gradient(135deg,rgba(255,211,31,.18),rgba(0,0,0,.78));
+border:2px solid #d99b00;
+border-radius:20px;
+padding:14px 18px;
+box-shadow:0 0 25px rgba(255,190,0,.35);
+align-items:center;
+justify-content:space-between;
+gap:12px;
+}
+
+.topUserBar.active{display:flex}
+
+.topUserName{
+font-size:20px;
+font-weight:900;
+color:#ffd21f;
+}
+
+.topUserBalance{
+font-size:24px;
+font-weight:900;
+color:#fff000;
+text-shadow:0 0 10px red;
+}
+
+.loginOpenBtn{
+max-width:320px;
+margin:0 auto 18px;
+display:block;
+font-size:20px;
+padding:16px;
+border-radius:999px;
+background:linear-gradient(135deg,#fff06b,#ffb000,#ff4b00);
+box-shadow:0 0 20px rgba(255,190,0,.6);
+}
+
+.layout{
+display:grid;
+grid-template-columns:1fr;
+gap:18px;
+}
+
+.card{
+background:rgba(0,0,0,.78);
+border:2px solid #d99b00;
+border-radius:18px;
+padding:18px;
+box-shadow:0 0 25px rgba(255,190,0,.35);
+}
+
+input,select,button{
+width:100%;
+padding:14px;
+margin:8px 0;
+border-radius:10px;
+font-size:16px;
+}
+
+input,select{
+background:#080808;
+color:white;
+border:1px solid #777;
+}
+
+button{
+border:none;
+background:linear-gradient(#ffe45c,#ffb000);
+font-weight:900;
+cursor:pointer;
+color:#111;
+}
+
+button:active{transform:scale(.97)}
+
+.status{
+text-align:center;
+color:#ffe45c;
+font-weight:bold;
+min-height:22px;
+}
+
+.hero{
+background:
+linear-gradient(90deg,rgba(255,80,0,.9),rgba(255,0,70,.75)),
+url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80");
+background-size:cover;
+background-position:center;
+border:2px solid #d99b00;
+border-radius:18px;
+padding:28px;
+text-align:center;
+box-shadow:0 0 20px rgba(255,150,0,.45);
+}
+
+.hero h2{font-size:40px;margin:0 0 10px}
+
+.balance{
+font-size:52px;
+font-weight:900;
+color:#fff000;
+text-shadow:0 0 12px red;
+}
+
+.live{
+margin-top:14px;
+text-align:center;
+border:2px solid #d99b00;
+border-radius:18px;
+padding:14px;
+background:rgba(0,0,0,.75);
+}
+
+.live h3{margin:0 0 10px;color:#ffcc00;font-size:26px}
+
+.liveBox{
+border:1px solid red;
+box-shadow:0 0 18px red inset,0 0 12px red;
+border-radius:10px;
+padding:13px;
+color:#fff000;
+font-size:22px;
+font-weight:900;
+overflow:hidden;
+white-space:nowrap;
+}
+
+.liveBox span{
+display:inline-block;
+padding-left:100%;
+animation:moveText 14s linear infinite;
+}
+
+@keyframes moveText{
+from{transform:translateX(0)}
+to{transform:translateX(-100%)}
+}
+
+.quickGrid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px;
+margin-top:16px;
+}
+
+.banner{
+min-height:150px;
+border-radius:16px;
+border:2px solid;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+font-size:25px;
+font-weight:900;
+cursor:pointer;
+transition:.2s;
+}
+
+.banner:hover{
+transform:translateY(-3px) scale(1.02);
+filter:brightness(1.15);
+}
+
+.bonus{border-color:#00eaff;background:linear-gradient(135deg,#002b36,#008eaa)}
+.jackpot{border-color:#ffb000;background:linear-gradient(135deg,#2d1500,#5c3700)}
+.top{border-color:#d600ff;background:linear-gradient(135deg,#22002a,#310050)}
+.invite{border-color:#39ff14;background:linear-gradient(135deg,#002400,#0a4a00)}
+
+.gamePanel{margin-top:16px}
+.gamePanel h2{text-align:center;color:#ffcc00;margin-top:0}
+
+.gameCard{
+border:2px solid #d99b00;
+border-radius:18px;
+padding:0;
+overflow:hidden;
+background:#090909;
+box-shadow:0 0 22px rgba(255,170,0,.4);
+}
+
+.gameArt{
+height:330px;
+background:
+radial-gradient(circle at 50% 45%,rgba(255,210,0,.45),transparent 20%),
+linear-gradient(135deg,#1b0050,#4b001c 45%,#120000);
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+}
+
+.gameArt:before{
+content:"🍇 🍎 👑 7 ⭐";
+position:absolute;
+top:25px;
+font-size:55px;
+letter-spacing:18px;
+filter:drop-shadow(0 0 12px red);
+}
+
+.slotLogo{
+margin-top:60px;
+padding:20px 40px;
+border:3px solid #ffcc00;
+background:linear-gradient(#701000,#210000);
+box-shadow:0 0 25px red,0 0 40px gold;
+font-size:52px;
+font-weight:900;
+color:#ffd44d;
+text-align:center;
+text-shadow:0 0 10px red;
+border-radius:12px;
+}
+
+.gameSub{
+text-align:center;
+font-size:22px;
+font-weight:900;
+color:#ffc1ff;
+padding-bottom:18px;
+margin-top:-38px;
+position:relative;
+z-index:2;
+}
+
+.playMain{
+max-width:360px;
+margin:14px auto 0;
+display:block;
+font-size:24px;
+padding:18px;
+}
+
+.activity{margin-top:16px}
+.activity h2{text-align:center;color:#ffcc00;margin:0 0 10px}
+
+.activityBox{
+height:115px;
+background:#030303;
+border:1px solid #ffcc00;
+border-radius:10px;
+padding:12px;
+overflow:auto;
+box-shadow:0 0 14px rgba(255,204,0,.25) inset;
+}
+
+.activityItem{
+margin:6px 0;
+font-size:16px;
+color:#ffe45c;
+font-weight:800;
+}
+
+.chat{margin-top:16px}
+.chat h2{text-align:center;color:#ffcc00;margin:0 0 10px}
+
+.chatBox{
+height:155px;
+background:#030303;
+border:1px solid #555;
+border-radius:10px;
+padding:12px;
+overflow:auto;
+}
+
+.msg{margin:6px 0;font-size:16px}
+.name{color:#ffcc00;font-weight:900}
+
+.inputRow{
+display:flex;
+gap:10px;
+margin-top:12px;
+}
+
+.inputRow input{margin:0;flex:1}
+.inputRow button{width:140px;margin:0}
+
+.refBox{
+margin-top:16px;
+text-align:center;
+}
+
+.refLink{
+background:#050505;
+border:1px solid #777;
+border-radius:8px;
+padding:13px;
+color:#00d9ff;
+word-break:break-all;
+}
+
+.logout{
+background:linear-gradient(#ff1010,#920000);
+color:white;
+font-size:24px;
+margin-top:16px;
+}
+
+/* LOGIN MODAL */
+.loginModal{
+display:none;
+position:fixed;
+inset:0;
+z-index:999;
+background:rgba(0,0,0,.82);
+backdrop-filter:blur(7px);
+align-items:center;
+justify-content:center;
+padding:18px;
+}
+
+.loginModal.active{display:flex}
+
+.loginLuxuryBox{
+width:min(440px,96vw);
+background:
+radial-gradient(circle at top,rgba(255,210,31,.20),transparent 28%),
+linear-gradient(180deg,#0a0a0a,#020202);
+border:2px solid #ffd21f;
+border-radius:26px;
+box-shadow:0 0 35px rgba(255,210,31,.45),0 0 70px rgba(255,0,0,.22);
+padding:24px;
+position:relative;
+overflow:hidden;
+}
+
+.loginLuxuryBox:before{
+content:"";
+position:absolute;
+inset:-120px;
+background:conic-gradient(transparent,#ffd21f,transparent,#ff2a00,transparent);
+opacity:.14;
+animation:rotateGlow 7s linear infinite;
+}
+
+.modalContent{position:relative;z-index:2}
+
+.modalClose{
+position:absolute;
+top:12px;
+right:12px;
+width:42px;
+height:42px;
+border-radius:50%;
+margin:0;
+padding:0;
+background:linear-gradient(#ff3030,#850000);
+color:white;
+z-index:3;
+}
+
+.modalTitle{
+font-size:30px;
+font-weight:900;
+color:#ffd21f;
+text-align:center;
+text-shadow:0 0 12px red,0 0 24px gold;
+margin-bottom:12px;
+}
+
+.modalLine{
+height:1px;
+background:linear-gradient(90deg,transparent,#ffd21f,transparent);
+margin:18px 0;
+}
+
+.hidden{display:none!important}
+
+/* INVITE CASINO POPUP */
+.inviteModal{
+display:none;
+position:fixed;
+inset:0;
+z-index:999;
+background:rgba(0,0,0,.82);
+backdrop-filter:blur(6px);
+align-items:center;
+justify-content:center;
+padding:18px;
+}
+
+.inviteModal.active{display:flex}
+
+.inviteBox{
+width:min(520px,96vw);
+border:2px solid #ffd21f;
+border-radius:26px;
+background:
+radial-gradient(circle at top,#143d22 0%,#071006 38%,#030303 100%);
+box-shadow:0 0 35px rgba(57,255,20,.45),0 0 55px rgba(255,210,31,.25);
+padding:24px;
+text-align:center;
+position:relative;
+overflow:hidden;
+}
+
+.inviteBox:before{
+content:"";
+position:absolute;
+inset:-80px;
+background:conic-gradient(from 0deg,transparent,#39ff14,transparent,#ffd21f,transparent);
+animation:rotateGlow 6s linear infinite;
+opacity:.18;
+}
+
+@keyframes rotateGlow{to{transform:rotate(360deg)}}
+
+.inviteContent{position:relative;z-index:2}
+
+.inviteClose{
+position:absolute;
+top:12px;
+right:12px;
+width:42px;
+height:42px;
+border-radius:50%;
+margin:0;
+padding:0;
+background:linear-gradient(#ff3030,#850000);
+color:white;
+z-index:3;
+}
+
+.inviteTitle{
+font-size:34px;
+font-weight:900;
+color:#ffd21f;
+text-shadow:0 0 12px red,0 0 24px gold;
+margin:6px 0;
+}
+
+.invitePrize{
+font-size:28px;
+font-weight:900;
+color:#39ff14;
+text-shadow:0 0 12px #39ff14;
+margin:12px 0;
+}
+
+.inviteText{
+font-size:17px;
+color:#eee;
+line-height:1.4;
+margin-bottom:16px;
+}
+
+.inviteLinkBox{
+background:#020202;
+border:1px solid #39ff14;
+border-radius:14px;
+padding:14px;
+color:#00eaff;
+font-size:16px;
+word-break:break-all;
+box-shadow:0 0 14px rgba(57,255,20,.25) inset;
+margin:12px 0;
+}
+
+.inviteButtons{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:14px;
+}
+
+.copyBtn{background:linear-gradient(#ffe45c,#ffb000);color:#111}
+.whatsappBtn{background:linear-gradient(#39ff14,#0b8f00);color:#021400}
+.shareBtn{background:linear-gradient(#00eaff,#0066ff);color:white}
+
+.playMain.loading{
+pointer-events:none;
+opacity:.85;
+filter:brightness(1.2);
+}
+
+.playMain.loading:after{
+content:" ...";
+animation:dots 1s infinite;
+}
+
+@keyframes dots{
+0%{content:" ..."}
+33%{content:" .."}
+66%{content:" ."}
+100%{content:" ..."}
+}
+
+.smallNote{
+font-size:13px;
+color:#bbb;
+margin-top:12px;
+}
+
+@media(max-width:850px){
+.logo{font-size:36px}
+.subLogo{font-size:17px}
+.quickGrid{grid-template-columns:1fr 1fr}
+.hero h2{font-size:28px}
+.balance{font-size:38px}
+.gameArt{height:260px}
+.slotLogo{font-size:34px}
+.inviteButtons{grid-template-columns:1fr}
+.topUserBar{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="logo">🎰 MYKONOS CASINO</div>
+<div class="subLogo">FINAL VERSION</div>
+
+<div id="topUserBar" class="topUserBar">
+<div class="topUserName" id="topUserName">Гост</div>
+<div class="topUserBalance" id="topUserBalance">0€</div>
+</div>
+
+<button id="loginOpenBtn" class="loginOpenBtn" onclick="openLoginPopup()">🔐 ВХОД / РЕГИСТРАЦИЯ</button>
+
+<div class="layout" id="layout">
+
+<div id="mainBox">
+
+<div class="hero">
+<h2 id="welcomeText">Добре дошъл</h2>
+<div class="balance">Баланс: <span id="balanceText">0€</span></div>
+</div>
+
+<div class="live">
+<h3>🔥 LIVE WINS</h3>
+<div class="liveBox"><span id="liveWinText">Добре дошли в Mykonos Casino! 🎰</span></div>
+</div>
+
+<div class="quickGrid">
+<div class="banner bonus" onclick="dailyBonus()">🎁<br>ДНЕВЕН<br>БОНУС<br>+5€</div>
+<div class="banner jackpot">👑<br>JACKPOT<br>12 000€</div>
+<div class="banner top">🏆<br>ТОП<br><span id="topWinner">---</span></div>
+<div class="banner invite" onclick="openInvitePopup()">👥<br>ПОКАНИ<br>ПРИЯТЕЛ<br>+5€</div>
+</div>
+
+<div class="card gamePanel">
+<h2>🎮 ИГРА</h2>
+
+<div class="gameCard">
+<div class="gameArt">
+<div class="slotLogo">FRIENDS<br>SLOT</div>
+</div>
+<div class="gameSub">5×3 | WILD | SCATTER | JACKPOT</div>
+</div>
+
+<button class="playMain" onclick="openGame()">ИГРАЙ СЕГА</button>
+</div>
+
+<div class="card activity">
+<h2>📢 АКТИВНОСТИ</h2>
+<div id="activityBox" class="activityBox">
+<div class="activityItem">🎰 Добре дошъл в Mykonos Casino!</div>
+</div>
+</div>
+
+<div class="card chat">
+<h2>💬 ЧАТ ЗА ПРИЯТЕЛИ</h2>
+<div id="chat" class="chatBox">
+<div class="msg"><span class="name">SYSTEM:</span> Чатът е само за съобщения между играчи.</div>
+</div>
+
+<div class="inputRow">
+<input id="msgInput" placeholder="пиши на приятелите...">
+<button onclick="sendMsg()">SEND</button>
+</div>
+</div>
+
+<div class="card refBox">
+<h2>🔗 Твоят линк</h2>
+<div class="refLink" id="myLink">---</div>
+</div>
+
+<button class="logout" onclick="logout()">ИЗХОД ⎋</button>
+
+</div>
+</div>
+</div>
+
+<div class="loginModal" id="loginModal" onclick="closeLoginByBg(event)">
+<div class="loginLuxuryBox">
+<button class="modalClose" onclick="closeLoginPopup()">×</button>
+<div class="modalContent">
+<div class="modalTitle">🔐 ВХОД</div>
+<select id="playerSelect"></select>
+<input id="pinInput" placeholder="PIN">
+<button onclick="login()">ВЛЕЗ</button>
+
+<div class="modalLine"></div>
+
+<div class="modalTitle">🆕 РЕГИСТРАЦИЯ</div>
+<input id="regName" placeholder="Име">
+<input id="regPin" placeholder="PIN">
+<input id="regRef" placeholder="Referral код">
+<button onclick="register()">РЕГИСТРАЦИЯ</button>
+
+<div id="loginStatus" class="status">status</div>
+</div>
+</div>
+</div>
+
+<div class="inviteModal" id="inviteModal" onclick="closeInviteByBg(event)">
+<div class="inviteBox">
+<button class="inviteClose" onclick="closeInvitePopup()">×</button>
+<div class="inviteContent">
+<div class="inviteTitle">👥 ПОКАНИ ПРИЯТЕЛ</div>
+<div class="invitePrize">ВЗЕМИ +5€ БОНУС</div>
+<div class="inviteText">
+Изпрати своя специален линк. Когато приятел се регистрира чрез него, ти получаваш <b>+5€</b>.
+</div>
+<div class="inviteLinkBox" id="invitePopupLink">---</div>
+<div class="inviteButtons">
+<button class="copyBtn" onclick="copyInviteLink()">📋 КОПИРАЙ ЛИНКА</button>
+<button class="whatsappBtn" onclick="shareWhatsApp()">🟢 WHATSAPP</button>
+<button class="shareBtn" onclick="nativeShare()">📲 СПОДЕЛИ</button>
+<button onclick="closeInvitePopup()">✅ ГОТОВО</button>
+</div>
+<div class="smallNote">Новият играч трябва да се регистрира през твоя линк, за да се отчете бонусът.</div>
+</div>
+</div>
+</div>
+
+<script>
+const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const KEY="sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+
+let user=null;
+
+function headers(){
+return {
+apikey:KEY,
+Authorization:"Bearer "+KEY,
+"Content-Type":"application/json"
+};
+}
+
+async function api(path,options={}){
+let r=await fetch(URL+path,{
+...options,
+headers:{...headers(),...(options.headers||{})}
+});
+
+if(!r.ok){
+console.log(await r.text());
+throw new Error("Supabase error");
+}
+
+if(r.status===204)return null;
+return await r.json();
+}
+
+function money(v){return Number(v||0).toFixed(0)+"€"}
+
+function makeRefCode(name){
+return name.replace(/\s+/g,"").toUpperCase()+Math.floor(100+Math.random()*900);
+}
+
+function inviteLink(){
+if(!user || !user.ref_code)return "---";
+return location.origin+location.pathname+"?ref="+encodeURIComponent(user.ref_code);
+}
+
+function urlRef(){
+let p=new URLSearchParams(location.search);
+return p.get("ref") || "";
+}
+
+function autoReferral(){
+let ref=urlRef();
+if(ref) regRef.value=ref;
+}
+
+function openLoginPopup(){
+loginModal.classList.add("active");
+}
+
+function closeLoginPopup(){
+loginModal.classList.remove("active");
+}
+
+function closeLoginByBg(e){
+if(e.target.id==="loginModal") closeLoginPopup();
+}
+
+function setLoggedInUI(){
+loginOpenBtn.classList.add("hidden");
+topUserBar.classList.add("active");
+topUserName.textContent="👤 "+user.Name;
+topUserBalance.textContent="Баланс: "+money(user.balance);
+welcomeText.innerText="Добре дошъл, "+user.Name;
+balanceText.innerText=money(user.balance);
+myLink.innerText=inviteLink();
+closeLoginPopup();
+}
+
+function setLoggedOutUI(){
+loginOpenBtn.classList.remove("hidden");
+topUserBar.classList.remove("active");
+welcomeText.innerText="Добре дошъл";
+balanceText.innerText="0€";
+myLink.innerText="---";
+}
+
+function addActivity(text){
+const div=document.createElement("div");
+div.className="activityItem";
+div.textContent=text;
+activityBox.appendChild(div);
+activityBox.scrollTop=activityBox.scrollHeight;
+liveWinText.textContent=text;
+}
+
+function openInvitePopup(){
+if(!user)return alert("Първо влез");
+
+invitePopupLink.textContent=inviteLink();
+inviteModal.classList.add("active");
+addActivity("🔗 "+user.Name+" отвори покана линка");
+}
+
+function closeInvitePopup(){inviteModal.classList.remove("active")}
+
+function closeInviteByBg(e){
+if(e.target.id==="inviteModal") closeInvitePopup();
+}
+
+async function copyInviteLink(){
+if(!user)return alert("Първо влез");
+
+const link=inviteLink();
+
+try{
+await navigator.clipboard.writeText(link);
+addActivity("📋 "+user.Name+" копира покана линк");
+alert("Линкът е копиран!");
+}catch(e){
+prompt("Копирай линка:",link);
+}
+}
+
+function shareWhatsApp(){
+if(!user)return alert("Първо влез");
+
+const text="Ела в Mykonos Casino 🎰 Регистрирай се от моя линк и вземи бонус: "+inviteLink();
+window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
+addActivity("🟢 "+user.Name+" сподели покана в WhatsApp");
+}
+
+async function nativeShare(){
+if(!user)return alert("Първо влез");
+
+const text="Ела в Mykonos Casino 🎰 Регистрирай се от моя линк и вземи бонус.";
+const url=inviteLink();
+
+if(navigator.share){
+try{
+await navigator.share({title:"Mykonos Casino",text,url});
+addActivity("📲 "+user.Name+" сподели покана");
+}catch(e){}
+}else{
+copyInviteLink();
+}
+}
+
+async function loadPlayers(){
+try{
+let d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&order=id.asc");
+
+playerSelect.innerHTML="";
+
+if(!d || d.length===0){
+playerSelect.innerHTML="<option>Няма играчи</option>";
+return;
+}
+
+let first=document.createElement("option");
+first.textContent="Избери играч";
+first.value="";
+playerSelect.appendChild(first);
+
+d.forEach(p=>{
+let o=document.createElement("option");
+o.value=p.Name;
+o.textContent=p.Name;
+playerSelect.appendChild(o);
+});
+
+}catch(e){
+playerSelect.innerHTML="<option>Грешка база</option>";
+loginStatus.innerText="Проблем със сървъра";
+}
+}
+
+async function login(){
+let name=playerSelect.value;
+let pin=pinInput.value.trim();
+
+if(!name || !pin){
+alert("Избери играч и въведи PIN");
+return;
+}
+
+let d;
+
+try{
+d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&Name=eq."+encodeURIComponent(name));
+}catch(e){
+alert("Не мога да заредя профила");
+return;
+}
+
+if(!d[0] || String(d[0].Pin).trim()!==pin){
+alert("Грешен PIN");
+return;
+}
+
+user=d[0];
+
+if(!user.ref_code){
+user.ref_code=makeRefCode(user.Name);
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({ref_code:user.ref_code})
+});
+}
+
+localStorage.setItem("player",JSON.stringify(user));
+
+setLoggedInUI();
+
+await loadChat();
+await loadTop();
+
+addActivity("🎰 "+user.Name+" вече е в играта");
+loginStatus.innerText="Успешен вход";
+}
+
+async function register(){
+let name=regName.value.trim();
+let pin=regPin.value.trim();
+let ref=regRef.value.trim();
+
+if(!name || !pin){
+alert("Попълни име и PIN");
+return;
+}
+
+let code=makeRefCode(name);
+
+try{
+await api("players",{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({
+Name:name,
+Pin:pin,
+balance:10,
+ref_code:code,
+ref_by:ref || null
+})
+});
+}catch(e){
+alert("Грешка при регистрация");
+return;
+}
+
+if(ref){
+try{
+let invitedBy=await api("players?select=id,Name,balance,ref_code&ref_code=eq."+encodeURIComponent(ref));
+
+if(invitedBy[0]){
+let newBalance=Number(invitedBy[0].balance||0)+5;
+
+await api("players?id=eq."+invitedBy[0].id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({balance:newBalance})
+});
+
+addActivity("🎁 "+invitedBy[0].Name+" получи +5€ за покана");
+}
+}catch(e){}
+}
+
+alert("Регистрация успешна!");
+loadPlayers();
+}
+
+async function refreshUser(){
+if(!user)return;
+
+try{
+let d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&id=eq."+user.id);
+
+if(d[0]){
+user=d[0];
+localStorage.setItem("player",JSON.stringify(user));
+setLoggedInUI();
+}
+}catch(e){}
+}
+
+async function savePlayerPatch(patch){
+if(!user)return;
+
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify(patch)
+});
+}
+
+async function saveBalance(){
+if(!user)return;
+
+await savePlayerPatch({
+balance:Math.round(Number(user.balance||0))
+});
+}
+
+function todayKey(){
+return new Date().toISOString().slice(0,10);
+}
+
+async function dailyBonus(){
+if(!user)return alert("Първо влез");
+
+const key="daily_bonus_"+user.id;
+const today=todayKey();
+const last=localStorage.getItem(key);
+
+if(last===today){
+alert("Вече взе дневния бонус днес. Опитай пак утре 🎁");
+addActivity("⏳ "+user.Name+" вече е взел дневния бонус днес");
+return;
+}
+
+user.balance=Number(user.balance||0)+5;
+localStorage.setItem(key,today);
+localStorage.setItem("player",JSON.stringify(user));
+setLoggedInUI();
+
+await saveBalance();
+await loadTop();
+
+addActivity("🎁 "+user.Name+" взе дневен бонус +5€");
+}
+
+function openGame(){
+if(!user)return alert("Първо влез");
+
+localStorage.setItem("player",JSON.stringify(user));
+
+const btn=document.querySelector(".playMain");
+if(btn){
+btn.classList.add("loading");
+btn.textContent="ЗАРЕЖДАНЕ";
+}
+
+setTimeout(()=>{
+window.location.href="FRIENDS_BET_CASINO_v13_FIXED_PAYOUT.html";
+},450);
+}
+
+async function sendMsg(){
+if(!user)return alert("Първо влез");
+
+let text=msgInput.value.trim();
+if(!text)return;
+
+try{
+await api("chat_messages",{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({
+player_name:user.Name,
+message:text
+})
+});
+
+msgInput.value="";
+loadChat();
+}catch(e){
+alert("Грешка при изпращане");
+}
+}
+
+async function loadChat(){
+try{
+let d=await api("chat_messages?select=player_name,message,created_at&order=created_at.desc&limit=30");
+
+chat.innerHTML="";
+
+d.reverse().forEach(x=>{
+if(String(x.player_name).toUpperCase()==="SYSTEM") return;
+
+chat.innerHTML+=`
+<div class="msg">
+<span class="name">${x.player_name}:</span> ${x.message}
+</div>`;
+});
+
+chat.scrollTop=chat.scrollHeight;
+}catch(e){}
+}
+
+async function loadTop(){
+try{
+let d=await api("players?select=Name,balance&order=balance.desc&limit=1");
+
+if(d[0]){
+topWinner.innerText=d[0].Name+" "+money(d[0].balance);
+}
+}catch(e){}
+}
+
+function logout(){
+localStorage.removeItem("player");
+user=null;
+setLoggedOutUI();
+location.reload();
+}
+
+async function autoLoginFromStorage(){
+let saved=JSON.parse(localStorage.getItem("player") || "null");
+
+if(saved && saved.id){
+user=saved;
+await refreshUser();
+
+addActivity("🎰 Добре дошъл обратно, "+user.Name);
+
+await loadChat();
+}else{
+setLoggedOutUI();
+openLoginPopup();
+}
+}
+
+window.addEventListener("focus", async ()=>{
+if(user){
+await refreshUser();
+await loadTop();
+}
+});
+
+setInterval(async ()=>{
+if(user){
+await refreshUser();
+await loadTop();
+}
+},15000);
+
+loadPlayers();
+loadTop();
+autoReferral();
+autoLoginFromStorage();
+</script>
+
+</body>
+</html>
