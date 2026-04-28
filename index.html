@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Friends Bet Casino</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
 body{
@@ -13,20 +15,16 @@ body{
   color:white;
   background:radial-gradient(circle at top,#123b85,#02020a 55%);
 }
-
-/* NAVBAR */
 .navbar{
   display:flex;
   justify-content:space-between;
   padding:15px 30px;
   background:#000a;
 }
-
 .logo{font-size:28px;font-weight:bold}
 .friends{color:#00d9ff}
 .bet{color:red}
 .casino{color:gold}
-
 .menu button{
   margin-left:10px;
   padding:8px 12px;
@@ -36,18 +34,8 @@ body{
   color:white;
   cursor:pointer;
 }
-
-/* PROFILE */
-.profile{
-  text-align:center;
-  margin:20px;
-}
-
-/* HERO */
-.hero{
-  text-align:center;
-  padding:40px;
-}
+.profile{text-align:center;margin:20px}
+.hero{text-align:center;padding:40px}
 .hero h1{font-size:40px}
 .hero button{
   padding:15px 25px;
@@ -57,8 +45,6 @@ body{
   color:white;
   cursor:pointer;
 }
-
-/* BANNERS */
 .banners{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -66,14 +52,11 @@ body{
   width:90%;
   margin:20px auto;
 }
-
 .banner{
   background:#111;
   padding:20px;
   border-radius:15px;
 }
-
-/* GAMES */
 .games{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -81,7 +64,6 @@ body{
   width:90%;
   margin:40px auto;
 }
-
 .game-card{
   height:260px;
   border-radius:20px;
@@ -91,12 +73,10 @@ body{
   background:#111;
   transition:.3s;
 }
-
 .game-card:hover{
   transform:scale(1.05);
   box-shadow:0 0 20px red;
 }
-
 .tag{
   position:absolute;
   top:10px;
@@ -105,14 +85,11 @@ body{
   border-radius:8px;
   font-size:12px;
 }
-
 .hot{background:red}
 .new{background:#00d9ff;color:black}
 .vip{background:gold;color:black}
-
 .game-cover{text-align:center;margin-top:40px}
 .big-icon{font-size:60px}
-
 .play-btn{
   position:absolute;
   bottom:15px;
@@ -123,32 +100,25 @@ body{
   text-align:center;
   border-radius:10px;
 }
-
-/* CHAT */
 .chat{
   width:90%;
   margin:30px auto;
 }
-
 .messages{
   height:200px;
   background:#111;
   padding:10px;
   overflow:auto;
 }
-
 input{
   padding:10px;
   width:70%;
 }
-
 .footer{
   text-align:center;
   padding:20px;
   opacity:0.7;
 }
-
-/* MODAL */
 .modal{
   display:none;
   position:fixed;
@@ -156,12 +126,24 @@ input{
   background:#000c;
   justify-content:center;
   align-items:center;
+  z-index:99;
 }
-
 .box{
   background:#111;
   padding:20px;
   border-radius:15px;
+}
+.box button{
+  padding:10px 18px;
+  background:red;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+.close{
+  background:#333!important;
+  margin-left:10px;
 }
 </style>
 </head>
@@ -177,7 +159,6 @@ input{
 
   <div class="menu">
     <button onclick="openModal('login')">Вход</button>
-    <button onclick="openModal('register')">Регистрация</button>
     <button onclick="logout()">Изход</button>
   </div>
 </div>
@@ -202,11 +183,11 @@ input{
 
 <div class="games">
 
-  <div class="game-card" onclick="openGame('vasa-fortune.html')">
+  <div class="game-card" onclick="openGame('FRIENDS_BET_CASINO_v13_FIXED_PAYOUT.html')">
     <div class="tag hot">HOT</div>
     <div class="game-cover">
       <div class="big-icon">🎰</div>
-      <h3>Vasa Fortune</h3>
+      <h3>Friends Slot</h3>
     </div>
     <div class="play-btn">ИГРАЙ</div>
   </div>
@@ -234,7 +215,7 @@ input{
 <div class="chat">
   <h2>Чат</h2>
   <div class="messages" id="messages"></div>
-  <input id="msg">
+  <input id="msg" placeholder="Напиши съобщение...">
   <button onclick="send()">Изпрати</button>
 </div>
 
@@ -242,109 +223,169 @@ input{
 Демо казино • Без реални пари
 </div>
 
-<!-- LOGIN -->
 <div class="modal" id="login">
   <div class="box">
-    <input id="lEmail" placeholder="Имейл"><br><br>
-    <input id="lPass" type="password" placeholder="Парола"><br><br>
+    <input id="lName" placeholder="Име"><br><br>
+    <input id="lPin" type="password" placeholder="PIN"><br><br>
     <button onclick="login()">Вход</button>
-  </div>
-</div>
-
-<!-- REGISTER -->
-<div class="modal" id="register">
-  <div class="box">
-    <input id="rName" placeholder="Име"><br><br>
-    <input id="rEmail" placeholder="Имейл"><br><br>
-    <input id="rPass" type="password" placeholder="Парола"><br><br>
-    <button onclick="register()">Регистрация</button>
+    <button class="close" onclick="closeModal('login')">Затвори</button>
   </div>
 </div>
 
 <script>
-function getUsers(){
-  return JSON.parse(localStorage.getItem("users")||"{}");
-}
-function saveUsers(u){
-  localStorage.setItem("users",JSON.stringify(u));
-}
-function getCurrent(){
-  return localStorage.getItem("user");
-}
+const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
+const SUPABASE_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentPlayer = JSON.parse(localStorage.getItem("player") || "null");
 
 function openModal(id){
   document.getElementById(id).style.display="flex";
 }
 
-function register(){
-  let name=rName.value;
-  let email=rEmail.value;
-  let pass=rPass.value;
-
-  let users=getUsers();
-
-  users[email]={name,pass,balance:10000};
-  saveUsers(users);
-
-  localStorage.setItem("user",email);
-  update();
+function closeModal(id){
+  document.getElementById(id).style.display="none";
 }
 
-function login(){
-  let email=lEmail.value;
-  let pass=lPass.value;
+async function login(){
+  const name = lName.value.trim();
+  const pin = lPin.value.trim();
 
-  let users=getUsers();
+  if(!name || !pin){
+    alert("Въведи име и PIN");
+    return;
+  }
 
-  if(users[email] && users[email].pass==pass){
-    localStorage.setItem("user",email);
-    update();
-  }else alert("грешка");
+  const { data, error } = await supabase
+    .from("players")
+    .select("*")
+    .eq("Name", name)
+    .eq("Pin", pin)
+    .single();
+
+  if(error || !data){
+    alert("Грешно име или PIN");
+    return;
+  }
+
+  currentPlayer = data;
+  localStorage.setItem("player", JSON.stringify(data));
+
+  closeModal("login");
+  update();
+  loadMessages();
 }
 
 function logout(){
-  localStorage.removeItem("user");
+  localStorage.removeItem("player");
+  currentPlayer = null;
   update();
 }
 
-function claimBonus(){
-  let u=getCurrent();
-  if(!u) return alert("влез първо");
+async function refreshPlayer(){
+  if(!currentPlayer) return;
 
-  let users=getUsers();
-  users[u].balance+=10000;
-  saveUsers(users);
+  const { data, error } = await supabase
+    .from("players")
+    .select("*")
+    .eq("id", currentPlayer.id)
+    .single();
+
+  if(!error && data){
+    currentPlayer = data;
+    localStorage.setItem("player", JSON.stringify(data));
+  }
+}
+
+async function update(){
+  await refreshPlayer();
+
+  if(currentPlayer){
+    user.innerText = "Добре дошъл " + currentPlayer.Name;
+    balance.innerText = "Баланс: " + currentPlayer.balance;
+  }else{
+    user.innerText = "Не си влязъл";
+    balance.innerText = "Баланс: 0";
+  }
+}
+
+async function claimBonus(){
+  if(!currentPlayer) return alert("Влез първо");
+
+  const newBalance = Number(currentPlayer.balance) + 10000;
+
+  const { error } = await supabase
+    .from("players")
+    .update({ balance: newBalance })
+    .eq("id", currentPlayer.id);
+
+  if(error){
+    alert("Грешка при бонуса");
+    return;
+  }
+
+  currentPlayer.balance = newBalance;
+  localStorage.setItem("player", JSON.stringify(currentPlayer));
   update();
 }
 
 function openGame(file){
-  if(!getCurrent()) return alert("влез първо");
-  window.location.href=file;
+  if(!currentPlayer) return alert("Влез първо");
+  window.location.href = file;
 }
 
-function update(){
-  let u=getCurrent();
-  let users=getUsers();
+async function loadMessages(){
+  const { data, error } = await supabase
+    .from("chat_messages")
+    .select("*")
+    .order("created_at", { ascending:true })
+    .limit(50);
 
-  if(u){
-    user.innerText="Добре дошъл "+users[u].name;
-    balance.innerText="Баланс: "+users[u].balance;
-  }else{
-    user.innerText="Не си влязъл";
-    balance.innerText="Баланс: 0";
+  if(error) return;
+
+  messages.innerHTML = "";
+  data.forEach(addMsg);
+}
+
+async function send(){
+  if(!currentPlayer) return alert("Влез първо");
+
+  const text = msg.value.trim();
+  if(!text) return;
+
+  const { error } = await supabase
+    .from("chat_messages")
+    .insert({
+      user: currentPlayer.Name,
+      text: text
+    });
+
+  if(error){
+    alert("Грешка при чата");
+    console.log(error);
+    return;
   }
+
+  msg.value = "";
 }
 
-function send(){
-  let text=msg.value;
-  let u=getCurrent();
-  if(!u) return;
-
-  messages.innerHTML+="<div>"+u+": "+text+"</div>";
-  msg.value="";
+function addMsg(m){
+  messages.innerHTML += `<div><b>${m.user}:</b> ${m.text}</div>`;
+  messages.scrollTop = messages.scrollHeight;
 }
+
+supabase
+  .channel("chat-room")
+  .on(
+    "postgres_changes",
+    { event:"INSERT", schema:"public", table:"chat_messages" },
+    payload => addMsg(payload.new)
+  )
+  .subscribe();
 
 update();
+loadMessages();
 </script>
 
 </body>
