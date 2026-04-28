@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beer Collect v1</title>
+<style>
+:root{
+  --bg:#050915;
+  --cyan:#1fe8ff;
+  --gold:#ffd35a;
+  --orange:#ff8a00;
+  --red:#d92323;
+  --green:#36ff8b;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 15% 10%,rgba(31,232,255,.22),transparent 28%),
+    radial-gradient(circle at 85% 15%,rgba(255,138,0,.18),transparent 26%),
+    linear-gradient(180deg,#0c2340,#050915 75%);
+  color:white;font-family:Arial,Helvetica,sans-serif;overflow:hidden;
+}
+.game{
+  width:min(980px,96vw);padding:18px;border-radius:30px;position:relative;overflow:hidden;
+  border:2px solid rgba(31,232,255,.8);
+  background:linear-gradient(180deg,rgba(9,28,50,.92),rgba(0,0,0,.72));
+  box-shadow:0 0 35px rgba(31,232,255,.42),inset 0 0 30px rgba(31,232,255,.12);
+}
+.title{
+  text-align:center;font-size:46px;font-weight:1000;letter-spacing:2px;margin:0 0 10px;
+  color:var(--gold);text-shadow:0 0 12px #ffb300,0 0 30px #ff5a00;
+}
+.top{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:12px;
+}
+.box{
+  background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.2);border-radius:16px;
+  padding:10px;text-align:center;box-shadow:inset 0 0 14px rgba(255,255,255,.06);
+}
+.box span{display:block;font-size:12px;color:#aeefff;font-weight:900;margin-bottom:4px}
+.box strong{font-size:23px}
+.boardWrap{
+  border-radius:28px;padding:18px;background:linear-gradient(145deg,#5e090c,#e02727 48%,#5b0608);
+  border:5px solid var(--orange);box-shadow:0 0 25px rgba(255,80,0,.8),inset 0 0 25px rgba(0,0,0,.55);
+}
+.grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:12px;background:#030406;border-radius:20px;
+  padding:14px;box-shadow:inset 0 0 30px #000;
+}
+.cell{
+  height:118px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#103657,#071827);border:2px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 0 22px rgba(0,0,0,.72),0 0 12px rgba(31,232,255,.12);
+  position:relative;overflow:hidden;
+}
+.cell.empty{opacity:.45}
+.icon{font-size:42px;line-height:1}
+.value{
+  margin-top:7px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.55);
+  border:1px solid rgba(255,211,90,.5);font-size:17px;font-weight:1000;color:var(--gold);
+  text-shadow:0 0 8px #ff9d00;
+}
+.cell.money{animation:drop .28s ease-out}
+.cell.collect{
+  background:radial-gradient(circle,rgba(54,255,139,.35),rgba(7,24,39,1));
+  animation:collectPulse .55s infinite alternate;
+}
+.cell.bonusHold{
+  background:radial-gradient(circle,rgba(255,211,90,.4),rgba(7,24,39,1));
+  animation:holdPulse .7s infinite alternate;
+}
+@keyframes drop{from{transform:translateY(-38px) scale(.8);opacity:.2}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes collectPulse{to{filter:brightness(1.9);box-shadow:0 0 28px var(--green),inset 0 0 30px rgba(54,255,139,.4)}}
+@keyframes holdPulse{to{filter:brightness(1.8);box-shadow:0 0 30px var(--gold),inset 0 0 30px rgba(255,211,90,.35)}}
+.msg{
+  height:45px;margin:12px 0 10px;display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:25px;font-weight:1000;text-shadow:0 0 12px #ffb300;text-align:center;
+}
+.controls{display:grid;grid-template-columns:1fr 1fr 2fr 1fr;gap:10px}
+button{
+  border:0;border-radius:17px;padding:15px 10px;color:white;font-size:18px;font-weight:1000;cursor:pointer;
+  background:linear-gradient(180deg,#185987,#0a2139);
+  box-shadow:0 0 14px rgba(31,232,255,.34),inset 0 1px 0 rgba(255,255,255,.25);
+}
+button:hover{filter:brightness(1.15)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.spin{
+  font-size:28px;background:linear-gradient(180deg,#ff5353,#b90000);
+  box-shadow:0 0 22px rgba(255,35,35,.85),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,.75);z-index:10;border-radius:30px;
+  display:none;align-items:center;justify-content:center;text-align:center;backdrop-filter:blur(3px);
+}
+.overlay.show{display:flex}
+.popup{
+  width:min(560px,90%);padding:34px;border-radius:28px;background:linear-gradient(180deg,#321700,#050505);
+  border:3px solid var(--gold);box-shadow:0 0 45px rgba(255,211,90,.85);
+}
+.popup h2{font-size:54px;margin:0 0 10px;color:var(--gold);text-shadow:0 0 20px #ffae00}
+.popup p{font-size:23px;font-weight:900}
+.big{
+  position:absolute;inset:0;display:none;z-index:9;align-items:center;justify-content:center;flex-direction:column;
+  pointer-events:none;color:var(--gold);font-weight:1000;text-shadow:0 0 20px #ffb300,0 0 42px #ff3200;
+}
+.big.show{display:flex;animation:bigPulse .5s infinite alternate}
+.big .t{font-size:78px}.big .a{font-size:50px}
+@keyframes bigPulse{to{transform:scale(1.08)}}
+.particles{position:absolute;inset:0;pointer-events:none;z-index:8;overflow:hidden}
+.particle{position:absolute;font-size:28px;animation:fly 1.15s ease-out forwards}
+@keyframes fly{to{transform:translateY(-260px) scale(1.8) rotate(25deg);opacity:0}}
+.shake{animation:shake .28s ease-in-out 2}
+@keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(-5px,3px)}50%{transform:translate(5px,-3px)}75%{transform:translate(-3px,-2px)}}
+
+@media(max-width:720px){
+  .title{font-size:30px}.top{grid-template-columns:repeat(2,1fr)}
+  .boardWrap{padding:9px}.grid{gap:6px;padding:8px}.cell{height:86px;border-radius:12px}
+  .icon{font-size:31px}.value{font-size:13px;padding:2px 6px}
+  .controls{grid-template-columns:1fr 1fr}.spin{grid-column:span 2}.big .t{font-size:44px}
+}
+</style>
+</head>
+<body>
+<div class="game" id="game">
+  <div class="particles" id="particles"></div>
+  <div class="big" id="big"><div class="t" id="bigT">BIG WIN</div><div class="a" id="bigA">0.00 €</div></div>
+  <div class="overlay" id="overlay">
+    <div class="popup">
+      <h2 id="popT">BONUS</h2>
+      <p id="popP"></p>
+      <button onclick="closePopup()">OK</button>
+    </div>
+  </div>
+
+  <h1 class="title">🍺 BEER COLLECT v1 🍺</h1>
+
+  <div class="top">
+    <div class="box"><span>BALANCE</span><strong id="balance">20.00 €</strong></div>
+    <div class="box"><span>BET</span><strong id="bet">0.20 €</strong></div>
+    <div class="box"><span>WIN</span><strong id="win">0.00 €</strong></div>
+    <div class="box"><span>BONUS SPINS</span><strong id="respins">0</strong></div>
+    <div class="box"><span>COLLECT POT</span><strong id="pot">0.00 €</strong></div>
+  </div>
+
+  <div class="boardWrap">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="msg" id="msg">Натисни SPIN</div>
+
+  <div class="controls">
+    <button onclick="changeBet(-1)">BET -</button>
+    <button onclick="changeBet(1)">BET +</button>
+    <button class="spin" id="spinBtn" onclick="spin()">SPIN</button>
+    <button id="soundBtn" onclick="toggleSound()">SOUND ON</button>
+  </div>
+</div>
+
+<script>
+const ROWS=3,COLS=5;
+const moneySymbols=[
+  {icon:"🍺", value:0.20, weight:38},
+  {icon:"🍷", value:0.50, weight:26},
+  {icon:"🥃", value:1.00, weight:18},
+  {icon:"🍸", value:2.00, weight:10},
+  {icon:"🍾", value:5.00, weight:5},
+  {icon:"💰", value:10.00, weight:2},
+  {icon:"⭐", value:20.00, weight:1}
+];
+const COLLECT="🍻";
+let balance=20.00, bet=0.20, win=0, respins=0, pot=0, spinning=false, soundOn=true, inBonus=false;
+let board=emptyBoard(), held=emptyBoard();
+
+const $=id=>document.getElementById(id);
+const game=$("game"), grid=$("grid"), msg=$("msg");
+
+function emptyBoard(){return Array.from({length:ROWS},()=>Array.from({length:COLS},()=>null))}
+function money(v){return Number(v).toFixed(2)+" €"}
+function update(){
+  $("balance").textContent=money(balance);
+  $("bet").textContent=money(bet);
+  $("win").textContent=money(win);
+  $("respins").textContent=respins;
+  $("pot").textContent=money(pot);
+}
+function pickMoney(){
+  const bag=[];
+  for(const s of moneySymbols){for(let i=0;i<s.weight;i++)bag.push(s)}
+  const x=bag[Math.floor(Math.random()*bag.length)];
+  return {icon:x.icon,value:+(x.value*(bet/0.20)).toFixed(2)};
+}
+function draw(){
+  grid.innerHTML="";
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const d=document.createElement("div");
+      const item=board[r][c];
+      d.className="cell";
+      if(!item){d.classList.add("empty");d.innerHTML='<div class="icon">·</div>'; }
+      else if(item.collect){d.classList.add("collect");d.innerHTML='<div class="icon">🍻</div><div class="value">COLLECT</div>'; }
+      else{
+        d.classList.add(inBonus?"bonusHold":"money");
+        d.innerHTML='<div class="icon">'+item.icon+'</div><div class="value">'+money(item.value)+'</div>';
+      }
+      grid.appendChild(d);
+    }
+  }
+}
+function clearFx(){
+  $("big").classList.remove("show");
+  $("particles").innerHTML="";
+}
+function baseSpinBoard(){
+  const b=emptyBoard();
+  let moneyCount=0, collects=0;
+
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const roll=Math.random();
+      if(roll<0.24){b[r][c]=pickMoney();moneyCount++;}
+      else if(roll<0.28){b[r][c]={collect:true};collects++;}
+    }
+  }
+
+  // малко по-често да има поне нещо
+  if(moneyCount===0 && Math.random()<0.7){
+    b[Math.floor(Math.random()*ROWS)][Math.floor(Math.random()*COLS)]=pickMoney();
+  }
+
+  return b;
+}
+function boardPot(b){
+  let sum=0;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(b[r][c]&&!b[r][c].collect)sum+=b[r][c].value;
+  return +sum.toFixed(2);
+}
+function countCollects(b){
+  let n=0;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(b[r][c]?.collect)n++;return n;
+}
+async function spin(){
+  if(spinning)return; unlockAudio();
+  if(!inBonus && balance<bet){msg.textContent="Няма баланс";badSound();return}
+  spinning=true;$("spinBtn").disabled=true;clearFx();win=0;update();
+
+  if(inBonus){ await bonusSpin(); }
+  else { await normalSpin(); }
+
+  update();
+  spinning=false;$("spinBtn").disabled=false;
+}
+async function normalSpin(){
+  balance=+(balance-bet).toFixed(2);
+  msg.textContent="SPIN...";
+  startSpinSound();
+
+  await wait(360);
+  board=baseSpinBoard();
+  stopSpinSound();
+  draw();
+  landSound();
+
+  const collectCount=countCollects(board);
+  pot=boardPot(board);
+
+  if(collectCount>=3){
+    inBonus=true;respins=3;held=emptyBoard();
+    board=emptyBoard();pot=0;
+    bonusSound();
+    popup("HOLD & WIN!", "3 🍻 Collect символа! Влизаш в Bonus с 3 respins.");
+    msg.textContent="BONUS START!";
+  }else if(collectCount>=1 && pot>0){
+    win=+(pot*collectCount).toFixed(2);
+    balance=+(balance+win).toFixed(2);
+    cashSound();
+    bigMaybe(win,"COLLECT WIN");
+    msg.textContent="COLLECT WIN "+money(win);
+    particles("💰",18);
+  }else if(pot>0){
+    win=+(pot*0.25).toFixed(2);
+    balance=+(balance+win).toFixed(2);
+    cashSound();
+    msg.textContent="SMALL WIN "+money(win);
+  }else{
+    msg.textContent="Опитай пак";
+  }
+}
+async function bonusSpin(){
+  msg.textContent="BONUS RESPIN...";
+  startSpinSound();
+  await wait(320);
+  stopSpinSound();
+
+  let newHit=false;
+  board=held.map(row=>row.slice());
+
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      if(!board[r][c] && Math.random()<0.28){
+        board[r][c]=pickMoney();
+        newHit=true;
+      }
+    }
+  }
+
+  held=board.map(row=>row.slice());
+  pot=boardPot(board);
+  draw();
+  landSound();
+
+  if(newHit){
+    respins=3;
+    msg.textContent="NEW SYMBOL! RESPINS BACK TO 3";
+    particles("🍺",16);
+  }else{
+    respins--;
+    msg.textContent="NO HIT — "+respins+" RESPINS LEFT";
+  }
+
+  if(isFull(board) || respins<=0){
+    await wait(450);
+    win=pot;
+    balance=+(balance+win).toFixed(2);
+    bigWin(isFull(board)?"FULL SCREEN!":"BONUS WIN",win);
+    cashSound();
+    inBonus=false;respins=0;pot=0;held=emptyBoard();
+    msg.textContent="BONUS WIN "+money(win);
+  }
+}
+function isFull(b){
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(!b[r][c])return false;
+  return true;
+}
+function changeBet(dir){
+  if(spinning||inBonus)return;
+  bet=+(Math.max(0.10,Math.min(5.00,bet+(dir>0?0.10:-0.10)))).toFixed(2);
+  tap();update();
+}
+function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+function popup(t,p){$("popT").textContent=t;$("popP").textContent=p;$("overlay").classList.add("show");particles("🍻",28)}
+function closePopup(){tap();$("overlay").classList.remove("show")}
+function bigMaybe(amount,text){ if(amount>=bet*12) bigWin(text,amount); }
+function bigWin(t,amount){
+  $("bigT").textContent=t;$("bigA").textContent=money(amount);$("big").classList.add("show");
+  game.classList.add("shake");particles("💰",38);
+  setTimeout(()=>{game.classList.remove("shake");$("big").classList.remove("show")},1700);
+}
+function particles(s,n){
+  const box=$("particles");
+  for(let i=0;i<n;i++){
+    const p=document.createElement("div");p.className="particle";p.textContent=s;
+    p.style.left=Math.random()*100+"%";p.style.top=65+Math.random()*25+"%";p.style.animationDelay=Math.random()*.2+"s";
+    box.appendChild(p);setTimeout(()=>p.remove(),1200);
+  }
+}
+
+/* AUDIO */
+let ac=null,spinTimer=null;
+function audio(){if(!ac)ac=new (AudioContext||webkitAudioContext)();return ac}
+function unlockAudio(){const a=audio();if(a.state==="suspended")a.resume()}
+document.body.addEventListener("pointerdown",unlockAudio,{once:true});
+function tone(f,d=.06,v=.045,type="triangle",delay=0){
+ if(!soundOn)return;const a=audio();const o=a.createOscillator();const g=a.createGain();const fl=a.createBiquadFilter();
+ o.type=type;o.frequency.setValueAtTime(f,a.currentTime+delay);
+ fl.type="lowpass";fl.frequency.value=1600;
+ g.gain.setValueAtTime(.0001,a.currentTime+delay);
+ g.gain.exponentialRampToValueAtTime(v,a.currentTime+delay+.01);
+ g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+delay+d);
+ o.connect(fl);fl.connect(g);g.connect(a.destination);
+ o.start(a.currentTime+delay);o.stop(a.currentTime+delay+d+.03);
+}
+function noise(d=.025,v=.025,delay=0){
+ if(!soundOn)return;const a=audio();const size=Math.floor(a.sampleRate*d);const b=a.createBuffer(1,size,a.sampleRate);const data=b.getChannelData(0);
+ for(let i=0;i<size;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/size,2.2);
+ const src=a.createBufferSource();const g=a.createGain();const fl=a.createBiquadFilter();
+ fl.type="bandpass";fl.frequency.value=900;g.gain.value=v;src.buffer=b;src.connect(fl);fl.connect(g);g.connect(a.destination);src.start(a.currentTime+delay);
+}
+function tap(){noise(.02,.025);tone(320,.035,.018)}
+function startSpinSound(){stopSpinSound();let n=0;spinTimer=setInterval(()=>{noise(.018,.016);if(n%3===0)tone(120,.03,.012,"sine");n++},95)}
+function stopSpinSound(){if(spinTimer){clearInterval(spinTimer);spinTimer=null}}
+function landSound(){noise(.035,.04);tone(210,.055,.035)}
+function cashSound(){[360,470,620,780].forEach((f,i)=>tone(f,.07,.05,"triangle",i*.07))}
+function bonusSound(){[240,340,480,660,860].forEach((f,i)=>tone(f,.11,.06,"triangle",i*.09))}
+function badSound(){noise(.06,.045);tone(120,.08,.025)}
+function toggleSound(){soundOn=!soundOn;$("soundBtn").textContent=soundOn?"SOUND ON":"SOUND OFF";if(soundOn)tap()}
+
+draw();update();
+</script>
+</body>
+</html>
