@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Friends Bet Casino</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -157,32 +158,12 @@ input{
   background:#000c;
   justify-content:center;
   align-items:center;
-  z-index:999;
 }
 
 .box{
   background:#111;
   padding:20px;
   border-radius:15px;
-  min-width:300px;
-  text-align:center;
-}
-
-.box button{
-  padding:10px 16px;
-  border:none;
-  border-radius:8px;
-  background:red;
-  color:white;
-  cursor:pointer;
-  margin:5px;
-}
-
-@media(max-width:800px){
-  .banners,.games{grid-template-columns:1fr}
-  .navbar{display:block;text-align:center}
-  .menu{margin-top:15px}
-  input{width:90%}
 }
 </style>
 </head>
@@ -232,7 +213,7 @@ input{
     <div class="play-btn">ИГРАЙ</div>
   </div>
 
-  <div class="game-card" onclick="openGame('didi-blitz.html')">
+  <div class="game-card" onclick="alert('Тази игра още не е качена')">
     <div class="tag new">NEW</div>
     <div class="game-cover">
       <div class="big-icon">⚡</div>
@@ -241,7 +222,7 @@ input{
     <div class="play-btn">ИГРАЙ</div>
   </div>
 
-  <div class="game-card" onclick="openGame('mitko-koch-bells.html')">
+  <div class="game-card" onclick="alert('Тази игра още не е качена')">
     <div class="tag vip">VIP</div>
     <div class="game-cover">
       <div class="big-icon">🔔</div>
@@ -255,7 +236,7 @@ input{
 <div class="chat">
   <h2>Чат</h2>
   <div class="messages" id="messages"></div>
-  <input id="msg" placeholder="Напиши съобщение...">
+  <input id="msg" placeholder="Напиши съобщение">
   <button onclick="send()">Изпрати</button>
 </div>
 
@@ -264,93 +245,67 @@ input{
 </div>
 
 <!-- LOGIN -->
-<div class="modal" id="login" onclick="closeOnBg(event,'login')">
+<div class="modal" id="login">
   <div class="box">
-    <h2>Вход</h2>
-    <input id="lName" placeholder="Име / Name"><br><br>
+    <input id="lName" placeholder="Име"><br><br>
     <input id="lPin" type="password" placeholder="PIN"><br><br>
     <button onclick="login()">Вход</button>
-    <button onclick="closeModal('login')">Затвори</button>
   </div>
 </div>
 
 <!-- REGISTER -->
-<div class="modal" id="register" onclick="closeOnBg(event,'register')">
+<div class="modal" id="register">
   <div class="box">
-    <h2>Регистрация</h2>
-    <input id="rName" placeholder="Име / Name"><br><br>
+    <input id="rName" placeholder="Име"><br><br>
     <input id="rPin" type="password" placeholder="PIN"><br><br>
     <button onclick="register()">Регистрация</button>
-    <button onclick="closeModal('register')">Затвори</button>
   </div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = window.supabase.createClient(
+  "https://xjcvntplrbjsaozkduqd.supabase.co",
+  "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq"
+);
 
-let currentPlayer = null;
+let currentPlayer = JSON.parse(localStorage.getItem("currentPlayer") || "null");
 
 function openModal(id){
-  document.getElementById(id).style.display="flex";
+  document.getElementById(id).style.display = "flex";
 }
 
-function closeModal(id){
-  document.getElementById(id).style.display="none";
-}
-
-function closeOnBg(e,id){
-  if(e.target.id === id) closeModal(id);
-}
-
-function saveSession(player){
-  localStorage.setItem("fb_player_id", player.id);
-  localStorage.setItem("fb_player_name", player.Name);
-}
-
-function clearSession(){
-  localStorage.removeItem("fb_player_id");
-  localStorage.removeItem("fb_player_name");
-}
-
-async function loadCurrentPlayer(){
-  const id = localStorage.getItem("fb_player_id");
-  if(!id){ update(); return; }
-
-  const { data, error } = await db
-    .from("players")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if(error || !data){
-    clearSession();
-    currentPlayer = null;
-  }else{
-    currentPlayer = data;
-  }
-  update();
-}
+document.querySelectorAll(".modal").forEach(modal => {
+  modal.addEventListener("click", function(e){
+    if(e.target === modal){
+      modal.style.display = "none";
+    }
+  });
+});
 
 async function register(){
-  const name = document.getElementById("rName").value.trim();
-  const pin = document.getElementById("rPin").value.trim();
+  let name = document.getElementById("rName").value.trim();
+  let pin = document.getElementById("rPin").value.trim();
 
-  if(!name || !pin) return alert("Напиши име и PIN");
+  if(!name || !pin){
+    alert("Въведи име и PIN");
+    return;
+  }
 
-  const { data: existing } = await db
+  const { data: existing } = await supabaseClient
     .from("players")
     .select("*")
     .eq("Name", name)
     .maybeSingle();
 
-  if(existing) return alert("Това име вече съществува. Избери друго.");
+  if(existing){
+    alert("Това име вече съществува");
+    return;
+  }
 
-  const { data, error } = await db
+  const { data, error } = await supabaseClient
     .from("players")
     .insert([{ Name: name, Pin: pin, balance: 10000 }])
-    .select("*")
+    .select()
     .single();
 
   if(error){
@@ -359,19 +314,21 @@ async function register(){
   }
 
   currentPlayer = data;
-  saveSession(data);
-  closeModal("register");
+  localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
+  document.getElementById("register").style.display = "none";
   update();
-  alert("Регистрацията е успешна!");
 }
 
 async function login(){
-  const name = document.getElementById("lName").value.trim();
-  const pin = document.getElementById("lPin").value.trim();
+  let name = document.getElementById("lName").value.trim();
+  let pin = document.getElementById("lPin").value.trim();
 
-  if(!name || !pin) return alert("Напиши име и PIN");
+  if(!name || !pin){
+    alert("Въведи име и PIN");
+    return;
+  }
 
-  const { data, error } = await db
+  const { data, error } = await supabaseClient
     .from("players")
     .select("*")
     .eq("Name", name)
@@ -383,32 +340,36 @@ async function login(){
     return;
   }
 
-  if(data){
-    currentPlayer = data;
-    saveSession(data);
-    closeModal("login");
-    update();
-  }else{
+  if(!data){
     alert("Грешно име или PIN");
+    return;
   }
+
+  currentPlayer = data;
+  localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
+  document.getElementById("login").style.display = "none";
+  update();
 }
 
 function logout(){
   currentPlayer = null;
-  clearSession();
+  localStorage.removeItem("currentPlayer");
   update();
 }
 
 async function claimBonus(){
-  if(!currentPlayer) return alert("Влез първо");
+  if(!currentPlayer){
+    alert("Влез първо");
+    return;
+  }
 
-  const newBalance = Number(currentPlayer.balance || 0) + 10000;
+  let newBalance = Number(currentPlayer.balance || 0) + 10000;
 
-  const { data, error } = await db
+  const { data, error } = await supabaseClient
     .from("players")
     .update({ balance: newBalance })
     .eq("id", currentPlayer.id)
-    .select("*")
+    .select()
     .single();
 
   if(error){
@@ -417,20 +378,24 @@ async function claimBonus(){
   }
 
   currentPlayer = data;
+  localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
   update();
 }
 
 function openGame(file){
-  if(!currentPlayer) return alert("Влез първо");
-  localStorage.setItem("fb_player_id", currentPlayer.id);
-  localStorage.setItem("fb_player_name", currentPlayer.Name);
+  if(!currentPlayer){
+    alert("Влез първо");
+    return;
+  }
+
+  localStorage.setItem("currentPlayer", JSON.stringify(currentPlayer));
   window.location.href = file;
 }
 
 function update(){
   if(currentPlayer){
     document.getElementById("user").innerText = "Добре дошъл " + currentPlayer.Name;
-    document.getElementById("balance").innerText = "Баланс: " + Number(currentPlayer.balance || 0).toFixed(2);
+    document.getElementById("balance").innerText = "Баланс: " + currentPlayer.balance;
   }else{
     document.getElementById("user").innerText = "Не си влязъл";
     document.getElementById("balance").innerText = "Баланс: 0";
@@ -438,15 +403,22 @@ function update(){
 }
 
 function send(){
-  const text = document.getElementById("msg").value.trim();
-  if(!currentPlayer) return alert("Влез първо");
+  let text = document.getElementById("msg").value.trim();
+
+  if(!currentPlayer){
+    alert("Влез първо");
+    return;
+  }
+
   if(!text) return;
 
-  document.getElementById("messages").innerHTML += "<div><b>" + currentPlayer.Name + ":</b> " + text + "</div>";
+  document.getElementById("messages").innerHTML +=
+    "<div>" + currentPlayer.Name + ": " + text + "</div>";
+
   document.getElementById("msg").value = "";
 }
 
-loadCurrentPlayer();
+update();
 </script>
 
 </body>
