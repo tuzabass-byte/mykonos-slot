@@ -165,9 +165,98 @@ button:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 @media(max-width:700px){
   .header{grid-template-columns:1fr}.feature-panel{display:none}.jackpots{grid-template-columns:repeat(3,1fr)}.jp{display:block}.jp b,.jp span{display:block;font-size:14px}
 }
+
+/* FINAL MYKONOS GAME NAV PANEL - NO OVERLAP */
+body{
+padding-top:78px!important;
+}
+
+.mykonosGameNav{
+position:fixed;
+top:8px;
+left:50%;
+transform:translateX(-50%);
+z-index:99999;
+width:min(1040px,96vw);
+height:58px;
+display:grid;
+grid-template-columns:1.25fr .95fr repeat(4,.72fr);
+gap:8px;
+align-items:center;
+padding:7px;
+border:1px solid rgba(255,210,31,.9);
+border-radius:18px;
+background:linear-gradient(180deg,rgba(20,5,0,.92),rgba(0,0,0,.82));
+box-shadow:0 0 24px rgba(255,210,31,.42),inset 0 0 16px rgba(255,255,255,.06);
+backdrop-filter:blur(8px);
+}
+
+.navBrand{
+font-size:clamp(13px,1.8vw,20px);
+font-weight:1000;
+color:#ffd21f;
+text-shadow:0 0 10px red,0 0 20px gold;
+white-space:nowrap;
+text-align:center;
+}
+
+.navWallet{
+border:1px solid rgba(255,210,31,.55);
+border-radius:999px;
+padding:8px;
+background:rgba(0,0,0,.55);
+font-size:clamp(12px,1.5vw,15px);
+font-weight:1000;
+color:#95ff35;
+text-align:center;
+white-space:nowrap;
+}
+
+.navBtn{
+width:100%!important;
+height:40px!important;
+margin:0!important;
+padding:6px!important;
+border-radius:12px!important;
+font-size:clamp(11px,1.4vw,14px)!important;
+background:linear-gradient(180deg,#fff0a1,#c78a16 35%,#7e160d)!important;
+color:#fff!important;
+border:1px solid #fff0a1!important;
+box-shadow:0 0 12px rgba(255,198,60,.38)!important;
+white-space:nowrap;
+}
+
+.navBtn.red{
+background:linear-gradient(180deg,#ff4040,#8e0000)!important;
+}
+
+@media(max-width:760px){
+body{padding-top:132px!important}
+.mykonosGameNav{
+height:auto;
+grid-template-columns:1fr 1fr;
+}
+.navBrand,.navWallet{
+grid-column:1/3;
+}
+.navBtn{
+height:36px!important;
+}
+}
+
 </style>
 </head>
 <body>
+
+<div class="mykonosGameNav">
+  <div class="navBrand">🎰 MYKONOS CASINO</div>
+  <div class="navWallet" id="gameWallet">💰 Wallet</div>
+  <button class="navBtn" onclick="goCasino('home')">🏠 Начало</button>
+  <button class="navBtn" onclick="goCasino('games')">🎮 Игри</button>
+  <button class="navBtn" onclick="goCasino('bonus')">🎁 Бонус</button>
+  <button class="navBtn red" onclick="goCasino('profile')">👤 Профил</button>
+</div>
+
 <div class="game">
   <div class="header">
     <div class="jackpots">
@@ -243,6 +332,24 @@ button:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.6)}
 </div>
 
 <script>
+
+function updateGameWallet(){
+try{
+const p=JSON.parse(localStorage.getItem("player") || "null");
+if(p){
+const name=p.Name || p.name || "Играч";
+const bal=p.balance ?? p.Points ?? 0;
+const w=document.getElementById("gameWallet");
+if(w) w.textContent="👤 "+name+" • 💰 "+Number(bal).toFixed(0)+"€";
+}
+}catch(e){}
+}
+function goCasino(page){
+window.location.href="index.html#"+page;
+}
+updateGameWallet();
+setInterval(updateGameWallet,5000);
+
 const CONFIG={
   balance:20,
   bet:0.40,
