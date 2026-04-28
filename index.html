@@ -135,6 +135,19 @@ padding:13px;
 color:#fff000;
 font-size:22px;
 font-weight:900;
+overflow:hidden;
+white-space:nowrap;
+}
+
+.liveBox span{
+display:inline-block;
+padding-left:100%;
+animation:moveText 14s linear infinite;
+}
+
+@keyframes moveText{
+from{transform:translateX(0)}
+to{transform:translateX(-100%)}
 }
 
 .quickGrid{
@@ -349,7 +362,7 @@ margin-top:16px;
 
 <div class="live">
 <h3>🔥 LIVE WINS</h3>
-<div class="liveBox" id="liveWinText">Добре дошли в Mykonos Casino! 🎰</div>
+<div class="liveBox"><span id="liveWinText">Добре дошли в Mykonos Casino! 🎰</span></div>
 </div>
 
 <div class="quickGrid">
@@ -366,7 +379,7 @@ margin-top:16px;
 <div class="gameArt">
 <div class="slotLogo">FRIENDS<br>SLOT</div>
 </div>
-<div class="gameSub">5×3 | WILD | SCATTER</div>
+<div class="gameSub">5×3 | WILD | SCATTER | JACKPOT</div>
 </div>
 
 <button class="playMain" onclick="openGame()">ИГРАЙ СЕГА</button>
@@ -576,6 +589,20 @@ alert("Регистрация успешна!");
 loadPlayers();
 }
 
+async function refreshUser(){
+if(!user)return;
+
+try{
+let d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&id=eq."+user.id);
+
+if(d[0]){
+user=d[0];
+localStorage.setItem("player",JSON.stringify(user));
+balanceText.innerText=money(user.balance);
+}
+}catch(e){}
+}
+
 async function saveBalance(){
 if(!user)return;
 
@@ -606,7 +633,7 @@ function openGame(){
 if(!user)return alert("Първо влез");
 
 localStorage.setItem("player",JSON.stringify(user));
-window.location.href="FRIENDS_BET_CASINO_v13_FIXED_PAYOUT.html";
+window.location.href="FRIENDS_BET_CASINO_v13_SUPABASE_MENU.html";
 }
 
 async function sendMsg(){
@@ -635,7 +662,7 @@ alert("Грешка при изпращане");
 async function sendSystem(t){
 await api("chat_messages",{
 method:"POST",
-headers:{Prefer:"return=minimal"},
+headers:{Prefer:"return:minimal"},
 body:JSON.stringify({
 player_name:"SYSTEM",
 message:t
@@ -675,9 +702,26 @@ localStorage.removeItem("player");
 location.reload();
 }
 
+async function autoLoginFromStorage(){
+let saved=JSON.parse(localStorage.getItem("player") || "null");
+
+if(saved && saved.id){
+user=saved;
+await refreshUser();
+
+welcomeText.innerText="Добре дошъл, "+user.Name;
+balanceText.innerText=money(user.balance);
+myLink.innerText=inviteLink();
+liveWinText.innerText="Добре дошъл обратно, "+user.Name+" 🎰";
+
+await loadChat();
+}
+}
+
 loadPlayers();
 loadTop();
 autoReferral();
+autoLoginFromStorage();
 </script>
 
 </body>
