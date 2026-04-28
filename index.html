@@ -1,1 +1,231 @@
 
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Friends Bet Casino</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial;
+  color:white;
+  background:radial-gradient(circle at top,#123b85,#02020a 55%);
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  padding:15px 30px;
+  background:#000a;
+}
+
+.logo{font-size:28px;font-weight:bold}
+.friends{color:#00d9ff}
+.bet{color:red}
+.casino{color:gold}
+
+.menu button{
+  margin-left:10px;
+  padding:8px 12px;
+  border:none;
+  border-radius:8px;
+  background:#111;
+  color:white;
+  cursor:pointer;
+}
+
+.profile{text-align:center;margin:20px;}
+
+.hero{text-align:center;padding:40px;}
+.hero h1{font-size:40px}
+.hero button{
+  padding:15px 25px;
+  background:red;
+  border:none;
+  border-radius:10px;
+  color:white;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+  width:90%;
+  margin:40px auto;
+}
+
+.game-card{
+  height:200px;
+  border-radius:20px;
+  padding:20px;
+  cursor:pointer;
+  background:#111;
+  text-align:center;
+}
+
+.play-btn{
+  margin-top:20px;
+  padding:10px;
+  background:red;
+  border-radius:10px;
+}
+
+/* MODAL */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000c;
+  justify-content:center;
+  align-items:center;
+}
+
+.box{
+  background:#111;
+  padding:20px;
+  border-radius:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="logo">
+    <span class="friends">Friends</span>
+    <span class="bet">Bet</span>
+    <span class="casino">Casino</span>
+  </div>
+
+  <div class="menu">
+    <button onclick="openModal('login')">Вход</button>
+    <button onclick="openModal('register')">Регистрация</button>
+    <button onclick="logout()">Изход</button>
+  </div>
+</div>
+
+<div class="profile">
+  <div id="user">Не си влязъл</div>
+  <div id="balance">Баланс: 0</div>
+</div>
+
+<div class="hero">
+  <h1>Добре дошъл бонус</h1>
+  <button onclick="claimBonus()">ВЗЕМИ 10 000</button>
+</div>
+
+<div class="games">
+  <div class="game-card" onclick="openGame()">
+    <h2>🎰 Vasa Fortune</h2>
+    <div class="play-btn">ИГРАЙ</div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal" id="login">
+  <div class="box">
+    <input id="lName" placeholder="Име"><br><br>
+    <input id="lPin" type="password" placeholder="PIN"><br><br>
+    <button onclick="login()">Вход</button>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="modal" id="register">
+  <div class="box">
+    <input id="rName" placeholder="Име"><br><br>
+    <input id="rPin" type="password" placeholder="PIN"><br><br>
+    <button onclick="register()">Регистрация</button>
+  </div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://xjcvntplrbjsaozkduqd.supabase.co",
+  "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq"
+);
+
+let userData = null;
+
+function openModal(id){
+  document.getElementById(id).style.display="flex";
+}
+
+async function register(){
+  let name = rName.value;
+  let pin = rPin.value;
+
+  const { data } = await supabase
+    .from("players")
+    .insert([{ Name:name, Pin:pin, balance:10000 }])
+    .select()
+    .single();
+
+  userData = data;
+  update();
+}
+
+async function login(){
+  let name = lName.value;
+  let pin = lPin.value;
+
+  const { data } = await supabase
+    .from("players")
+    .select("*")
+    .eq("Name",name)
+    .eq("Pin",pin)
+    .maybeSingle();
+
+  if(!data){
+    alert("грешен вход");
+    return;
+  }
+
+  userData = data;
+  update();
+}
+
+function logout(){
+  userData=null;
+  update();
+}
+
+async function claimBonus(){
+  if(!userData) return alert("влез първо");
+
+  let newBalance = userData.balance + 10000;
+
+  const { data } = await supabase
+    .from("players")
+    .update({ balance:newBalance })
+    .eq("id",userData.id)
+    .select()
+    .single();
+
+  userData = data;
+  update();
+}
+
+function openGame(){
+  if(!userData) return alert("влез първо");
+  window.location.href="vasa-fortune.html";
+}
+
+function update(){
+  if(userData){
+    user.innerText="Добре дошъл "+userData.Name;
+    balance.innerText="Баланс: "+userData.balance;
+  }else{
+    user.innerText="Не си влязъл";
+    balance.innerText="Баланс: 0";
+  }
+}
+</script>
+
+</body>
+</html>
