@@ -2,87 +2,126 @@
 <html lang="bg">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mykonos Casino</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mykonos Casino Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#fff;background:#050505}body{background:radial-gradient(circle at 50% 0%,rgba(255,210,0,.18),transparent 30%),linear-gradient(135deg,#090909,#26000b 45%,#050505)}.app{max-width:1180px;margin:auto;padding:16px}.top{display:flex;gap:14px;align-items:center;justify-content:space-between}.logo{font-size:44px;font-weight:1000;color:#ffd21f;text-shadow:0 0 14px red,0 0 28px gold}.sub{color:#7ee8ff;font-weight:900;letter-spacing:3px;text-align:center}.card{background:rgba(0,0,0,.80);border:2px solid #d99b00;border-radius:18px;padding:18px;box-shadow:0 0 24px rgba(255,190,0,.25);margin-top:16px}.grid{display:grid;grid-template-columns:310px 1fr;gap:16px}.loginPanel h2,.card h2{margin:0 0 14px;text-align:center;color:#ffd21f}input,button{width:100%;padding:14px;margin:8px 0;border-radius:10px;font-size:16px}input{background:#060606;color:#fff;border:1px solid #777}button{border:0;cursor:pointer;background:linear-gradient(#ffe45c,#ffb000);font-weight:1000;color:#111}.red{background:linear-gradient(#ff1515,#9e0000);color:#fff}.green{background:linear-gradient(#39ff14,#0b8f00);color:#021400}.hidden{display:none!important}.userChip{display:none;gap:12px;align-items:center;background:rgba(0,0,0,.78);border:2px solid #d99b00;border-radius:18px;padding:12px;min-width:270px}.userChip.active{display:flex}.avatar{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(#ffe45c,#ffb000);font-size:28px}.wallet{color:#95ff35;font-size:24px;font-weight:1000}.hero{min-height:220px;border:2px solid #d99b00;border-radius:18px;background:linear-gradient(120deg,rgba(255,80,0,.75),rgba(80,0,120,.5));display:flex;align-items:center;justify-content:center;text-align:center}.heroName{font-size:54px;font-weight:1000;color:#ffd21f;text-shadow:0 0 14px red,0 0 28px gold}.heroInfo span{display:inline-block;background:#0009;border:1px solid #ffd21f;border-radius:999px;padding:8px 18px;color:#95ff35;font-weight:900}.games{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.gameCard{border:2px solid #d99b00;border-radius:18px;overflow:hidden;background:#080808;box-shadow:0 0 22px rgba(255,190,0,.30)}.gameArt{height:270px;background:radial-gradient(circle at 50% 55%,rgba(255,210,0,.45),transparent 22%),linear-gradient(135deg,#17004a,#4d001d 45%,#130000);display:flex;align-items:center;justify-content:center}.gameCard.hot .gameArt{background:radial-gradient(circle at 50% 50%,rgba(80,255,70,.38),transparent 24%),linear-gradient(135deg,#052d09,#0a7017 45%,#020802)}.slotLogo{font-size:50px;line-height:.95;font-weight:1000;color:#ffd25d;text-shadow:0 0 10px red,0 0 24px gold;padding:22px 38px;border:3px solid #ffcc00;border-radius:14px;background:linear-gradient(#4b0017,#120006);box-shadow:0 0 25px red,0 0 40px gold;text-align:center}.gameSub{text-align:center;font-size:20px;font-weight:1000;color:#ffc1ff;margin:10px 0}.playBtn{display:block;width:90%;margin:10px auto 18px;font-size:23px;padding:17px}.playBtn.loading{pointer-events:none;opacity:.8}.leaderRow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:8px;padding:10px;margin:8px 0;border-radius:12px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.12);font-weight:900}.leaderBalance{color:#95ff35;font-weight:1000}.raceProgressWrap{height:18px;background:#050505;border:1px solid #39ff14;border-radius:999px;overflow:hidden;margin-top:12px}.raceProgress{height:100%;width:0%;background:linear-gradient(90deg,#00ff55,#ffd21f);transition:.35s}.raceText{text-align:center;margin-top:7px;font-weight:1000}.status{text-align:center;color:#ffe45c;font-weight:900;min-height:22px}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(80px);background:#000e;border:2px solid #ffd21f;border-radius:14px;padding:14px 20px;color:#ffd21f;font-weight:1000;transition:.3s;z-index:999}.toast.show{transform:translateX(-50%) translateY(0)}@media(max-width:850px){.grid{grid-template-columns:1fr}.games{grid-template-columns:1fr}.top{display:block;text-align:center}.logo{font-size:34px}.heroName{font-size:38px}.gameArt{height:230px}.slotLogo{font-size:38px}.quick{grid-template-columns:1fr}}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.box{
+  width:320px;
+  padding:20px;
+  background:#111;
+  border:2px solid gold;
+  border-radius:12px;
+  text-align:center;
+}
+
+input,button{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:8px;
+  border:0;
+}
+
+button{
+  background:gold;
+  font-weight:bold;
+}
+
+.balance{
+  font-size:22px;
+  color:#39ff14;
+}
 </style>
 </head>
+
 <body>
-<div class="app">
-  <div class="top">
-    <div><div class="logo">🎰 MYKONOS CASINO</div><div class="sub">FRIENDS EDITION</div></div>
-    <div class="userChip" id="userChip"><div class="avatar">👤</div><div style="flex:1"><b id="topUserName">Играч</b><br><span class="wallet" id="topUserBalance">0€</span></div><button class="red" onclick="logout()" style="width:90px;margin:0">ИЗХОД</button></div>
-  </div>
-  <div class="grid">
-    <aside class="card" id="loginBox">
-      <h2>🔐 Вход</h2>
-      <input id="loginName" placeholder="Име">
-      <input id="pinInput" placeholder="PIN">
-      <button onclick="login()">ВЛЕЗ</button>
-      <div style="height:1px;background:#555;margin:18px 0"></div>
-      <h2>🆕 Регистрация</h2>
-      <input id="regName" placeholder="Име">
-      <input id="regPin" placeholder="PIN">
-      <input id="regRef" placeholder="Referral код (по избор)">
-      <button onclick="register()">РЕГИСТРАЦИЯ</button>
-      <div id="loginStatus" class="status">Напиши име и PIN</div>
-    </aside>
-    <main>
-      <section class="hero">
-        <div><div>Добре дошъл,</div><div class="heroName" id="heroName">ИГРАЧ 👑</div><div class="heroInfo">Каса: <span id="heroWallet">0€</span></div></div>
-      </section>
-      <div class="quick" style="margin-top:16px">
-        <button onclick="dailyBonus()">🎁 ДНЕВЕН БОНУС +5€</button>
-        <button onclick="loadLeaderboard();loadRace()">🔄 ОБНОВИ КЛАСАЦИЯ</button>
-        <button onclick="showInfo()">ℹ️ ИНФО</button>
-      </div>
-      <div class="card">
-        <h2>🎮 ИГРИ</h2>
-        <div class="games">
-          <div class="gameCard"><div class="gameArt"><div class="slotLogo">20 JOKER<br>PRO</div></div><div class="gameSub">20 Lines | Joker Wild | Jackpot</div><button class="playBtn" onclick="openGame('20-joker.html',this)">ИГРАЙ СЕГА</button></div>
-          <div class="gameCard hot"><div class="gameArt"><div class="slotLogo">MYKONOS<br>HOT 5</div></div><div class="gameSub">5 Lines | Hot Fruits | Mobile</div><button class="playBtn" onclick="openGame('mykonos-hot-5.html',this)">ИГРАЙ СЕГА</button></div>
-        </div>
-      </div>
-      <div class="card">
-        <h2>🎯 FIRST TO 100€</h2>
-        <div id="raceList"></div>
-        <div class="raceProgressWrap"><div class="raceProgress" id="raceProgress"></div></div>
-        <div class="raceText" id="raceText">0€ / 100€</div>
-      </div>
-      <div class="card">
-        <h2>🏆 ТОП ИГРАЧИ</h2>
-        <div id="leaderboardList"></div>
-      </div>
-    </main>
-  </div>
+
+<div class="box">
+
+<h2>MYKONOS LOGIN</h2>
+
+<input id="name" placeholder="Име">
+<input id="pin" placeholder="PIN" type="password">
+
+<button onclick="login()">LOGIN</button>
+
+<div id="status"></div>
+
+<div id="userBox" style="display:none">
+  <h3 id="userName"></h3>
+  <div class="balance">€ <span id="balance">0</span></div>
+
+  <button onclick="save()">SAVE BALANCE</button>
+  <button onclick="goGame()">PLAY</button>
 </div>
-<div class="toast" id="toast">OK</div>
+
+</div>
+
 <script>
-const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
-const KEY="sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
-let user=null;
-function headers(){return {apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"}}
-async function api(path,options={}){const r=await fetch(URL+path,{method:options.method||"GET",cache:"no-store",headers:{...headers(),...(options.headers||{})},body:options.body});if(!r.ok){console.log(await r.text());throw new Error("Supabase error")}if(r.status===204)return null;return await r.json()}
-function money(v){return Number(v||0).toFixed(2).replace(/\.00$/,"")+"€"}
-function makeRefCode(name){return name.replace(/\s+/g,"").toUpperCase()+Math.floor(100+Math.random()*900)}
-function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500)}
-function setLoggedInUI(){loginBox.classList.add('hidden');userChip.classList.add('active');topUserName.textContent=user.Name;topUserBalance.textContent=money(user.balance);heroName.textContent=user.Name+' 👑';heroWallet.textContent=money(user.balance)}
-function setLoggedOutUI(){loginBox.classList.remove('hidden');userChip.classList.remove('active');heroName.textContent='ИГРАЧ 👑';heroWallet.textContent='0€'}
-async function refreshUser(){if(!user)return;const d=await api('players?select=id,Name,Pin,balance,ref_code,ref_by&id=eq.'+user.id);if(d[0]){user=d[0];localStorage.setItem('player',JSON.stringify(user));setLoggedInUI()}}
-async function login(){const name=loginName.value.trim(),pin=pinInput.value.trim();if(!name||!pin){alert('Напиши име и PIN');return}let players=[];try{players=await api('players?select=id,Name,Pin,balance,ref_code,ref_by')}catch(e){alert('Грешка със Supabase');return}const norm=s=>String(s||'').trim().toLowerCase();const p=players.find(x=>norm(x.Name)===norm(name));if(!p){alert('Няма такъв играч. Първо се регистрирай.');return}if(String(p.Pin).trim()!==pin){alert('Грешен PIN');return}user=p;if(!user.ref_code){user.ref_code=makeRefCode(user.Name);try{await api('players?id=eq.'+user.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({ref_code:user.ref_code})})}catch(e){}}localStorage.setItem('player',JSON.stringify(user));setLoggedInUI();loginStatus.textContent='Успешен вход';toast('Добре дошъл, '+user.Name);await loadLeaderboard();await loadRace()}
-async function register(){const name=regName.value.trim(),pin=regPin.value.trim(),ref=regRef.value.trim();if(!name||!pin){alert('Попълни име и PIN');return}let players=await api('players?select=id,Name,Pin,balance,ref_code,ref_by');const norm=s=>String(s||'').trim().toLowerCase();if(players.some(p=>norm(p.Name)===norm(name))){alert('Това име вече съществува');return}const code=makeRefCode(name);let inserted=await api('players',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({Name:name,Pin:pin,balance:10,ref_code:code,ref_by:ref||null})});user=Array.isArray(inserted)?inserted[0]:inserted;localStorage.setItem('player',JSON.stringify(user));setLoggedInUI();toast('Регистрация успешна');await loadLeaderboard();await loadRace()}
-async function saveBalance(){if(!user)return;await api('players?id=eq.'+user.id,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({balance:Number(user.balance||0)})})}
-async function dailyBonus(){if(!user){alert('Първо влез');return}const key='daily_'+user.id;const today=new Date().toISOString().slice(0,10);if(localStorage.getItem(key)===today){alert('Вече взе бонус днес');return}user.balance=Number(user.balance||0)+5;localStorage.setItem(key,today);localStorage.setItem('player',JSON.stringify(user));setLoggedInUI();await saveBalance();toast('+5€ дневен бонус');await loadLeaderboard();await loadRace()}
-async function openGame(file,btn){if(!user){alert('Първо влез');return}await refreshUser();localStorage.setItem('player',JSON.stringify(user));resetPlayButtons();if(btn){btn.classList.add('loading');btn.textContent='ЗАРЕЖДАНЕ';btn.disabled=true}setTimeout(()=>location.href='./'+file,80)}
-function resetPlayButtons(){document.querySelectorAll('.playBtn').forEach(b=>{b.classList.remove('loading');b.textContent='ИГРАЙ СЕГА';b.disabled=false})}
-window.addEventListener('pageshow',async()=>{resetPlayButtons();if(user){try{await refreshUser();await loadLeaderboard();await loadRace()}catch(e){}}});
-async function loadLeaderboard(){try{const d=await api('players?select=Name,balance&order=balance.desc&limit=5');leaderboardList.innerHTML=(d||[]).map((p,i)=>`<div class="leaderRow"><div>${['🥇','🥈','🥉','4.','5.'][i]}</div><div>${p.Name}</div><div class="leaderBalance">${money(p.balance)}</div></div>`).join('')||'<div class="leaderRow"><div>---</div><div>Няма играчи</div><div>0€</div></div>'}catch(e){leaderboardList.innerHTML='<div class="leaderRow"><div>!</div><div>Грешка Supabase</div><div></div></div>'}}
-async function loadRace(){try{const d=await api('players?select=Name,balance&order=balance.desc&limit=3');raceList.innerHTML=(d||[]).map((p,i)=>`<div class="leaderRow"><div>${['🥇','🥈','🥉'][i]}</div><div>${p.Name}</div><div class="leaderBalance">${money(p.balance)}</div></div>`).join('');if(user){const p=Math.min(100,Number(user.balance||0));raceProgress.style.width=p+'%';raceText.textContent=money(user.balance)+' / 100€'}}catch(e){raceList.innerHTML='<div class="leaderRow"><div>!</div><div>Грешка Supabase</div><div></div></div>'}}
-function showInfo(){alert('Играта използва един общ Supabase баланс. Влизаш в сайта, после играеш 20 Joker или Mykonos Hot 5.');}
-function logout(){localStorage.removeItem('player');user=null;setLoggedOutUI()}
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(document.activeElement.id==='loginName'||document.activeElement.id==='pinInput'))login()});
-(async function init(){const saved=JSON.parse(localStorage.getItem('player')||'null');if(saved&&saved.id){user=saved;try{await refreshUser()}catch(e){setLoggedOutUI()}}else setLoggedOutUI();await loadLeaderboard();await loadRace()})();
+const supabase = window.supabase.createClient(
+  "https://xjcvntplrbjsaozkduqd.supabase.co",
+  "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq"
+);
+
+let currentUser = null;
+
+async function login(){
+  const name = document.getElementById("name").value;
+  const pin = document.getElementById("pin").value;
+
+  const { data, error } = await supabase
+    .from("players")
+    .select("*")
+    .eq("name", name)
+    .eq("pin", pin)
+    .single();
+
+  if(error || !data){
+    document.getElementById("status").innerText = "❌ Грешен login";
+    return;
+  }
+
+  currentUser = data;
+
+  document.getElementById("userBox").style.display = "block";
+  document.getElementById("userName").innerText = data.name;
+  document.getElementById("balance").innerText = data.balance;
+
+  document.getElementById("status").innerText = "✅ Успешен login";
+}
+
+async function save(){
+  let newBalance = parseFloat(document.getElementById("balance").innerText);
+
+  await supabase
+    .from("players")
+    .update({ balance: newBalance })
+    .eq("id", currentUser.id);
+
+  alert("Запазено!");
+}
+
+function goGame(){
+  localStorage.setItem("balance", document.getElementById("balance").innerText);
+  localStorage.setItem("player_id", currentUser.id);
+
+  window.location.href = "mykonos-hot-5.html";
+}
 </script>
+
 </body>
 </html>
