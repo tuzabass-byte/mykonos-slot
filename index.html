@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mykonos Casino</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;color:#fff;background:#050505}
+body{
+  background:
+    radial-gradient(circle at 50% 0%,rgba(255,210,0,.20),transparent 28%),
+    radial-gradient(circle at 82% 35%,rgba(255,0,90,.15),transparent 30%),
+    radial-gradient(circle at 20% 60%,rgba(0,220,255,.10),transparent 30%),
+    linear-gradient(90deg,rgba(0,0,0,.96),rgba(35,0,15,.78),rgba(0,0,0,.96)),
+    url("https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=1600&q=80");
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+}
+.app{max-width:1220px;margin:0 auto;padding:18px;position:relative}
+.hidden{display:none!important}
+
+.top{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:18px;
+  align-items:center;
+  margin-bottom:16px;
+}
+.logoBox{text-align:center}
+.logo{
+  font-size:54px;
+  font-weight:1000;
+  letter-spacing:2px;
+  color:#ffd21f;
+  text-shadow:0 0 8px #ff2600,0 0 26px #ffb000,0 0 48px #ffd21f;
+  line-height:1;
+}
+.sub{
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:5px;
+  color:#7ee8ff;
+  text-shadow:0 0 12px #00d9ff;
+  margin-top:6px;
+}
+.userChip{
+  min-width:280px;
+  display:none;
+  align-items:center;
+  gap:12px;
+  background:rgba(0,0,0,.78);
+  border:2px solid #d99b00;
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 0 22px rgba(255,190,0,.30);
+}
+.userChip.active{display:flex}
+.avatar{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(#ffe45c,#ffb000);
+  color:#111;font-size:30px;
+  box-shadow:0 0 18px gold;
+}
+.userData{flex:1}
+.userData b{font-size:17px;display:block}
+.wallet{
+  margin-top:5px;
+  display:inline-block;
+  font-size:24px;
+  font-weight:1000;
+  color:#95ff35;
+  text-shadow:0 0 10px #1eff00;
+}
+.logoutSmall{
+  width:88px;margin:0;padding:10px;border-radius:10px;
+  background:linear-gradient(#ff2020,#920000);
+  color:#fff;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:18px;
+  align-items:start;
+}
+.card{
+  background:rgba(0,0,0,.82);
+  border:2px solid #d99b00;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 0 26px rgba(255,190,0,.25);
+}
+.card h2{margin:0 0 14px;color:#ffd21f;text-align:center}
+input,button{
+  width:100%;
+  padding:14px;
+  margin:8px 0;
+  border-radius:11px;
+  font-size:16px;
+}
+input{
+  background:#060606;
+  color:white;
+  border:1px solid #777;
+  outline:none;
+}
+input:focus{border-color:#ffd21f;box-shadow:0 0 12px rgba(255,210,31,.35)}
+button{
+  border:0;
+  cursor:pointer;
+  background:linear-gradient(#ffe45c,#ffb000);
+  font-weight:1000;
+  color:#111;
+  box-shadow:0 0 14px rgba(255,190,0,.35);
+}
+button:active{transform:scale(.98)}
+.status{text-align:center;color:#ffe45c;font-weight:900;min-height:22px}
+.hr{height:1px;background:linear-gradient(90deg,transparent,#aaa,transparent);margin:18px 0}
+
+.hero{
+  min-height:250px;
+  border:2px solid #d99b00;
+  border-radius:22px;
+  background:
+    linear-gradient(90deg,rgba(255,70,0,.76),rgba(170,0,90,.48)),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1400&q=80");
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  box-shadow:0 0 28px rgba(255,150,0,.38);
+}
+.hero h1{font-size:35px;margin:0 0 8px}
+.heroName{
+  font-size:60px;
+  font-weight:1000;
+  color:#ffd21f;
+  text-shadow:0 0 10px red,0 0 24px gold;
+}
+.heroInfo{font-size:22px;font-weight:900;margin-top:14px}
+.heroInfo span{
+  display:inline-block;
+  padding:8px 18px;
+  border-radius:999px;
+  background:rgba(0,0,0,.65);
+  border:1px solid #ffd21f;
+  color:#95ff35;
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:14px;
+}
+.qcard{
+  min-height:105px;
+  border:2px solid #d99b00;
+  border-radius:16px;
+  background:linear-gradient(135deg,#2d1500,#5a3600);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:17px;
+  font-weight:1000;
+  cursor:pointer;
+  transition:.2s;
+}
+.qcard:hover{transform:translateY(-3px);filter:brightness(1.15)}
+.qcard span{display:block;font-size:32px;margin-bottom:6px}
+
+.gameGrid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+  margin-top:16px;
+}
+.gameCard{
+  position:relative;
+  border:2px solid #d99b00;
+  border-radius:20px;
+  overflow:hidden;
+  background:#080808;
+  box-shadow:0 0 24px rgba(255,190,0,.30);
+  transition:.25s ease;
+}
+.gameCard:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 0 32px rgba(255,170,0,.58)}
+.gameCard:before{
+  content:"HOT";
+  position:absolute;
+  top:12px;
+  left:12px;
+  z-index:5;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:900;
+  background:linear-gradient(#ff3030,#930000);
+  color:#fff;
+  box-shadow:0 0 12px red;
+}
+.gameCard.green:before{content:"NEW";background:linear-gradient(#39ff14,#008a19);color:#041400;box-shadow:0 0 12px #39ff14}
+.gameArt{
+  height:310px;
+  background:
+    radial-gradient(circle at 50% 55%,rgba(255,210,0,.46),transparent 20%),
+    radial-gradient(circle at 30% 35%,rgba(255,0,90,.35),transparent 24%),
+    linear-gradient(135deg,#17004a,#4d001d 45%,#130000);
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.gameCard.green .gameArt{
+  background:
+    radial-gradient(circle at 50% 55%,rgba(80,255,70,.40),transparent 20%),
+    radial-gradient(circle at 30% 35%,rgba(255,210,0,.35),transparent 24%),
+    linear-gradient(135deg,#003b10,#0a5b12 45%,#020b04);
+}
+.gameArt:before{
+  content:"🍒 🍋 🍇 7 🔔";
+  position:absolute;top:22px;left:20px;right:20px;
+  text-align:center;font-size:43px;letter-spacing:12px;
+  filter:drop-shadow(0 0 10px red);
+}
+.slotLogo{
+  z-index:2;
+  font-size:54px;
+  line-height:.95;
+  font-weight:1000;
+  font-family:Georgia,serif;
+  color:#ffd25d;
+  text-shadow:0 0 10px red,0 0 24px gold;
+  padding:22px 38px;
+  border:3px solid #ffcc00;
+  border-radius:16px;
+  background:linear-gradient(#4b0017,#120006);
+  box-shadow:0 0 25px red,0 0 40px gold;
+  text-align:center;
+}
+.gameSub{text-align:center;font-size:20px;font-weight:1000;color:#ffc1ff;margin:11px 0}
+.playBtn{max-width:360px;display:block;margin:10px auto 18px;font-size:22px;padding:17px}
+.playBtn.loading{pointer-events:none;filter:brightness(1.2);opacity:.88}
+
+.raceBox,.leaderboardBox,.activityFeed{
+  background:rgba(0,0,0,.80);
+  border:2px solid #d99b00;
+  border-radius:20px;
+  padding:16px;
+  box-shadow:0 0 24px rgba(255,190,0,.25);
+  margin-top:16px;
+}
+.raceBox{border-color:#39ff14;box-shadow:0 0 24px rgba(57,255,20,.25)}
+.raceBox h2,.leaderboardBox h2,.activityFeed h2{
+  margin:0 0 12px;
+  text-align:center;
+  color:#ffcc00;
+}
+.raceBox h2{color:#39ff14;text-shadow:0 0 12px #39ff14}
+.leaderRow{
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  gap:8px;
+  align-items:center;
+  padding:10px;
+  margin:8px 0;
+  border-radius:12px;
+  background:rgba(0,0,0,.58);
+  border:1px solid rgba(255,255,255,.12);
+  font-weight:900;
+}
+.leaderRank{font-size:24px;text-align:center}
+.leaderBalance{color:#95ff35;font-weight:1000}
+.raceProgressWrap{
+  height:16px;background:#050505;border:1px solid #39ff14;border-radius:999px;overflow:hidden;margin-top:12px;
+}
+.raceProgress{height:100%;width:0%;background:linear-gradient(90deg,#00ff55,#ffd21f);transition:.4s}
+.raceText{text-align:center;margin-top:7px;font-weight:1000}
+.activityList{height:165px;overflow:auto;background:#030303;border:1px solid rgba(255,204,0,.45);border-radius:12px;padding:10px}
+.activityItem{padding:8px 9px;margin:6px 0;border-radius:10px;background:linear-gradient(90deg,rgba(255,204,0,.10),rgba(0,0,0,.12));font-weight:900;color:#ffe45c;font-size:15px}
+
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(90px);
+  z-index:99999;min-width:280px;max-width:92vw;padding:15px 20px;
+  border-radius:18px;border:2px solid #ffd21f;
+  background:linear-gradient(135deg,rgba(0,0,0,.92),rgba(80,0,25,.88));
+  box-shadow:0 0 28px rgba(255,210,31,.55);
+  color:#ffd21f;font-weight:1000;text-align:center;transition:.35s ease;opacity:0;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:950px){
+  .layout{grid-template-columns:1fr}
+  .top{grid-template-columns:1fr}
+  .userChip{margin:auto}
+  .logo{font-size:38px}
+  .sub{font-size:15px}
+  .gameGrid{grid-template-columns:1fr}
+  .quick{grid-template-columns:1fr}
+  .heroName{font-size:42px}
+  .gameArt{height:240px}
+  .slotLogo{font-size:40px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="top">
+    <div class="logoBox">
+      <div class="logo">🎰 MYKONOS CASINO</div>
+      <div class="sub">FRIENDS EDITION</div>
+    </div>
+
+    <div class="userChip" id="userChip">
+      <div class="avatar">👤</div>
+      <div class="userData">
+        <b id="topUserName">Играч</b>
+        <span class="wallet" id="topUserBalance">0€</span>
+      </div>
+      <button class="logoutSmall" onclick="logout()">ИЗХОД</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <aside class="card" id="loginBox">
+      <h2>🔐 Вход</h2>
+      <input id="loginName" placeholder="Име">
+      <input id="pinInput" placeholder="PIN">
+      <button onclick="login()">ВЛЕЗ</button>
+
+      <div class="hr"></div>
+
+      <h2>🆕 Регистрация</h2>
+      <input id="regName" placeholder="Име">
+      <input id="regPin" placeholder="PIN">
+      <input id="regRef" placeholder="Referral код (по избор)">
+      <button onclick="register()">РЕГИСТРАЦИЯ</button>
+
+      <div id="loginStatus" class="status">Напиши име и PIN за вход</div>
+    </aside>
+
+    <main>
+      <div class="hero">
+        <div>
+          <h1>Добре дошъл,</h1>
+          <div class="heroName" id="heroName">ИГРАЧ 👑</div>
+          <div class="heroInfo">Каса: <span id="heroWallet">0€</span></div>
+        </div>
+      </div>
+
+      <div class="quick">
+        <div class="qcard" onclick="dailyBonus()"><div><span>🎁</span>ДНЕВЕН БОНУС<br>+5€</div></div>
+        <div class="qcard" onclick="loadLeaderboard();loadRace();showToast('Класацията е обновена')"><div><span>🔄</span>ОБНОВИ<br>КЛАСАЦИЯ</div></div>
+        <div class="qcard" onclick="showInfo()"><div><span>ℹ️</span>ИНФО</div></div>
+      </div>
+
+      <div class="gameGrid">
+        <div class="gameCard">
+          <div class="gameArt"><div class="slotLogo">20 JOKER<br>PRO</div></div>
+          <div class="gameSub">20 Lines | Joker Wild | Jackpot</div>
+          <button class="playBtn" onclick="openGame('20-joker.html',this)">ИГРАЙ СЕГА</button>
+        </div>
+
+        <div class="gameCard green">
+          <div class="gameArt"><div class="slotLogo">MYKONOS<br>HOT 5</div></div>
+          <div class="gameSub">5 Lines | Hot Fruits | Mobile</div>
+          <button class="playBtn" onclick="openGame('mykonos-hot-5.html',this)">ИГРАЙ СЕГА</button>
+        </div>
+      </div>
+
+      <div class="raceBox">
+        <h2>🎯 FIRST TO 100€</h2>
+        <div id="raceList"><div class="leaderRow"><div class="leaderRank">🥇</div><div>---</div><div class="leaderBalance">0€</div></div></div>
+        <div class="raceProgressWrap"><div class="raceProgress" id="raceProgress"></div></div>
+        <div class="raceText" id="raceText">0€ / 100€</div>
+      </div>
+
+      <div class="leaderboardBox">
+        <h2>🏆 ТОП ИГРАЧИ</h2>
+        <div id="leaderboardList"><div class="leaderRow"><div class="leaderRank">🥇</div><div>---</div><div class="leaderBalance">0€</div></div></div>
+      </div>
+
+      <div class="activityFeed">
+        <h2>🔥 LIVE АКТИВНОСТИ</h2>
+        <div class="activityList" id="activityList">
+          <div class="activityItem">🎰 Добре дошъл в Mykonos Casino!</div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast">OK</div>
+
+<script>
+const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const KEY="sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+
+let user=null;
+
+function headers(){
+  return {
+    "apikey": KEY,
+    "Authorization": "Bearer " + KEY,
+    "Content-Type": "application/json"
+  };
+}
+
+async function api(path, options = {}) {
+  const res = await fetch(URL + path, {
+    method: options.method || "GET",
+    cache: "no-store",
+    headers: {...headers(), ...(options.headers || {})},
+    body: options.body
+  });
+
+  if (!res.ok) {
+    console.log("Supabase error:", await res.text());
+    throw new Error("Supabase error");
+  }
+
+  if (res.status === 204) return null;
+  return await res.json();
+}
+
+function money(v){return Number(v||0).toFixed(2)+"€"}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function makeRefCode(name){return name.replace(/\s+/g,"").toUpperCase()+Math.floor(100+Math.random()*900)}
+function norm(s){return String(s||"").trim().toLowerCase()}
+
+function showToast(text){
+  toast.textContent=text;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),2600);
+}
+
+function setLoggedInUI(){
+  loginBox.classList.add("hidden");
+  userChip.classList.add("active");
+  topUserName.textContent=user.Name;
+  topUserBalance.textContent=money(user.balance);
+  heroName.textContent=user.Name+" 👑";
+  heroWallet.textContent=money(user.balance);
+}
+
+function setLoggedOutUI(){
+  loginBox.classList.remove("hidden");
+  userChip.classList.remove("active");
+  heroName.textContent="ИГРАЧ 👑";
+  heroWallet.textContent="0€";
+}
+
+async function refreshUser(){
+  if(!user)return;
+  try{
+    const d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&id=eq."+user.id);
+    if(d && d[0]){
+      user=d[0];
+      localStorage.setItem("player",JSON.stringify(user));
+      setLoggedInUI();
+    }
+  }catch(e){}
+}
+
+async function login(){
+  const name=loginName.value.trim();
+  const pin=pinInput.value.trim();
+
+  if(!name || !pin){
+    loginStatus.textContent="Напиши име и PIN";
+    alert("Напиши име и PIN");
+    return;
+  }
+
+  let players=[];
+  try{
+    players=await api("players?select=id,Name,Pin,balance,ref_code,ref_by");
+  }catch(e){
+    loginStatus.textContent="Грешка със Supabase";
+    alert("Грешка със Supabase");
+    return;
+  }
+
+  const player=(players||[]).find(p=>norm(p.Name)===norm(name));
+
+  if(!player){
+    loginStatus.textContent="Няма такъв играч";
+    alert("Няма такъв играч. Първо се регистрирай.");
+    return;
+  }
+
+  if(String(player.Pin).trim()!==pin){
+    loginStatus.textContent="Грешен PIN";
+    alert("Грешен PIN");
+    return;
+  }
+
+  user=player;
+
+  if(!user.ref_code){
+    user.ref_code=makeRefCode(user.Name);
+    try{
+      await api("players?id=eq."+user.id,{
+        method:"PATCH",
+        headers:{Prefer:"return=minimal"},
+        body:JSON.stringify({ref_code:user.ref_code})
+      });
+    }catch(e){}
+  }
+
+  localStorage.setItem("player",JSON.stringify(user));
+  setLoggedInUI();
+  loginStatus.textContent="Успешен вход";
+  addActivity("🎰 "+user.Name+" вече е в играта");
+  showToast("Добре дошъл, "+user.Name+" 🎰");
+  await loadLeaderboard();
+  await loadRace();
+}
+
+async function register(){
+  const name=regName.value.trim();
+  const pin=regPin.value.trim();
+  const ref=regRef.value.trim();
+
+  if(!name || !pin){
+    alert("Попълни име и PIN");
+    return;
+  }
+
+  let existing=[];
+  try{
+    existing=await api("players?select=id,Name,Pin,balance,ref_code,ref_by");
+  }catch(e){
+    alert("Проблем със Supabase");
+    return;
+  }
+
+  if((existing||[]).some(p=>norm(p.Name)===norm(name))){
+    alert("Това име вече съществува. Влез с PIN.");
+    return;
+  }
+
+  const code=makeRefCode(name);
+  let created=null;
+
+  try{
+    const inserted=await api("players",{
+      method:"POST",
+      headers:{Prefer:"return=representation"},
+      body:JSON.stringify({Name:name,Pin:pin,balance:10,ref_code:code,ref_by:ref || null})
+    });
+    created=Array.isArray(inserted)?inserted[0]:inserted;
+  }catch(e){
+    alert("Грешка при регистрация");
+    return;
+  }
+
+  if(!created){
+    alert("Регистрацията е записана, но не успях да заредя профила.");
+    return;
+  }
+
+  user=created;
+  localStorage.setItem("player",JSON.stringify(user));
+  setLoggedInUI();
+  loginStatus.textContent="Регистрация успешна";
+  addActivity("🆕 "+user.Name+" се регистрира");
+  showToast("Добре дошъл, "+user.Name+" 🎰");
+  await loadLeaderboard();
+  await loadRace();
+
+  regName.value="";
+  regPin.value="";
+  regRef.value="";
+}
+
+async function dailyBonus(){
+  if(!user)return alert("Първо влез");
+
+  const key="daily_bonus_"+user.id;
+  const today=todayKey();
+
+  if(localStorage.getItem(key)===today){
+    alert("Вече взе дневния бонус днес.");
+    return;
+  }
+
+  user.balance=Number(user.balance||0)+5;
+  localStorage.setItem(key,today);
+  localStorage.setItem("player",JSON.stringify(user));
+  setLoggedInUI();
+
+  await api("players?id=eq."+user.id,{
+    method:"PATCH",
+    headers:{Prefer:"return=minimal"},
+    body:JSON.stringify({balance:Number(user.balance||0)})
+  });
+
+  addActivity("🎁 "+user.Name+" взе дневен бонус +5€");
+  showToast("🎁 +5€ дневен бонус");
+  await loadLeaderboard();
+  await loadRace();
+}
+
+async function openGame(file,btn){
+  if(!user)return alert("Първо влез");
+
+  try{await refreshUser()}catch(e){}
+  localStorage.setItem("player",JSON.stringify(user));
+
+  resetPlayButtons();
+  if(btn){
+    btn.classList.add("loading");
+    btn.textContent="ЗАРЕЖДАНЕ";
+    btn.disabled=true;
+  }
+
+  setTimeout(()=>window.location.href="./"+file,100);
+}
+
+function resetPlayButtons(){
+  document.querySelectorAll(".playBtn").forEach(btn=>{
+    btn.classList.remove("loading");
+    btn.textContent="ИГРАЙ СЕГА";
+    btn.disabled=false;
+    btn.style.pointerEvents="";
+  });
+}
+
+async function loadLeaderboard(){
+  try{
+    const d=await api("players?select=Name,balance&order=balance.desc&limit=5");
+    leaderboardList.innerHTML="";
+    const medals=["🥇","🥈","🥉","4.","5."];
+    (d||[]).forEach((p,i)=>{
+      leaderboardList.innerHTML+=`
+      <div class="leaderRow">
+        <div class="leaderRank">${medals[i]}</div>
+        <div>${p.Name}</div>
+        <div class="leaderBalance">${money(p.balance)}</div>
+      </div>`;
+    });
+  }catch(e){
+    leaderboardList.innerHTML='<div class="leaderRow"><div class="leaderRank">!</div><div>Грешка Supabase</div><div class="leaderBalance">---</div></div>';
+  }
+}
+
+async function loadRace(){
+  try{
+    const d=await api("players?select=Name,balance&order=balance.desc&limit=3");
+    raceList.innerHTML="";
+    const medals=["🥇","🥈","🥉"];
+    (d||[]).forEach((p,i)=>{
+      raceList.innerHTML+=`
+      <div class="leaderRow">
+        <div class="leaderRank">${medals[i]}</div>
+        <div>${p.Name}</div>
+        <div class="leaderBalance">${money(p.balance)}</div>
+      </div>`;
+    });
+
+    if(user){
+      const p=Math.min(100,Number(user.balance||0));
+      raceProgress.style.width=p+"%";
+      raceText.textContent=money(user.balance)+" / 100€";
+    }else{
+      raceProgress.style.width="0%";
+      raceText.textContent="0€ / 100€";
+    }
+  }catch(e){}
+}
+
+function addActivity(text){
+  const div=document.createElement("div");
+  div.className="activityItem";
+  div.textContent=text;
+  activityList.appendChild(div);
+  while(activityList.children.length>24)activityList.removeChild(activityList.firstElementChild);
+  activityList.scrollTop=activityList.scrollHeight;
+}
+
+function showInfo(){
+  alert("Играеш с точки, които се показват като €. Първият до 100€ точки печели рунда.");
+}
+
+function logout(){
+  localStorage.removeItem("player");
+  user=null;
+  setLoggedOutUI();
+  showToast("Излезе от профила");
+}
+
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Enter" && (document.activeElement.id==="loginName" || document.activeElement.id==="pinInput")){
+    login();
+  }
+});
+
+window.addEventListener("pageshow",async()=>{
+  resetPlayButtons();
+  const saved=JSON.parse(localStorage.getItem("player")||"null");
+  if(saved && saved.id){
+    user=saved;
+    await refreshUser();
+  }else{
+    setLoggedOutUI();
+  }
+  await loadLeaderboard();
+  await loadRace();
+});
+
+setInterval(async()=>{
+  if(user)await refreshUser();
+  await loadLeaderboard();
+  await loadRace();
+},15000);
+
+loadLeaderboard();
+loadRace();
+</script>
+</body>
+</html>
