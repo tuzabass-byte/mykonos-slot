@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Mykonos Hot Fruits ORIGINAL MOBILE</title>
+<style>
+*{box-sizing:border-box}
+:root{--gold:#ffd84a;--green:#50ff37;--cyan:#28d7ff}
+body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -10%,rgba(93,255,63,.28),transparent 32%),linear-gradient(180deg,#082c0b,#020803 75%,#000);color:#fff;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+.app{width:min(1220px,98vw);margin:auto;padding:10px 0 28px}
+.top{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.logoBox,.feature,.jp{border:2px solid rgba(255,216,74,.55);border-radius:16px;background:linear-gradient(#143b17,#041006);box-shadow:0 0 16px rgba(255,216,74,.25);text-align:center}
+.logoBox{padding:10px}.logo{font-size:clamp(26px,4vw,46px);font-weight:900;text-shadow:0 0 10px var(--cyan),0 4px 0 #003b4b}.sub{color:var(--gold);font-weight:900;font-size:13px}
+.jps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.jp{padding:8px 6px}.jp span{display:block;color:#b7ffc0;font-size:12px;font-weight:900}.jp b{font-size:clamp(18px,3vw,30px);color:var(--gold);text-shadow:0 0 8px #ff0}
+.feature{padding:10px;font-weight:900;text-shadow:0 2px 0 #000;background:linear-gradient(135deg,#062e5c,#0085cc,#00345c)}.feature b{color:#fff044}
+.machine{position:relative;border-radius:24px;padding:18px 126px 18px 74px;background:radial-gradient(circle at center,rgba(65,255,70,.22),transparent 46%),linear-gradient(135deg,#0b6b12,#052b08 66%,#010501);border:3px solid #2a5d10;box-shadow:0 34px 85px rgba(0,0,0,.72),inset 0 0 70px rgba(0,0,0,.64);overflow:hidden}
+.linesBadge{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:52px;height:128px;border-radius:12px;background:linear-gradient(#caff49,#4ba300);border:3px solid var(--gold);display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:900;text-shadow:0 2px 0 #1f5200;box-shadow:0 0 16px rgba(255,255,0,.55)}
+.linesBadge b{font-size:38px}.linesBadge span{font-size:13px}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;max-width:900px;margin:auto;position:relative;z-index:2}
+.reel{height:440px;overflow:hidden;position:relative;background:radial-gradient(circle at 50% 10%,rgba(255,255,255,.08),transparent 25%),linear-gradient(180deg,#102d14,#021006);border:4px solid #dabb2d;box-shadow:inset 0 0 32px rgba(0,0,0,.85),0 0 16px rgba(255,221,48,.25)}
+.reel:before,.reel:after{content:"";position:absolute;left:0;right:0;height:52px;z-index:5;pointer-events:none}.reel:before{top:0;background:linear-gradient(180deg,rgba(0,0,0,.56),transparent)}.reel:after{bottom:0;background:linear-gradient(0deg,rgba(0,0,0,.62),transparent)}
+.symbols{display:grid;grid-template-rows:repeat(3,1fr);height:100%}
+.symbol{display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 9px 5px rgba(0,0,0,.85))}
+.symbol svg{width:94%;height:94%}
+.symbol.win{filter:drop-shadow(0 9px 5px rgba(0,0,0,.85)) drop-shadow(0 0 8px rgba(255,240,0,.75))}
+.symbol.scatterWin{filter:drop-shadow(0 9px 5px rgba(0,0,0,.85)) drop-shadow(0 0 8px rgba(0,255,120,.75))}
+.spin .symbols{animation:spin .055s linear infinite}@keyframes spin{0%{transform:translateY(-40px);filter:blur(1px)}100%{transform:translateY(40px);filter:blur(4px)}}
+.stop{animation:stop .18s ease}@keyframes stop{0%{transform:translateY(0)}45%{transform:translateY(3px)}100%{transform:translateY(0)}}
+.wildReel{box-shadow:0 0 18px #24c8ff,inset 0 0 22px rgba(36,200,255,.20);border-color:#62dcff}
+.wildReel:after{content:"WILD";position:absolute;right:6px;bottom:8px;z-index:8;font-size:13px;font-weight:900;color:#fff;background:rgba(0,75,145,.72);border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:4px 8px;text-shadow:0 0 8px #24c8ff}
+.side{position:absolute;right:15px;top:50%;transform:translateY(-50%);display:grid;gap:12px;z-index:10}
+.round{width:88px;height:88px;border-radius:50%;border:2px solid rgba(255,255,255,.65);background:radial-gradient(circle,#214716,#050905);color:white;cursor:pointer;font-size:32px;box-shadow:0 12px 30px rgba(0,0,0,.62),inset 0 0 20px rgba(255,255,255,.08)}
+.round.big{width:108px;height:108px;font-size:50px;background:radial-gradient(circle,#29670a,#031000)}.round small{display:block;font-size:12px}
+.bottom{background:linear-gradient(180deg,#061208,#020402);border-radius:0 0 18px 18px;padding:12px 14px;display:grid;grid-template-columns:1.1fr 2.2fr 1.1fr;gap:14px;align-items:center}
+.money{text-align:center;font-weight:900}.money small{display:block;color:#c5cec8}.money b{display:block;font-size:clamp(28px,4vw,42px)}.label{color:#ffeb3b;font-size:21px;text-shadow:0 0 8px #ff0}
+.bets{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.bet{background:linear-gradient(#777,#151515);border:1px solid #aaa;color:white;border-radius:9px;min-height:56px;cursor:pointer;font-weight:900}.bet.active{border-color:#ffef3f;background:linear-gradient(#a4c700,#435500);box-shadow:0 0 14px #ffeb3b}.bet b{display:block;font-size:21px}.bet span{color:#ffeb3b;font-size:12px}
+.panel{margin-top:9px;background:rgba(0,0,0,.36);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:10px;color:#dcecdc;font-size:13px}.payBtn{background:linear-gradient(#2da8ff,#0862a9);border:1px solid #7adfff;color:#fff;border-radius:10px;padding:9px 13px;font-weight:900;cursor:pointer}.infoBtn{margin-top:7px;width:34px;height:34px;border-radius:50%;border:1px solid #7adfff;background:linear-gradient(#2da8ff,#0862a9);color:#fff;font-weight:900;font-size:19px;cursor:pointer;box-shadow:0 0 10px rgba(45,168,255,.45)}.log{min-height:38px}
+.overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100;background:radial-gradient(circle,rgba(255,230,0,.13),rgba(0,0,0,.48));pointer-events:none}.overlay.show{display:flex}.overlay div{font-size:clamp(42px,8vw,100px);font-weight:900;color:var(--gold);text-shadow:0 0 24px #ff0,0 7px 0 #6c3100}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.70);display:none;align-items:center;justify-content:center;z-index:200;padding:10px}.modal.show{display:flex}.payBox{width:min(760px,96vw);max-height:88vh;overflow-y:auto;background:#050505;border:2px solid #e0e0e0;border-radius:8px;box-shadow:0 30px 90px rgba(0,0,0,.82);color:#fff}.payHead{position:sticky;top:0;height:45px;display:flex;align-items:center;justify-content:center;background:#171717;border-bottom:1px solid #777;font-size:23px;font-weight:900;color:#d8d8d8;z-index:3}.close{position:absolute;right:16px;top:3px;border:none;background:transparent;color:#ff241f;font-size:45px;line-height:1;font-weight:900;cursor:pointer}.payContent{padding:18px 28px 26px}.payNote{width:min(460px,90%);margin:0 auto 22px;text-align:center;line-height:1.35;font-size:16px;color:#f0f0f0}.wildPreview{width:112px;height:112px;margin:0 auto 12px;border:2px solid #746b1c;background:#071407;display:flex;align-items:center;justify-content:center}.wildPreview svg{width:100%;height:100%;filter:drop-shadow(0 0 5px #fff)}
+.payGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:36px 54px;margin-top:10px}.payItem{text-align:center}.payIcon{height:118px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}.payIcon svg{width:118px;height:118px;filter:drop-shadow(0 0 5px #fff) drop-shadow(0 6px 3px rgba(0,0,0,.8))}.payBig .payIcon{height:148px}.payBig .payIcon svg{width:145px;height:145px}.rows{display:inline-grid;grid-template-columns:auto auto auto;gap:3px 8px;align-items:baseline;font-weight:900;font-size:18px}.x{color:#39ff2e}.cur{font-size:11px;color:#fff}.scatterTop{display:grid;grid-template-columns:1fr 1fr;gap:45px;margin:34px auto 30px;max-width:620px}.scatterLabel{color:#fff000;font-weight:900;font-size:22px;text-shadow:0 0 7px #ff0}.starLabel{color:#ddd;font-size:25px;margin:8px 0}.jpTitle{text-align:center;font-size:26px;color:#e8e8e8;margin:28px 0 18px}.jpSevens{display:flex;justify-content:center;gap:8px;margin-bottom:20px}.jpSevens svg{width:58px;height:58px;filter:drop-shadow(0 0 5px #fff)}.jpText{text-align:center;max-width:620px;margin:auto;font-size:16px;line-height:1.35}
+.coin{position:fixed;font-size:32px;z-index:101;pointer-events:none;animation:coin 1.1s forwards}@keyframes coin{to{transform:translateY(-230px) rotate(500deg);opacity:0}}
+@media(max-width:900px){.top{grid-template-columns:1fr}.jps{grid-template-columns:repeat(3,1fr)}.machine{padding:14px 12px 145px}.linesBadge{display:none}.side{right:12px;bottom:18px;top:auto;transform:none;display:flex}.round{width:66px;height:66px;font-size:23px}.round.big{width:78px;height:78px;font-size:35px}.reels{gap:6px}.reel{height:330px;border-width:3px}.bottom{grid-template-columns:1fr}.bets{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:700px){.payGrid{grid-template-columns:repeat(2,1fr);gap:28px 20px}.scatterTop{grid-template-columns:1fr;gap:28px}.payContent{padding:14px}.payIcon svg{width:98px;height:98px}.payBig .payIcon svg{width:118px;height:118px}}
+@media(max-width:560px){.reel{height:250px}.symbol svg{width:98%;height:98%}.jps{grid-template-columns:1fr}.machine{padding-bottom:138px}}
+
+/* ORIGINAL MOBILE LAYOUT */
+.mobileBar{display:none}
+
+@media(max-width:760px){
+  body{
+    background:linear-gradient(180deg,#051d08,#020703 72%,#000);
+    overflow-x:hidden;
+  }
+  .app{
+    width:100vw;
+    padding:6px 6px 12px;
+  }
+  .top{
+    grid-template-columns:1fr;
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .logoBox{
+    padding:6px;
+    border-radius:12px;
+  }
+  .logoBox .logo,
+  .logo{
+    font-size:28px!important;
+    line-height:1;
+  }
+  .sub{
+    font-size:11px!important;
+  }
+  .jps,
+  .jackpots{
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:5px!important;
+  }
+  .jp{
+    padding:5px 2px!important;
+    border-radius:10px!important;
+  }
+  .jp span{font-size:10px!important}
+  .jp b{font-size:15px!important}
+  .feature{
+    display:none!important;
+  }
+
+  .machine{
+    padding:8px 6px 82px!important;
+    border-radius:14px!important;
+    border-width:2px!important;
+    min-height:auto!important;
+  }
+  .linesBadge{
+    display:none!important;
+  }
+  .reels{
+    width:100%;
+    max-width:none;
+    gap:4px!important;
+    grid-template-columns:repeat(5,1fr);
+  }
+  .reel{
+    height:54vh!important;
+    max-height:430px!important;
+    min-height:310px!important;
+    border-width:2px!important;
+  }
+  .symbol svg,
+  .symbol .svg{
+    width:98%!important;
+    height:98%!important;
+  }
+
+  .side{
+    position:absolute!important;
+    left:8px!important;
+    right:8px!important;
+    bottom:9px!important;
+    top:auto!important;
+    transform:none!important;
+    display:grid!important;
+    grid-template-columns:1fr 1.35fr 1fr!important;
+    gap:8px!important;
+    z-index:20!important;
+  }
+  .round{
+    width:100%!important;
+    height:58px!important;
+    border-radius:14px!important;
+    font-size:25px!important;
+  }
+  .round.big{
+    width:100%!important;
+    height:64px!important;
+    font-size:34px!important;
+    background:radial-gradient(circle,#37a80c,#063100)!important;
+    box-shadow:0 0 18px rgba(84,255,98,.45), inset 0 0 20px rgba(255,255,255,.1)!important;
+  }
+  .round small{
+    font-size:10px!important;
+  }
+
+  .bottom{
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:8px 6px!important;
+    border-radius:0 0 12px 12px!important;
+  }
+  .money{
+    display:grid!important;
+    grid-template-columns:auto 1fr auto!important;
+    align-items:center!important;
+    gap:7px!important;
+    background:rgba(255,255,255,.06)!important;
+    border:1px solid rgba(255,255,255,.1)!important;
+    border-radius:12px!important;
+    padding:6px 8px!important;
+  }
+  .money small{
+    font-size:11px!important;
+  }
+  .money b{
+    font-size:25px!important;
+    text-align:left!important;
+  }
+  .money .label{
+    font-size:15px!important;
+    text-align:right!important;
+  }
+  .infoBtn{
+    width:30px!important;
+    height:30px!important;
+    margin-top:0!important;
+    font-size:16px!important;
+  }
+
+  .bets{
+    grid-template-columns:repeat(6,1fr)!important;
+    gap:4px!important;
+    order:2;
+  }
+  .bet{
+    min-height:44px!important;
+    border-radius:8px!important;
+    padding:3px 1px!important;
+  }
+  .bet b{
+    font-size:15px!important;
+  }
+  .bet span{
+    font-size:9px!important;
+  }
+
+  .panel,
+  .log{
+    margin-top:6px!important;
+    padding:7px!important;
+    font-size:11px!important;
+    border-radius:10px!important;
+  }
+
+  .payBox{
+    width:96vw!important;
+    max-height:88vh!important;
+  }
+  .payHead{
+    height:42px!important;
+    font-size:19px!important;
+  }
+  .close,
+  .closeX{
+    font-size:40px!important;
+  }
+  .payContent{
+    padding:12px!important;
+  }
+  .payGrid,
+  .payGridSymbols{
+    grid-template-columns:repeat(2,1fr)!important;
+    gap:18px 10px!important;
+  }
+  .scatterTop{
+    grid-template-columns:1fr!important;
+    gap:18px!important;
+  }
+  .payIcon{
+    height:88px!important;
+  }
+  .payIcon svg{
+    width:88px!important;
+    height:88px!important;
+  }
+  .payItem.big .payIcon,
+  .payBig .payIcon{
+    height:105px!important;
+  }
+  .payItem.big .payIcon svg,
+  .payBig .payIcon svg{
+    width:105px!important;
+    height:105px!important;
+  }
+  .payRows,
+  .rows{
+    font-size:14px!important;
+    gap:2px 5px!important;
+  }
+}
+
+@media(max-width:420px){
+  .reel{
+    height:50vh!important;
+    min-height:285px!important;
+  }
+  .logoBox .logo,
+  .logo{
+    font-size:24px!important;
+  }
+  .jp b{font-size:13px!important}
+  .round{height:52px!important}
+  .round.big{height:58px!important}
+  .money b{font-size:22px!important}
+  .money .label{font-size:13px!important}
+}
+
+</style>
+</head>
+<body>
+<div class="overlay" id="overlay"><div id="overlayText">BIG WIN</div></div>
+<div class="app">
+  <div class="top">
+    <div class="logoBox"><div class="logo">MYKONOS</div><div class="sub">CASINO HOT FRUITS</div></div>
+    <div class="jps"><div class="jp"><span>MINI</span><b id="mini">25.14</b></div><div class="jp"><span>MAJOR</span><b id="major">459.09</b></div><div class="jp"><span>GRAND</span><b id="grand">3 459.09</b></div></div>
+    <div class="feature"><b>MYKONOS HOT</b><br>ORIGINAL MOBILE</div>
+  </div>
+  <div class="machine">
+    <div class="linesBadge"><b>5</b><span>LINES</span><span>FIXED</span></div>
+    <div class="reels" id="reels"></div>
+    <div class="side"><button class="round" id="auto">↻<small>AUTO</small></button><button class="round big" id="spin">⟳</button><button class="round" id="sound">🔊<small>SOUND</small></button></div>
+  </div>
+  <div class="bottom">
+    <div class="money"><small>€</small><b id="balance">20.00</b><div class="label">BALANCE</div><button class="infoBtn" id="payBtn" title="Paytable">i</button><button class="infoBtn" id="resetBtn" title="Reset" style="margin-left:6px">↺</button></div>
+    <div class="bets">
+      <button class="bet" data-bet="0.10"><span>€</span><b>0.10</b><span>PLAY</span></button>
+      <button class="bet" data-bet="0.20"><span>€</span><b>0.20</b><span>PLAY</span></button>
+      <button class="bet" data-bet="0.50"><span>€</span><b>0.50</b><span>PLAY</span></button>
+      <button class="bet" data-bet="1.00"><span>€</span><b>1.00</b><span>PLAY</span></button>
+      <button class="bet active" data-bet="2.00"><span>€</span><b>2.00</b><span>PLAY</span></button>
+      <button class="bet" data-bet="5.00"><span>€</span><b>5.00</b><span>PLAY</span></button>
+    </div>
+    <div class="money"><small>€</small><b id="win">0.00</b><div class="label">WIN</div></div>
+  </div>
+  <div class="panel log" id="log">Готово за игра.</div>
+</div>
+
+<div class="modal" id="payModal"><div class="payBox"><div class="payHead">PAYTABLE - 1€ BET <button class="close" id="close">×</button></div><div class="payContent">
+  <div class="wildPreview" id="ptWild"></div><div class="payNote">On 2nd, 3rd and 4th reels only. Substitutes for all symbols on the same reel except for <b style="color:#ffd84a">$</b> and <b style="color:#ff5cff">★</b>.</div>
+  <div class="payGrid">
+    <div class="payItem"><div class="payIcon" id="ptSeven"></div><div class="rows"><span class="x">x5</span><span>600.00</span><span class="cur">€</span><span class="x">x4</span><span>40.00</span><span class="cur">€</span><span class="x">x3</span><span>10.00</span><span class="cur">€</span><span class="x">x2</span><span>2.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptGrapes"></div><div class="rows"><span class="x">x5</span><span>100.00</span><span class="cur">€</span><span class="x">x4</span><span>20.00</span><span class="cur">€</span><span class="x">x3</span><span>8.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptWatermelon"></div><div class="rows"><span class="x">x5</span><span>100.00</span><span class="cur">€</span><span class="x">x4</span><span>20.00</span><span class="cur">€</span><span class="x">x3</span><span>8.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptBell"></div><div class="rows"><span class="x">x5</span><span>40.00</span><span class="cur">€</span><span class="x">x4</span><span>10.00</span><span class="cur">€</span><span class="x">x3</span><span>4.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptPlum"></div><div class="rows"><span class="x">x5</span><span>20.00</span><span class="cur">€</span><span class="x">x4</span><span>6.00</span><span class="cur">€</span><span class="x">x3</span><span>2.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptOrange"></div><div class="rows"><span class="x">x5</span><span>20.00</span><span class="cur">€</span><span class="x">x4</span><span>6.00</span><span class="cur">€</span><span class="x">x3</span><span>2.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptLemon"></div><div class="rows"><span class="x">x5</span><span>20.00</span><span class="cur">€</span><span class="x">x4</span><span>6.00</span><span class="cur">€</span><span class="x">x3</span><span>2.00</span><span class="cur">€</span></div></div>
+    <div class="payItem"><div class="payIcon" id="ptCherry"></div><div class="rows"><span class="x">x5</span><span>20.00</span><span class="cur">€</span><span class="x">x4</span><span>6.00</span><span class="cur">€</span><span class="x">x3</span><span>2.00</span><span class="cur">€</span></div></div>
+  </div>
+  <div class="scatterTop">
+    <div class="payItem payBig"><div class="payIcon" id="ptStar"></div><div class="starLabel">SCATTER GAME</div><div style="font-size:16px;line-height:1.45;color:#eee">3 ★ on the screen trigger a SCATTER GAME. The player selects one of the symbols and can win:</div><div class="rows" style="margin-top:12px"><span class="x">3</span><span>110.00</span><span class="cur">€</span><span class="x">3</span><span>210.00</span><span class="cur">€</span><span class="x">3</span><span>100.00</span><span class="cur">€</span></div></div>
+    <div class="payItem payBig"><div class="payIcon" id="ptScatter"></div><div class="scatterLabel">SCATTER</div><div style="font-size:16px;line-height:1.45;color:#eee">Appears anywhere on all reels. 3 or more $ on the screen trigger FREE SPINS.</div><div class="rows" style="margin-top:12px"><span class="x">x5</span><span>100.00</span><span class="cur">€</span><span class="x">x4</span><span>20.00</span><span class="cur">€</span><span class="x">x3</span><span>3.00</span><span class="cur">€</span></div></div>
+  </div>
+  <div class="jpTitle">JACKPOT</div><div class="jpSevens" id="ptJp"></div><div class="jpText">on an active payline win the jackpot amount shown on the progressive meter when the max bet per line is placed.</div>
+</div></div></div>
+
+<script>
+const ROWS=3,COLS=5;
+const SVG={
+cherry:`<svg viewBox="0 0 100 100"><defs><radialGradient id="cg1" cx="35%" cy="30%"><stop offset="0" stop-color="#ff7b8b"/><stop offset=".55" stop-color="#e8001e"/><stop offset="1" stop-color="#7b0010"/></radialGradient><radialGradient id="cg2" cx="35%" cy="30%"><stop offset="0" stop-color="#ff9aa5"/><stop offset=".55" stop-color="#f00024"/><stop offset="1" stop-color="#8d0012"/></radialGradient></defs><path d="M47 35 C52 19,63 9,78 5" stroke="#6b360e" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M54 36 C46 20,34 10,21 7" stroke="#6b360e" stroke-width="6" fill="none" stroke-linecap="round"/><ellipse cx="31" cy="63" rx="23" ry="26" fill="url(#cg1)"/><ellipse cx="64" cy="64" rx="24" ry="27" fill="url(#cg2)"/><ellipse cx="23" cy="54" rx="7" ry="5" fill="#ffd0d6" opacity=".85"/><ellipse cx="56" cy="54" rx="7" ry="5" fill="#ffd0d6" opacity=".8"/><path d="M48 18 C60 7,73 13,83 5 C81 26,62 26,48 18Z" fill="#2ac942" stroke="#0a5a12" stroke-width="2"/></svg>`,
+orange:`<svg viewBox="0 0 100 100"><defs><radialGradient id="og" cx="35%" cy="30%"><stop offset="0" stop-color="#ffd17a"/><stop offset=".45" stop-color="#ff8c00"/><stop offset="1" stop-color="#b54500"/></radialGradient></defs><circle cx="50" cy="53" r="36" fill="url(#og)" stroke="#ffd978" stroke-width="4"/><circle cx="38" cy="39" r="10" fill="#ffe0a0" opacity=".75"/><path d="M50 16 C55 8,64 7,70 13" stroke="#239b2e" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`,
+lemon:`<svg viewBox="0 0 100 100"><defs><radialGradient id="lg" cx="35%" cy="30%"><stop offset="0" stop-color="#fff8a8"/><stop offset=".55" stop-color="#ffe119"/><stop offset="1" stop-color="#c08f00"/></radialGradient></defs><ellipse cx="50" cy="52" rx="40" ry="28" fill="url(#lg)" stroke="#fff26d" stroke-width="4" transform="rotate(-18 50 52)"/><ellipse cx="40" cy="42" rx="10" ry="6" fill="#fffbd0" opacity=".85"/></svg>`,
+watermelon:`<svg viewBox="0 0 100 100"><defs><radialGradient id="wg" cx="50%" cy="42%"><stop offset="0" stop-color="#ff7787"/><stop offset=".55" stop-color="#ff304a"/><stop offset="1" stop-color="#b40018"/></radialGradient></defs><path d="M12 65 C28 22,72 22,88 65 C70 88,30 88,12 65Z" fill="url(#wg)" stroke="#124f18" stroke-width="7"/><path d="M14 66 C31 82,69 82,86 66" stroke="#c8ff90" stroke-width="7" fill="none"/><g fill="#111"><circle cx="43" cy="54" r="3"/><circle cx="58" cy="51" r="3"/><circle cx="66" cy="63" r="3"/></g></svg>`,
+plum:`<svg viewBox="0 0 100 100"><defs><radialGradient id="pg" cx="35%" cy="28%"><stop offset="0" stop-color="#bcb3ff"/><stop offset=".55" stop-color="#4b2ec5"/><stop offset="1" stop-color="#1b0c65"/></radialGradient></defs><ellipse cx="42" cy="58" rx="26" ry="31" fill="url(#pg)" stroke="#a697ff" stroke-width="3"/><ellipse cx="63" cy="59" rx="25" ry="30" fill="url(#pg)" stroke="#b6a8ff" stroke-width="3"/><ellipse cx="35" cy="45" rx="9" ry="6" fill="#d8d2ff" opacity=".72"/></svg>`,
+grapes:`<svg viewBox="0 0 100 100"><defs><radialGradient id="gg" cx="35%" cy="30%"><stop offset="0" stop-color="#9fd8ff"/><stop offset=".5" stop-color="#246bb8"/><stop offset="1" stop-color="#06306b"/></radialGradient></defs><path d="M45 18 C50 8 62 8 70 15" stroke="#5b3318" stroke-width="5" fill="none"/><path d="M47 20 C57 8 72 13 83 5 C80 27 61 27 47 20Z" fill="#2bb23b" stroke="#0d5a15" stroke-width="2"/><g fill="url(#gg)" stroke="#aee6ff" stroke-width="2"><circle cx="35" cy="40" r="11"/><circle cx="50" cy="38" r="11"/><circle cx="65" cy="42" r="11"/><circle cx="28" cy="55" r="11"/><circle cx="43" cy="56" r="11"/><circle cx="58" cy="57" r="11"/><circle cx="72" cy="58" r="11"/><circle cx="37" cy="71" r="11"/><circle cx="53" cy="72" r="11"/><circle cx="66" cy="73" r="11"/></g></svg>`,
+star:`<svg viewBox="0 0 100 100"><defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#9327b8"/><stop offset=".5" stop-color="#ff65ff"/><stop offset="1" stop-color="#6c007b"/></linearGradient></defs><path d="M50 8 L62 36 L92 38 L69 58 L76 88 L50 72 L24 88 L31 58 L8 38 L38 36Z" fill="url(#sg)" stroke="#ffe6ff" stroke-width="4"/></svg>`,
+bell:`<svg viewBox="0 0 100 100"><defs><linearGradient id="bgold" x1="0" x2="1"><stop offset="0" stop-color="#b87500"/><stop offset=".35" stop-color="#ffd55a"/><stop offset=".65" stop-color="#fff1a8"/><stop offset="1" stop-color="#c88700"/></linearGradient></defs><path d="M28 70 C32 50,25 31,50 24 C75 31,68 50,72 70 Z" fill="url(#bgold)" stroke="#fff0a8" stroke-width="4"/><rect x="24" y="68" width="52" height="10" rx="5" fill="#d98b00" stroke="#fff0a8" stroke-width="3"/><circle cx="50" cy="82" r="7" fill="#ffb000"/><circle cx="50" cy="22" r="8" fill="#f59b00"/></svg>`,
+seven:`<svg viewBox="0 0 100 100"><defs><linearGradient id="sev" x1="0" x2="1"><stop offset="0" stop-color="#9b000a"/><stop offset=".5" stop-color="#ff2037"/><stop offset="1" stop-color="#7d0008"/></linearGradient></defs><path d="M18 22 H82 L50 84 H31 L58 36 H18Z" fill="url(#sev)" stroke="#fff" stroke-width="6"/><path d="M22 25 H76 L47 79" stroke="#ff9aa3" stroke-width="5" fill="none"/><path d="M18 22 H82 L50 84 H31 L58 36 H18Z" fill="none" stroke="#6a0007" stroke-width="3"/></svg>`,
+wild:`<svg viewBox="0 0 100 100"><defs><linearGradient id="myg" x1="0" x2="1"><stop offset="0" stop-color="#003c82"/><stop offset=".5" stop-color="#00a3ff"/><stop offset="1" stop-color="#002d61"/></linearGradient></defs><rect x="12" y="12" width="76" height="76" rx="18" fill="url(#myg)" stroke="#e9fbff" stroke-width="5"/><path d="M25 61 L50 23 L75 61 Z" fill="#fff"/><text x="50" y="82" text-anchor="middle" font-size="14" font-weight="900" fill="#ffd84a">MYKONOS</text><text x="50" y="21" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">WILD</text></svg>`,
+scatter:`<svg viewBox="0 0 100 100"><defs><linearGradient id="cash" x1="0" x2="1"><stop offset="0" stop-color="#d88a00"/><stop offset=".5" stop-color="#ffdb47"/><stop offset="1" stop-color="#b96a00"/></linearGradient></defs><text x="50" y="72" text-anchor="middle" font-size="80" font-weight="900" fill="url(#cash)" stroke="#fff0a8" stroke-width="2">$</text><text x="50" y="92" text-anchor="middle" font-size="13" font-weight="900" fill="#fff000">SCATTER</text></svg>`
+};
+const symbolList=[
+{id:'cherry',w:21,pay:[0,0,2,6,20]},
+{id:'orange',w:19,pay:[0,0,2,6,20]},
+{id:'lemon',w:19,pay:[0,0,2,6,20]},
+{id:'plum',w:14,pay:[0,0,2,6,20]},
+{id:'watermelon',w:15,pay:[0,0,8,20,100]},
+{id:'grapes',w:14,pay:[0,0,8,20,100]},
+{id:'bell',w:7,pay:[0,0,4,10,40]},
+{id:'seven',w:4,pay:[0,2,10,40,600]},
+{id:'star',w:3,pay:[0,0,0,0,0],star:true},
+{id:'wild',w:3,pay:[0,0,0,0,0],wild:true},
+{id:'scatter',w:4,pay:[0,0,0,0,0],scatter:true}
+].map(s=>({...s,html:SVG[s.id]}));
+const lines=[[[0,0],[0,1],[0,2],[0,3],[0,4]],[[1,0],[1,1],[1,2],[1,3],[1,4]],[[2,0],[2,1],[2,2],[2,3],[2,4]],[[0,0],[1,1],[2,2],[1,3],[0,4]],[[2,0],[1,1],[0,2],[1,3],[2,4]]];
+let balance=Number(localStorage.getItem('mykonosOriginalMobileBalance')||20),bet=2,board=[],spinning=false,soundOn=true,auto=false,audioCtx=null,expanded=[];
+const $=id=>document.getElementById(id);
+function rnd(){let t=symbolList.reduce((a,s)=>a+s.w,0),x=Math.random()*t;for(const s of symbolList){x-=s.w;if(x<=0)return s}return symbolList[0]}
+function make(){return Array.from({length:ROWS},()=>Array.from({length:COLS},rnd))}
+function init(){const root=$('reels');root.innerHTML='';for(let c=0;c<COLS;c++){const reel=document.createElement('div');reel.className='reel';reel.id='reel'+c;const box=document.createElement('div');box.className='symbols';for(let r=0;r<ROWS;r++){const d=document.createElement('div');d.className='symbol';d.innerHTML=rnd().html;box.appendChild(d)}reel.appendChild(box);root.appendChild(reel)}update()}
+function expandWilds(){expanded=[];for(let c=0;c<COLS;c++){if(board.some(row=>row[c].id==='wild')){expanded.push(c);for(let r=0;r<ROWS;r++)board[r][c]=symbolList.find(s=>s.id==='wild')}}}
+function draw(wins=[],sc=[]){for(let c=0;c<COLS;c++){const reel=$('reel'+c);reel.classList.toggle('wildReel',expanded.includes(c));const box=reel.querySelector('.symbols');box.innerHTML='';for(let r=0;r<ROWS;r++){const d=document.createElement('div');const win=wins.some(w=>w.cells.some(x=>x[0]===r&&x[1]===c));const scatter=sc.some(x=>x[0]===r&&x[1]===c);d.className='symbol'+(win?' win':'')+(scatter?' scatterWin':'');d.innerHTML=board[r][c].html;box.appendChild(d)}}}
+function evalBoard(){let wins=[],total=0;for(let li=0;li<lines.length;li++){const line=lines[li];let target=null;for(const [r,c] of line){let s=board[r][c];if(!['wild','scatter','star'].includes(s.id)){target=s;break}}if(!target)target=symbolList.find(s=>s.id==='seven');let count=0;for(const [r,c] of line){let s=board[r][c];if(s.id===target.id||s.id==='wild')count++;else break}if((target.id==='seven'&&count>=2)||(target.id!=='seven'&&count>=3)){let amount=target.pay[count-1]*bet;total+=amount;wins.push({line:li+1,cells:line.slice(0,count),amount})}}let scat=[],stars=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){if(board[r][c].id==='scatter')scat.push([r,c]);if(board[r][c].id==='star')stars.push([r,c])}let scatterWin=0;if(scat.length===3)scatterWin=3*bet;if(scat.length===4)scatterWin=20*bet;if(scat.length>=5)scatterWin=100*bet;let starWin=0;if(stars.length>=3)starWin=20*bet;total+=scatterWin+starWin;return{wins,total,scat,stars,scatterWin,starWin}}
+function spin(){resume();if(spinning)return;if(balance<bet){log('Нямаш достатъчно баланс');return}spinning=true;expanded=[];$('overlay').classList.remove('show');balance-=bet;setWin(0);update();log('Spin '+bet.toFixed(2));spinSound();for(let c=0;c<COLS;c++)$('reel'+c).classList.add('spin');let temp=setInterval(()=>{board=make();draw()},65);setTimeout(()=>{clearInterval(temp);board=make();if(Math.random()<.10){board[Math.floor(Math.random()*3)][1+Math.floor(Math.random()*3)]=symbolList.find(s=>s.id==='wild')}draw();stopReel(0)},620)}
+function stopReel(c){if(c>=COLS){setTimeout(()=>{expandWilds();if(expanded.length){wildSound();log('MYKONOS WILD')}draw();setTimeout(finish,180)},80);return}const reel=$('reel'+c);reel.classList.remove('spin');reel.classList.add('stop');setTimeout(()=>reel.classList.remove('stop'),240);stopSound(c);setTimeout(()=>stopReel(c+1),115)}
+function finish(){const res=evalBoard();draw(res.wins,(res.scatterWin?res.scat:[]).concat(res.starWin?res.stars:[]));if(res.total>0){balance+=res.total;countWin(res.total);let big=res.total>=bet*20,mega=res.total>=bet*60;if(big){$('overlayText').textContent=mega?'MEGA WIN':'BIG WIN';$('overlay').classList.add('show');setTimeout(()=>$('overlay').classList.remove('show'),1400);coins(mega?28:16)}winSound();log((res.scatterWin?'SCATTER + ':'')+(res.starWin?'STAR GAME + ':'')+'WIN '+res.total.toFixed(2))}else{loseSound();log('Няма печалба')}jpTick();update();spinning=false;if(auto)setTimeout(spin,750)}
+function update(){$('balance').textContent=balance.toFixed(2);localStorage.setItem('mykonosOriginalMobileBalance',balance.toFixed(2));document.querySelectorAll('.bet').forEach(b=>b.classList.toggle('active',Number(b.dataset.bet)===bet))}
+function setWin(v){$('win').textContent=v.toFixed(2)}function countWin(t){let n=0,inc=t/24;let id=setInterval(()=>{n+=inc;if(n>=t){n=t;clearInterval(id)}setWin(n)},24)}
+function log(t){$('log').textContent='['+new Date().toLocaleTimeString('bg-BG',{hour:'2-digit',minute:'2-digit'})+'] '+t}
+function jpTick(){let g=Number($('grand').textContent.replace(/\s/g,''))||3459.09;g+=Math.random()*.19;$('grand').textContent=g.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2}).replace(',','.')}
+function coins(n){for(let i=0;i<n;i++){let c=document.createElement('div');c.className='coin';c.textContent='🪙';c.style.left=(40+Math.random()*20)+'vw';c.style.top=(60+Math.random()*12)+'vh';document.body.appendChild(c);setTimeout(()=>c.remove(),1200)}}
+function ctx(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();return audioCtx}function resume(){if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()}
+function tone(f,d,type='square',g=.08,delay=0){if(!soundOn)return;const ac=ctx(),o=ac.createOscillator(),gn=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,ac.currentTime+delay);gn.gain.setValueAtTime(.0001,ac.currentTime+delay);gn.gain.exponentialRampToValueAtTime(g,ac.currentTime+delay+.01);gn.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+delay+d);o.connect(gn);gn.connect(ac.destination);o.start(ac.currentTime+delay);o.stop(ac.currentTime+delay+d+.03)}
+function thump(){tone(85,.12,'sine',.16)}function spinSound(){thump();tone(110,.04,'square',.09,.01);tone(210,.045,'square',.07,.05);tone(320,.04,'square',.045,.09)}function stopSound(i){tone(75+i*18,.028,'square',.08);tone(180+i*28,.030,'square',.045,.018)}function wildSound(){thump();tone(640,.13,'square',.06,.08)}function winSound(){thump();tone(600,.06,'square',.09);tone(900,.08,'square',.075,.08);tone(1200,.1,'triangle',.06,.16)}function loseSound(){tone(80,.035,'square',.015)}
+function fillPay(){const set=(id,key)=>$(id).innerHTML=SVG[key];set('ptWild','wild');set('ptSeven','seven');set('ptGrapes','grapes');set('ptWatermelon','watermelon');set('ptBell','bell');set('ptPlum','plum');set('ptOrange','orange');set('ptLemon','lemon');set('ptCherry','cherry');set('ptStar','star');set('ptScatter','scatter');$('ptJp').innerHTML=Array(5).fill(SVG.seven).join('')}
+document.querySelectorAll('.bet').forEach(b=>b.onclick=()=>{if(!spinning){bet=Number(b.dataset.bet);update()}});
+$('spin').onclick=spin;$('auto').onclick=()=>{auto=!auto;$('auto').style.boxShadow=auto?'0 0 22px #ffeb3b':'0 12px 30px rgba(0,0,0,.62)';if(auto&&!spinning)spin()};$('sound').onclick=()=>{soundOn=!soundOn;$('sound').innerHTML=soundOn?'🔊<small>SOUND</small>':'🔇<small>SOUND</small>'};$('payBtn').onclick=()=>{$('payModal').classList.add('show')};$('close').onclick=()=>$('payModal').classList.remove('show');$('payModal').onclick=e=>{if(e.target.id==='payModal')$('payModal').classList.remove('show')};document.addEventListener('keydown',e=>{if(e.code==='Space'){e.preventDefault();spin()}});
+if($('resetBtn')){$('resetBtn').onclick=()=>{balance=20;setWin(0);update();log('Reset 20€')}};
+board=make();init();draw();fillPay();update();
+</script>
+</body>
+</html>
