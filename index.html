@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Mykonos Casino Lobby</title>
+<style>
+:root{
+  --bg:#071127;--panel:#151d37;--panel2:#202943;--soft:#2b3555;
+  --orange:#ff6a00;--gold:#ffd45a;--green:#1fff67;--blue:#38d9ff;--purple:#7a39ff;
+  --text:#f6f7ff;--muted:#aab2cc;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{
+  background:
+    radial-gradient(circle at 35% 0%,rgba(53,120,255,.18),transparent 32%),
+    radial-gradient(circle at 90% 18%,rgba(255,106,0,.15),transparent 28%),
+    linear-gradient(180deg,#071127,#070d20 55%,#050914);
+}
+body:before{content:"";position:fixed;inset:0;background:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:42px 42px;pointer-events:none;opacity:.7}
+.hidden{display:none!important}
+.appShell{min-height:100vh;display:grid;grid-template-columns:74px 1fr;position:relative;z-index:1}
+.sidebar{position:sticky;top:0;height:100vh;background:#0b1228;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;align-items:center;padding:10px 8px;gap:10px;z-index:50}
+.sideIcon{width:48px;height:48px;border-radius:14px;border:0;background:transparent;color:#b9c3e5;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.sideIcon:hover,.sideIcon.active{background:var(--panel2);color:#fff}
+.sideIcon.logoMini{font-size:26px;background:linear-gradient(180deg,#1c294d,#101936);color:var(--orange)}
+.mainArea{min-width:0}
+.topbar{height:62px;position:sticky;top:0;z-index:40;background:rgba(7,17,39,.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.5px;cursor:pointer}
+.brandLogo{font-size:26px;color:#fff;text-shadow:0 0 12px rgba(255,106,0,.9)}
+.brandLogo b{color:var(--orange)}
+.pill{border:0;border-radius:999px;background:#2b344f;color:#fff;font-weight:900;padding:10px 14px;margin:0;cursor:pointer;box-shadow:none;width:auto}
+.pill.orange{background:linear-gradient(180deg,#ff842e,#f05200);color:white}
+.pill.dark{background:#202943;color:#dce3ff}
+.topActions{display:flex;align-items:center;gap:10px;position:relative}
+.searchBtn{width:42px;height:42px;border-radius:50%;border:0;background:transparent;color:#c5cee8;font-size:24px;margin:0;padding:0;box-shadow:none}
+.balanceChip{height:42px;border-radius:999px;background:#222b45;color:#fff;padding:0 13px;display:flex;align-items:center;gap:7px;font-weight:1000;cursor:pointer;border:1px solid rgba(255,255,255,.08)}
+.balanceChip #topUserBalance{color:#fff!important;text-shadow:none!important}
+.avatarBtn{width:43px;height:43px;border-radius:50%;border:2px solid var(--gold);background:linear-gradient(180deg,#7b3800,#2c0a00);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;box-shadow:0 0 12px rgba(255,212,90,.35)}
+
+.content{max-width:1180px;margin:0 auto;padding:22px 18px 80px}
+.heroBanners{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:10px 0 24px}
+.banner{min-height:160px;border:1px solid rgba(255,106,0,.85);border-radius:16px;overflow:hidden;position:relative;background:#121b34;box-shadow:0 18px 38px rgba(0,0,0,.28)}
+.banner:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 77% 42%,rgba(255,214,90,.32),transparent 29%),linear-gradient(135deg,rgba(255,106,0,.26),transparent 55%)}
+.banner .txt{position:absolute;left:18px;top:18px;right:38%;z-index:2}
+.tag{display:inline-block;background:rgba(255,255,255,.22);border-radius:7px;padding:5px 8px;font-size:12px;font-weight:1000;color:#fff;margin-bottom:18px}
+.banner h2{margin:0;color:#ffd46a;font-size:24px;text-shadow:0 0 8px rgba(255,106,0,.7)}
+.banner p{margin:6px 0 0;color:#fff;font-weight:900}
+.banner .art{position:absolute;right:14px;bottom:10px;font-size:74px;filter:drop-shadow(0 0 18px rgba(255,214,90,.45));animation:floaty 2.4s ease-in-out infinite alternate}
+.banner:nth-child(2) .art{animation-delay:.4s}.banner:nth-child(3) .art{animation-delay:.8s}
+@keyframes floaty{to{transform:translateY(-8px) rotate(3deg)}}
+.sectionHead{display:flex;align-items:center;justify-content:space-between;margin:26px 0 12px}
+.sectionHead h2{margin:0;font-size:28px}
+.sectionHead .showAll{width:auto;margin:0;background:#3b455f;color:#fff;border-radius:999px;padding:10px 16px;box-shadow:none}
+
+.bigWins{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.winCard{height:72px;border-radius:12px;background:#1a2340;display:grid;grid-template-columns:62px 1fr;gap:10px;align-items:center;padding:8px;overflow:hidden}
+.winIcon{height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,#ff6a00,#263cff)}
+.winCard b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.winCard span{color:var(--green);font-weight:1000}
+
+.lobbyBlock{display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:center;margin-top:30px}
+.lobbyTitle{font-size:29px;font-weight:1000;line-height:1.15}
+.gameGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.gameCard{position:relative;height:230px;border-radius:16px;overflow:hidden;background:#18213d;cursor:pointer;box-shadow:0 18px 34px rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);transition:.22s}
+.gameCard:hover{transform:translateY(-6px);filter:brightness(1.08)}
+.gameThumb{height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center;padding:12px;background:linear-gradient(180deg,#2b3560,#111832)}
+.gameTitle{position:absolute;left:10px;right:10px;bottom:12px;text-align:center;font-size:16px;font-weight:1000;line-height:1.02;text-shadow:0 2px 4px #000;z-index:3}
+.provider{font-size:9px;color:#fff;opacity:.8;display:block;margin-top:3px}
+.heart{position:absolute;right:10px;top:10px;z-index:3;color:#dfe8ff;font-size:22px}
+.gameThumb:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.35),transparent 24%),linear-gradient(180deg,transparent,rgba(0,0,0,.55));z-index:1}
+.gameThumb:after{position:absolute;inset:auto 0 56px;text-align:center;z-index:2;font-size:74px;filter:drop-shadow(0 0 14px rgba(255,255,255,.32));animation:cardBob 1.7s ease-in-out infinite alternate}
+@keyframes cardBob{to{transform:translateY(-8px) scale(1.04)}}
+.hotArt{background:linear-gradient(135deg,#03431a,#049c2c 55%,#011406)}.hotArt:after{content:"🍒🍋🍇";font-size:58px}
+.jokerArt{background:linear-gradient(135deg,#5c0008,#db1024 55%,#170004)}.jokerArt:after{content:"🃏7️⃣🍀";font-size:58px;animation:flip 1.9s ease-in-out infinite alternate}
+.beerArt{background:linear-gradient(135deg,#0c426c,#d17b00 58%,#211000)}.beerArt:after{content:"🍺🍻💰";font-size:58px;animation:bubble 1.4s ease-in-out infinite alternate}
+.goldenArt{background:linear-gradient(135deg,#492000,#bd7b00 58%,#130800)}.goldenArt:after{content:"🔔👨‍🍳🔔";font-size:58px;animation:swing 1.2s ease-in-out infinite alternate;transform-origin:50% 20%}
+.wheelArt{background:linear-gradient(135deg,#532100,#d64b00 58%,#120400)}.wheelArt:after{content:"👨‍🍳🎡🔥";font-size:58px;animation:spinMini 2.4s linear infinite}
+@keyframes flip{to{transform:rotateY(20deg) translateY(-8px)}}@keyframes bubble{to{transform:translateY(-12px)}}@keyframes swing{to{transform:rotate(7deg)}}@keyframes spinMini{to{transform:rotate(360deg)}}
+
+.weekBanner{margin:30px 0;border-radius:16px;min-height:76px;background:linear-gradient(90deg,#1b58ff,#7b21d9);display:flex;align-items:center;justify-content:space-between;padding:14px 22px;overflow:hidden;position:relative}
+.weekBanner:before{content:"🃏";position:absolute;left:50%;font-size:66px;opacity:.9;filter:drop-shadow(0 0 12px white)}
+.weekBanner h2{margin:0;font-size:26px}.weekBanner p{margin:0;color:#dbe6ff;font-weight:900}
+.weekBanner button{width:auto;margin:0;border-radius:999px;background:#ff6a00;color:white;padding:12px 22px}
+
+.page{display:none}.page.active{display:block}
+.loginDrawer{position:fixed;left:86px;top:76px;z-index:80;width:320px;max-width:calc(100vw - 100px);display:none}
+.loginDrawer:not(.hidden){display:block}
+.card{background:#141c35;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;box-shadow:0 20px 45px rgba(0,0,0,.35)}
+.card h2{margin:0 0 14px;color:#fff}
+input,select,button{font-family:inherit}
+input,select{width:100%;padding:14px;margin:7px 0;border-radius:12px;background:#0b1228;color:#fff;border:1px solid #303a59;outline:none}
+button{width:100%;padding:14px;margin:8px 0;border-radius:12px;border:0;background:linear-gradient(180deg,#ff842e,#f05200);color:#fff;font-weight:1000;cursor:pointer;box-shadow:0 10px 20px rgba(255,106,0,.22)}
+.status{min-height:20px;text-align:center;color:#ffd46a;font-weight:900}.hr{height:1px;background:#2b3555;margin:14px 0}
+
+.drawer{position:fixed;left:0;top:0;bottom:0;width:360px;max-width:88vw;background:#151d37;z-index:200;transform:translateX(-105%);transition:.28s;box-shadow:30px 0 80px rgba(0,0,0,.5);padding:14px;overflow:auto}
+.drawer.show{transform:translateX(0)}.drawerTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.closeX{width:38px;height:38px;border:0;background:transparent;color:#cfd8f5;font-size:30px;box-shadow:none;margin:0;padding:0}
+.drawerLogo{font-size:22px;font-weight:1000}.drawerLogo b{color:var(--orange)}
+.drawerGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.drawerItem{min-height:58px;border-radius:10px;background:#27304b;display:flex;align-items:center;gap:10px;padding:10px;font-weight:1000}
+.drawerItem.big{grid-column:1/-1}.drawerItem span{font-size:28px}
+.drawerPromo{background:linear-gradient(90deg,#7a31ff,#183be3);border-radius:14px;padding:12px;margin:10px 0;display:grid;grid-template-columns:54px 1fr 90px;align-items:center;gap:8px}.drawerPromo .egg{font-size:38px}.drawerPromo b{display:block}
+.accord{margin-top:12px}.accordBtn{background:#27304b;color:#e5ebff;margin:6px 0;display:flex;justify-content:space-between;box-shadow:none}
+.drawerFooter{position:sticky;bottom:0;margin-top:30px;background:#151d37;padding-top:12px}
+.supportBtn{background:#ff5a00;border-radius:999px;font-size:17px}
+.langBtn{background:#4b546e;border-radius:999px}
+.socials{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.socials div{background:#27304b;border-radius:10px;padding:11px;text-align:center;font-size:22px}
+
+.dropPanel{position:absolute;right:0;top:54px;width:420px;max-width:calc(100vw - 24px);background:#0b1228;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:12px;box-shadow:0 24px 70px rgba(0,0,0,.55);display:none;z-index:100}
+.dropPanel.show{display:block}
+.walletGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.walletBox{background:#27304b;border-radius:12px;padding:12px;font-weight:1000}.walletBox span{display:block;color:#aab2cc;font-size:13px}.walletBox b{font-size:20px}
+.bonusOffer{margin-top:10px;border-radius:16px;background:linear-gradient(135deg,#642a9e,#321a5e);overflow:hidden;border:1px solid rgba(255,255,255,.08)}.bonusOffer .inside{padding:16px}.bonusOffer h3{background:#f5f205;color:#111;display:inline-block;padding:8px 12px;border-radius:7px;margin:8px 0}.bonusOffer button{border-radius:999px}
+.profileCard{background:#4c2a8b;border-radius:14px;padding:15px;margin-bottom:10px}.profileCard b{font-size:22px}.profileMenu div{padding:13px;border-bottom:1px solid #27304b;font-weight:900}.profileMenu div:last-child{border-bottom:0;color:#ffb2b2}
+
+.floatSupport{position:fixed;right:20px;bottom:22px;width:56px;height:56px;border-radius:50%;z-index:90;background:#596276;color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 16px 30px rgba(0,0,0,.35);cursor:pointer}
+.footer{margin-top:70px;padding:38px 0 10px;color:#aab2cc;border-top:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:30px}.footer b{color:#fff}.footer div div{margin:10px 0;font-weight:900}
+
+.profileGrid,.bonusGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.statBox{background:#19223d;border-radius:16px;padding:20px;text-align:center;font-weight:1000}.statBox span{display:block;font-size:34px;margin-bottom:8px}.chatBox{height:220px;background:#0b1228;border-radius:12px;padding:12px;overflow:auto}.inputRow{display:flex;gap:8px}.inputRow button{width:120px}.refRow{display:flex;gap:8px}.refLink{flex:1;background:#0b1228;border-radius:12px;padding:13px;color:#38d9ff;word-break:break-all}.copyMini{width:56px}
+
+.modal,.raceWinnerModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:300;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(6px)}.modal.active,.raceWinnerModal.active{display:flex}.modalBox,.raceWinnerBox,.wheelBox{width:min(560px,95vw);background:#121a32;border:1px solid rgba(255,212,90,.65);border-radius:22px;padding:22px;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.65);text-align:center}.close{position:absolute;right:10px;top:10px;width:38px;height:38px;border-radius:50%;padding:0;margin:0;background:#ff4a4a}.modalTitle,.raceWinnerTitle,.wheelLogo{font-size:28px;font-weight:1000;color:#ffd45a}.modalLink{background:#0b1228;border-radius:12px;padding:12px;margin:12px 0;color:#38d9ff;word-break:break-all}.modalGrid,.raceWinnerActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.green{background:#1fbf4b}.blue{background:#2c8dff}.red{background:#e03a3a}
+
+.luckyWheel{width:300px;height:300px;margin:18px auto;border-radius:50%;border:8px solid #ffd45a;background:conic-gradient(#ff1744 0 45deg,#ffb000 45deg 90deg,#00d9ff 90deg 135deg,#7b2cff 135deg 180deg,#39ff14 180deg 225deg,#ff5c00 225deg 270deg,#111 270deg 315deg,#ffd21f 315deg 360deg);transition:transform 4s cubic-bezier(.12,.82,.18,1)}.wheelLabel{display:none}.wheelResult{font-size:20px;font-weight:1000;color:#39ff14}
+
+.winToast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(100px);background:#151d37;border:1px solid #ffd45a;border-radius:18px;padding:13px 20px;z-index:400;opacity:0;transition:.3s;color:#ffd45a;font-weight:1000}.winToast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:980px){
+  .appShell{grid-template-columns:1fr}.sidebar{display:none}.topbar{height:58px;padding:0 10px}.brandLogo{font-size:20px}.content{padding:14px 10px 70px}.heroBanners{grid-template-columns:1fr;gap:10px}.banner{min-height:128px}.bigWins{grid-template-columns:1fr 1fr}.lobbyBlock{grid-template-columns:1fr}.lobbyTitle{font-size:24px}.gameGrid{grid-template-columns:1fr 1fr;gap:10px}.gameCard{height:205px}.weekBanner{display:block;text-align:left}.weekBanner button{margin-top:12px}.profileGrid,.bonusGrid{grid-template-columns:1fr}.footer{grid-template-columns:1fr;gap:8px}.loginDrawer{left:10px;top:68px}.drawer{width:320px}.pill.dark{display:none}
+}
+@media(max-width:560px){
+  .gameGrid{grid-template-columns:1fr 1fr}.gameCard{height:178px}.gameThumb:after{font-size:42px}.gameTitle{font-size:12px}.topActions{gap:5px}.balanceChip{height:38px;padding:0 9px;font-size:13px}.pill.orange{padding:10px 11px;font-size:13px}.avatarBtn{width:38px;height:38px}.searchBtn{width:34px}.banner .art{font-size:52px}.banner .txt{right:28%;left:14px}.sectionHead h2{font-size:23px}.bigWins{grid-template-columns:1fr}.dropPanel{right:-2px;top:48px;width:94vw}.drawerPromo{grid-template-columns:40px 1fr 78px}.footer{font-size:13px}
+}
+
+
+/* ===== REAL COVER CARDS v3 - embedded PNG-like art, no external files ===== */
+.gameCard{border-radius:22px!important;border:1px solid rgba(255,216,106,.28)!important;background:#11182f!important;box-shadow:0 18px 42px rgba(0,0,0,.45),0 0 18px rgba(255,216,106,.08)!important}
+.gameCard:hover{transform:translateY(-8px) scale(1.025)!important;filter:none!important;box-shadow:0 24px 56px rgba(0,0,0,.55),0 0 28px rgba(255,216,106,.28)!important}
+.gameThumb{isolation:isolate;overflow:hidden;padding:0!important;align-items:stretch!important;justify-content:stretch!important;background:#11182f!important}
+.gameThumb:before{z-index:1!important;background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 35%,rgba(0,0,0,.76))!important}
+.gameThumb:after{display:none!important}
+.coverScene{position:absolute;inset:0;z-index:2;overflow:hidden;border-radius:inherit;background:#18213d}
+.coverScene:before{content:"";position:absolute;inset:-25%;background:radial-gradient(circle,rgba(255,255,255,.24),transparent 34%);animation:coverGlow 3.2s ease-in-out infinite alternate;opacity:.7}
+.coverScene:after{content:"";position:absolute;inset:-70% -40%;background:linear-gradient(115deg,transparent 44%,rgba(255,255,255,.32),transparent 58%);transform:translateX(-80%) rotate(12deg);animation:coverShine 4.2s ease-in-out infinite}
+@keyframes coverGlow{to{transform:scale(1.14) rotate(8deg);opacity:1}}
+@keyframes coverShine{0%,55%{transform:translateX(-85%) rotate(12deg)}78%,100%{transform:translateX(85%) rotate(12deg)}}
+.coverBadge{position:absolute;top:10px;left:10px;z-index:5;padding:6px 9px;border-radius:8px;font-size:10px;font-weight:1000;color:#fff;border:1px solid rgba(255,255,255,.35);box-shadow:0 0 12px rgba(0,0,0,.35)}
+.coverBadge.hot{background:linear-gradient(#35ff68,#009822);color:#041400}.coverBadge.joker{background:linear-gradient(#ff4040,#930000)}.coverBadge.beer{background:linear-gradient(#ffd86a,#ff7a00);color:#170800}.coverBadge.bells{background:linear-gradient(#fff1a0,#b66a00);color:#1b0b00}.coverBadge.wheel{background:linear-gradient(#33e6ff,#064dff)}
+.coverRibbon{position:absolute;left:12px;right:12px;bottom:48px;z-index:5;text-align:center;padding:6px 7px;border-radius:999px;background:rgba(0,0,0,.56);border:1px solid rgba(255,216,106,.40);color:#fff4b0;font-size:10px;font-weight:1000;letter-spacing:.6px;text-shadow:0 0 8px #000}
+.coverHot{background:radial-gradient(circle at 50% 22%,rgba(255,240,75,.36),transparent 28%),linear-gradient(135deg,#053e15,#079e33 55%,#06120a)!important}
+.fruitSlots{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:4;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:86%;height:48%;align-items:center}
+.fruitSlots span{display:flex;align-items:center;justify-content:center;height:100%;border-radius:14px;background:linear-gradient(180deg,#082616,#010805);border:2px solid #ffd86a;font-size:clamp(35px,4.5vw,64px);filter:drop-shadow(0 0 8px rgba(255,255,255,.45));animation:fruitDrop 1.3s ease-in-out infinite alternate}
+.fruitSlots span:nth-child(2){animation-delay:.18s}.fruitSlots span:nth-child(3){animation-delay:.36s}
+@keyframes fruitDrop{to{transform:translateY(-9px) scale(1.07)}}
+.coverJoker{background:radial-gradient(circle at 52% 26%,rgba(255,216,106,.34),transparent 28%),linear-gradient(135deg,#67000c,#d7001a 58%,#180006)!important}
+.jokerCards{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);z-index:4;display:flex;gap:8px;align-items:center;justify-content:center;width:90%}
+.jokerCards span{width:54px;height:74px;border-radius:10px;background:linear-gradient(180deg,#fff,#d6eaff);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:1000;color:#0f4dd9;box-shadow:0 12px 24px rgba(0,0,0,.35);animation:jokerFlip 2s ease-in-out infinite alternate}
+.jokerCards span:nth-child(2){background:linear-gradient(180deg,#0b54db,#003a9a);color:#fff;font-size:42px;animation-delay:.25s}.jokerCards span:nth-child(3){animation-delay:.5s;background:linear-gradient(180deg,#baffc5,#2dd858)}
+@keyframes jokerFlip{to{transform:rotateY(24deg) translateY(-8px)}}
+.coverBeer{background:radial-gradient(circle at 48% 22%,rgba(255,216,106,.38),transparent 26%),linear-gradient(135deg,#06365c,#1672a2 48%,#3b2200)!important}
+.beerHero{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);z-index:4;font-size:clamp(72px,7vw,110px);filter:drop-shadow(0 0 18px rgba(255,216,106,.7));animation:beerBounce 1.2s ease-in-out infinite alternate}
+.beerCoins{position:absolute;left:0;right:0;top:64%;z-index:4;text-align:center;font-size:28px;letter-spacing:4px;animation:beerCoins 1.6s ease-in-out infinite alternate}
+@keyframes beerBounce{to{transform:translate(-50%,-58%) rotate(-4deg)}}@keyframes beerCoins{to{transform:translateY(-8px);filter:brightness(1.35)}}
+.coverBells{background:radial-gradient(circle at 50% 22%,rgba(255,245,140,.42),transparent 29%),linear-gradient(135deg,#3c1700,#b56d00 58%,#140700)!important}
+.bellHero{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:4;display:flex;gap:6px;align-items:center;font-size:clamp(42px,5vw,78px);filter:drop-shadow(0 0 14px rgba(255,216,106,.75))}
+.bellHero span{animation:bellSwing 1s ease-in-out infinite alternate;transform-origin:50% 0}.bellHero span:nth-child(2){font-size:.72em;animation-delay:.2s}.bellHero span:nth-child(3){animation-delay:.4s}
+@keyframes bellSwing{to{transform:rotate(9deg) translateY(-6px)}}
+.coverWheel{background:radial-gradient(circle at 50% 25%,rgba(255,216,106,.40),transparent 30%),linear-gradient(135deg,#581600,#c84a00 55%,#160400)!important}
+.wheelDisk{position:absolute;left:50%;top:42%;width:105px;height:105px;margin:-52px 0 0 -52px;border-radius:50%;z-index:4;background:conic-gradient(#ff3131,#ffd86a,#38d9ff,#7a39ff,#4dff88,#ff6a00,#ff3131);border:5px solid #fff0a4;box-shadow:0 0 24px rgba(255,216,106,.7);animation:wheelRotate 3.2s linear infinite;display:flex;align-items:center;justify-content:center;font-size:42px}
+.wheelDisk span{display:block;animation:counterRotate 3.2s linear infinite}.wheelMarks{position:absolute;left:0;right:0;top:66%;z-index:4;text-align:center;font-size:23px;letter-spacing:5px;font-weight:1000;text-shadow:0 0 8px #000}
+@keyframes wheelRotate{to{transform:rotate(360deg)}}@keyframes counterRotate{to{transform:rotate(-360deg)}}
+.gameTitle{z-index:8!important;bottom:12px!important;text-transform:uppercase;letter-spacing:.2px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));padding-top:32px;color:#fff;text-shadow:0 3px 8px #000,0 0 10px rgba(255,216,106,.45)}
+.provider{color:#ffd86a!important;font-size:9px!important;letter-spacing:.8px!important}
+@media(max-width:520px){.coverRibbon{bottom:40px;font-size:8px}.fruitSlots span{font-size:32px}.jokerCards span{width:43px;height:60px;font-size:27px}.beerHero{font-size:64px}.bellHero{font-size:43px}.wheelDisk{width:86px;height:86px;margin:-43px 0 0 -43px}.wheelMarks{font-size:18px}.gameTitle{font-size:11px!important}}
+
+</style>
+</head>
+<body>
+<div class="drawer" id="sideDrawer">
+  <div class="drawerTop"><div class="drawerLogo">MYKONOS <b>CASINO</b></div><button class="closeX" onclick="toggleDrawer(false)">×</button></div>
+  <div class="drawerGrid">
+    <div class="drawerItem big"><span>🎁</span> Бонуси</div>
+    <div class="drawerItem big"><span>🎯</span> Активности</div>
+    <div class="drawerItem"><span>🛡️</span> Верни</div>
+    <div class="drawerItem"><span>💸</span> Cashback</div>
+    <div class="drawerItem"><span>🎡</span> Рад</div>
+    <div class="drawerItem"><span>👑</span> VIP-Club</div>
+    <div class="drawerItem big"><span>🏷️</span> Promotions</div>
+  </div>
+  <div class="drawerPromo"><div class="egg">🥚</div><div><b>Магическо яйце</b><small>0 / 1 точки до отключване</small></div><button onclick="showPage('games');toggleDrawer(false)">Играй</button></div>
+  <div class="accord">
+    <button class="accordBtn" onclick="showPage('games');toggleDrawer(false)">🎰 Казино <span>⌄</span></button>
+    <button class="accordBtn">📡 Live Casino <span>⌄</span></button>
+    <button class="accordBtn">⚽ Sport <span>⌄</span></button>
+    <button class="accordBtn">🎮 Esport</button>
+  </div>
+  <div class="drawerFooter">
+    <button class="supportBtn" onclick="showInfo('🎧 Връзка с нас','Тук после ще добавим WhatsApp / Telegram / Messenger за Mykonos Casino.')">🎧 Помощ / Връзка</button>
+    <button class="langBtn">Deutsch ⌄</button>
+    <div class="socials"><div>𝕏</div><div>◎</div><div>f</div><div>✈</div></div>
+  </div>
+</div>
+
+<div class="appShell">
+  <aside class="sidebar">
+    <button class="sideIcon logoMini" onclick="toggleDrawer(true)">☰</button>
+    <button class="sideIcon active" onclick="showPage('home')">🏠</button>
+    <button class="sideIcon" onclick="showPage('games')">🎰</button>
+    <button class="sideIcon" onclick="showPage('bonus')">🎁</button>
+    <button class="sideIcon" onclick="showPage('profile')">👤</button>
+    <button class="sideIcon" onclick="showPage('chat')">💬</button>
+  </aside>
+
+  <div class="mainArea">
+    <div class="topbar">
+      <div class="brand" onclick="showPage('home')"><button class="searchBtn" onclick="event.stopPropagation();toggleDrawer(true)">☰</button><div class="brandLogo">MYKONOS <b>CASINO</b></div><button class="pill dark">🎰 Kasino</button></div>
+      <div class="topActions">
+        <button class="searchBtn">⌕</button>
+        <div class="balanceChip" onclick="toggleDrop('walletDrop')">💶 <span id="topUserBalance">0€</span> 🎁⌃</div>
+        <div class="avatarBtn" onclick="toggleDrop('profileDrop')">🦁</div>
+        <button class="pill dark" onclick="showPage('bonus')">🎯 Активности</button>
+        <button class="pill orange" onclick="showPage('bonus')">+ Зареди кинти</button>
+      </div>
+
+      <div class="dropPanel" id="walletDrop">
+        <div class="walletGrid">
+          <div class="walletBox"><span>🪙 Истински баланс</span><b id="walletReal">0€</b></div>
+          <div class="walletBox"><span>🎁 Бонус</span><b>0.00€</b></div>
+          <div class="walletBox"><span>⭐ Монети</span><b>68</b></div>
+          <div class="walletBox"><span>💸 Cashback</span><b>до 12.5%</b></div>
+        </div>
+        <div class="bonusOffer"><div class="inside"><span class="tag">BONUS min 20€</span><h3>50% до 750€</h3><button onclick="showPage('bonus');toggleDrop()">Зареди кинти</button></div></div>
+        <button class="pill dark" style="width:100%">🎁 Още бонуси</button>
+      </div>
+
+      <div class="dropPanel" id="profileDrop">
+        <div class="profileCard"><b id="topUserName">Играч</b><br><small id="profileEmailFake">Mykonos Casino Player</small><br><br><span>Твоят ранг: <b>Gold 2</b></span></div>
+        <div class="profileMenu">
+          <div onclick="showPage('profile');toggleDrop()">💼 Профил / Данни</div>
+          <div onclick="showPage('bonus');toggleDrop()">🎁 Бонуси</div>
+          <div onclick="showInfo('🔔 Известия','Тук после ще добавим известия за бонуси, печалби и промоции.')">🔔 Известия</div>
+          <div onclick="showInfo('🎧 Помощ','Тук после ще сложим директна връзка с теб.')">❔ Помощ</div>
+          <div onclick="logout();toggleDrop()">↪ Изход</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loginDrawer card" id="loginBox">
+      <h2>🔐 Вход</h2>
+      <select id="playerSelect"></select>
+      <input id="pinInput" placeholder="PIN">
+      <button onclick="login()">ВЛЕЗ</button>
+      <div class="hr"></div>
+      <h2>🆕 Регистрация</h2>
+      <input id="regName" placeholder="Име">
+      <input id="regPin" placeholder="PIN">
+      <input id="regRef" placeholder="Referral код">
+      <button onclick="register()">РЕГИСТРАЦИЯ</button>
+      <div id="loginStatus" class="status">status</div>
+    </div>
+    <button id="guestBtn" class="hidden" onclick="document.getElementById('loginBox').classList.toggle('hidden')">Вход</button>
+
+    <main class="content">
+      <section id="page-home" class="page active">
+        <div class="heroBanners">
+          <div class="banner"><div class="txt"><span class="tag">ИГРА НА МЕСЕЦА</span><h2>Mykonos Hot Fruit</h2><p>Real Jackpot • Wild • Fruit</p></div><div class="art">👑🍊</div></div>
+          <div class="banner"><div class="txt"><span class="tag">СЕДМИЧЕН CASHBACK</span><h2>до 25%</h2><p>за активни играчи</p></div><div class="art">🦜💸</div></div>
+          <div class="banner"><div class="txt"><span class="tag">MYKONOS BONUS</span><h2>до 500€</h2><p>Code: MYKONOS</p></div><div class="art">🧔💰</div></div>
+        </div>
+
+        <div class="sectionHead"><h2>✪ Големи печалби</h2><button class="showAll">Всички</button></div>
+        <div class="bigWins">
+          <div class="winCard"><div class="winIcon">👩</div><div><b>Floating Dragon Hot</b><span>5,449€</span></div></div>
+          <div class="winCard"><div class="winIcon">⚡</div><div><b>Energy Coins Hold</b><span>6,794€</span></div></div>
+          <div class="winCard"><div class="winIcon">👑</div><div><b>Big Bass Secrets</b><span>5,072€</span></div></div>
+          <div class="winCard"><div class="winIcon">🎰</div><div><b>Juicy Jewels</b><span>5,588€</span></div></div>
+          <div class="winCard"><div class="winIcon">🍬</div><div><b>Sugar Rush</b><span>5,993€</span></div></div>
+        </div>
+
+        <div class="lobbyBlock">
+          <div class="lobbyTitle">Избрано<br>за теб</div>
+          <div class="gameGrid">
+            <div class="gameCard" onclick="openGame(GAME_FILE,this.querySelector('button'))"><div class="heart">♡</div><div class="gameThumb hotArt"><div class="coverScene coverHot"><div class="coverBadge hot">HOT FRUIT</div><div class="fruitSlots"><span>🍒</span><span>🍋</span><span>🍇</span></div><div class="coverRibbon">REAL JACKPOT</div></div><div class="gameTitle">MYKONOS HOT FRUIT<span class="provider">MYKONOS</span></div></div><button class="playBtn hidden" onclick="openGame(GAME_FILE,this)">ИГРАЙ СЕГА</button></div>
+            <div class="gameCard" onclick="openGame(GAME_2_FILE,this.querySelector('button'))"><div class="heart">♡</div><div class="gameThumb jokerArt"><div class="coverScene coverJoker"><div class="coverBadge joker">CLOVER</div><div class="jokerCards"><span>🃏</span><span>7</span><span>🍀</span></div><div class="coverRibbon">PICK BONUS</div></div><div class="gameTitle">20 JOKER CLOVER<span class="provider">CLOVER CHANCE</span></div></div><button class="playBtn hidden" onclick="openGame(GAME_2_FILE,this)">ИГРАЙ СЕГА</button></div>
+            <div class="gameCard" onclick="openGame(GAME_3_FILE,this.querySelector('button'))"><div class="heart">♡</div><div class="gameThumb beerArt"><div class="coverScene coverBeer"><div class="coverBadge beer">COLLECT</div><div class="beerHero">🍺</div><div class="beerCoins">💰 🍻 💰</div><div class="coverRibbon">HOLD & WIN</div></div><div class="gameTitle">BEER COLLECT<span class="provider">HOLD & COLLECT</span></div></div><button class="playBtn hidden" onclick="openGame(GAME_3_FILE,this)">ИГРАЙ СЕГА</button></div>
+            <div class="gameCard" onclick="openGame(GAME_5_FILE,this.querySelector('button'))"><div class="heart">♡</div><div class="gameThumb goldenArt"><div class="coverScene coverBells"><div class="coverBadge bells">BELLS</div><div class="bellHero"><span>🔔</span><span>👨‍🍳</span><span>🔔</span></div><div class="coverRibbon">HOLD COLLECT</div></div><div class="gameTitle">GOLDEN BELLS<span class="provider">BELL BONUS</span></div></div><button class="playBtn hidden" onclick="openGame(GAME_5_FILE,this)">ИГРАЙ СЕГА</button></div>
+            <div class="gameCard" onclick="openGame(GAME_4_FILE,this.querySelector('button'))"><div class="heart">♡</div><div class="gameThumb wheelArt"><div class="coverScene coverWheel"><div class="coverBadge wheel">RISK</div><div class="wheelDisk"><span>👨‍🍳</span></div><div class="wheelMarks">🍅 🧀 🔔 🌶️</div><div class="coverRibbon">COOK & COLLECT</div></div><div class="gameTitle">CHEF WHEEL<span class="provider">COOK & COLLECT</span></div></div><button class="playBtn hidden" onclick="openGame(GAME_4_FILE,this)">ИГРАЙ СЕГА</button></div>
+          </div>
+        </div>
+
+        <div class="weekBanner"><div><h2>Игра на седмицата</h2><p>20 Joker Clover Chance</p></div><button onclick="openGame(GAME_2_FILE,this)">Играй сега</button></div>
+
+        <div class="sectionHead"><h2>↻ Последни игри</h2><button class="showAll">Всички 5</button></div>
+        <div class="gameGrid">
+          <div class="gameCard" onclick="openGame(GAME_FILE,this.querySelector('button'))"><div class="gameThumb hotArt"><div class="coverScene coverHot"><div class="coverBadge hot">HOT FRUIT</div><div class="fruitSlots"><span>🍒</span><span>🍋</span><span>🍇</span></div><div class="coverRibbon">REAL JACKPOT</div></div><div class="gameTitle">MYKONOS HOT 5</div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_2_FILE,this.querySelector('button'))"><div class="gameThumb jokerArt"><div class="coverScene coverJoker"><div class="coverBadge joker">CLOVER</div><div class="jokerCards"><span>🃏</span><span>7</span><span>🍀</span></div><div class="coverRibbon">PICK BONUS</div></div><div class="gameTitle">20 JOKER</div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_3_FILE,this.querySelector('button'))"><div class="gameThumb beerArt"><div class="coverScene coverBeer"><div class="coverBadge beer">COLLECT</div><div class="beerHero">🍺</div><div class="beerCoins">💰 🍻 💰</div><div class="coverRibbon">HOLD & WIN</div></div><div class="gameTitle">BEER COLLECT</div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_5_FILE,this.querySelector('button'))"><div class="gameThumb goldenArt"><div class="coverScene coverBells"><div class="coverBadge bells">BELLS</div><div class="bellHero"><span>🔔</span><span>👨‍🍳</span><span>🔔</span></div><div class="coverRibbon">HOLD COLLECT</div></div><div class="gameTitle">GOLDEN BELLS</div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_4_FILE,this.querySelector('button'))"><div class="gameThumb wheelArt"><div class="coverScene coverWheel"><div class="coverBadge wheel">RISK</div><div class="wheelDisk"><span>👨‍🍳</span></div><div class="wheelMarks">🍅 🧀 🔔 🌶️</div><div class="coverRibbon">COOK & COLLECT</div></div><div class="gameTitle">CHEF WHEEL</div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+        </div>
+
+        <div class="card" style="margin-top:22px">
+          <h2>🔥 LIVE АКТИВНОСТИ</h2>
+          <div id="activityList" class="chatBox"><div class="msg"><span class="name">SYSTEM:</span> Добре дошъл в Mykonos Casino!</div></div>
+          <div class="live hidden"><div id="liveWinText">Добре дошъл</div></div>
+        </div>
+      </section>
+
+      <section id="page-games" class="page">
+        <div class="sectionHead"><h2>🎮 Всички игри</h2><button class="showAll" onclick="showPage('home')">Начало</button></div>
+        <h2 style="margin:14px 0">HOT & CLOVER</h2>
+        <div class="gameGrid">
+          <div class="gameCard" onclick="openGame(GAME_FILE,this.querySelector('button'))"><div class="gameThumb hotArt"><div class="coverScene coverHot"><div class="coverBadge hot">HOT FRUIT</div><div class="fruitSlots"><span>🍒</span><span>🍋</span><span>🍇</span></div><div class="coverRibbon">REAL JACKPOT</div></div><div class="gameTitle">MYKONOS HOT FRUIT<span class="provider">HOT FRUITS</span></div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_2_FILE,this.querySelector('button'))"><div class="gameThumb jokerArt"><div class="coverScene coverJoker"><div class="coverBadge joker">CLOVER</div><div class="jokerCards"><span>🃏</span><span>7</span><span>🍀</span></div><div class="coverRibbon">PICK BONUS</div></div><div class="gameTitle">20 JOKER CLOVER<span class="provider">CLOVER CHANCE</span></div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+        </div>
+        <h2 style="margin:24px 0 14px">COLLECT & BELLS</h2>
+        <div class="gameGrid">
+          <div class="gameCard" onclick="openGame(GAME_3_FILE,this.querySelector('button'))"><div class="gameThumb beerArt"><div class="coverScene coverBeer"><div class="coverBadge beer">COLLECT</div><div class="beerHero">🍺</div><div class="beerCoins">💰 🍻 💰</div><div class="coverRibbon">HOLD & WIN</div></div><div class="gameTitle">BEER COLLECT<span class="provider">HOLD & COLLECT</span></div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_5_FILE,this.querySelector('button'))"><div class="gameThumb goldenArt"><div class="coverScene coverBells"><div class="coverBadge bells">BELLS</div><div class="bellHero"><span>🔔</span><span>👨‍🍳</span><span>🔔</span></div><div class="coverRibbon">HOLD COLLECT</div></div><div class="gameTitle">CHEF'S GOLDEN BELLS<span class="provider">BELL HOLD</span></div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+          <div class="gameCard" onclick="openGame(GAME_4_FILE,this.querySelector('button'))"><div class="gameThumb wheelArt"><div class="coverScene coverWheel"><div class="coverBadge wheel">RISK</div><div class="wheelDisk"><span>👨‍🍳</span></div><div class="wheelMarks">🍅 🧀 🔔 🌶️</div><div class="coverRibbon">COOK & COLLECT</div></div><div class="gameTitle">MYKONOS CHEF WHEEL<span class="provider">RISK COLLECT</span></div></div><button class="playBtn hidden">ИГРАЙ СЕГА</button></div>
+        </div>
+      </section>
+
+      <section id="page-profile" class="page">
+        <div class="card"><h2>👤 Профил</h2><div class="profileGrid"><div class="statBox"><span>👤</span><div id="profileName">Гост</div></div><div class="statBox"><span>💰</span><div id="profileWallet">0€</div></div><div class="statBox"><span>🏆</span><div id="profileRank">Играч</div></div></div></div>
+        <div class="card" style="margin-top:14px"><h2>🔗 Твоят линк</h2><div class="refRow"><div class="refLink" id="myLink">---</div><button class="copyMini" onclick="copyInviteLink()">⧉</button></div></div>
+      </section>
+
+      <section id="page-bonus" class="page">
+        <div class="card"><h2>🎁 Бонуси и промоции</h2><div class="bonusGrid"><div class="statBox" onclick="dailyBonus()" style="cursor:pointer"><span>🎁</span>Дневен бонус<br>+5€</div><div class="statBox" onclick="openInvitePopup()" style="cursor:pointer"><span>👥</span>Покани приятел<br>+5€</div><div class="statBox" onclick="openWheelPopup()" style="cursor:pointer"><span>🎡</span>Колело на късмета</div></div></div>
+        <div class="card" style="margin-top:14px"><h2>🏆 Класация</h2><div id="leaderboardList"><div class="winCard"><div class="winIcon">🥇</div><div>---<br><span>0€</span></div></div></div></div>
+        <div class="card" style="margin-top:14px"><h2>🎯 First to 100€</h2><div id="raceList"></div><div style="height:12px;background:#0b1228;border-radius:999px;overflow:hidden;margin-top:10px"><div id="raceProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#39ff14,#ffd45a)"></div></div><div id="raceText" style="text-align:center;margin-top:8px">0€ / 100€</div></div>
+        <div class="card hidden"><div id="streak1"></div><div id="streak2"></div><div id="streak3"></div><small id="topWinner">---</small></div>
+      </section>
+
+      <section id="page-chat" class="page">
+        <div class="card"><h2>💬 Чат</h2><div id="chat" class="chatBox"><div class="msg"><span class="name">SYSTEM:</span> Чатът е само за играчи.</div></div><div class="inputRow"><input id="msgInput" placeholder="Пиши съобщение..."><button onclick="sendMsg()">SEND</button></div></div>
+      </section>
+
+      <div class="footer">
+        <div><b>MYKONOS CASINO</b><br><br><button class="langBtn" style="width:auto">Deutsch ⌄</button></div>
+        <div><div>Promotions</div><div>За нас</div><div>Mykonos Casino информация</div><div>Условия</div></div>
+        <div><div>Бонуси</div><div>Cashback</div><div>Отговорна игра</div><div>Често задавани въпроси</div></div>
+        <div><div>Контакт</div><div>Поддръжка</div><div>Affiliate</div><div>© Mykonos Casino 2026</div></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<div class="floatSupport" onclick="showInfo('🎧 Връзка с Mykonos Casino','Тук ще добавим директна връзка с теб — WhatsApp, Telegram или Messenger.')">🎧</div>
+<div class="winToast" id="winToast"></div>
+<div class="funWinnerToast hidden" id="funWinnerToast"></div>
+<div id="funMini" class="hidden"></div><div id="funMajor" class="hidden"></div><div id="funGrand" class="hidden"></div>
+
+<div class="modal" id="infoModal" onclick="closeModalByBg(event,'infoModal')"><div class="modalBox"><button class="close" onclick="closeModal('infoModal')">×</button><div class="modalTitle" id="infoTitle">Инфо</div><div class="modalText" id="infoText">---</div></div></div>
+<div class="modal" id="inviteModal" onclick="closeModalByBg(event,'inviteModal')"><div class="modalBox"><button class="close" onclick="closeModal('inviteModal')">×</button><div class="modalTitle">👥 Покани приятел</div><div class="modalText">Изпрати своя линк и вземи бонус.</div><div class="modalLink" id="invitePopupLink">---</div><div class="modalGrid"><button class="green" onclick="copyInviteLink()">Копирай</button><button class="blue" onclick="shareWhatsApp()">WhatsApp</button></div></div></div>
+<div class="modal" id="wheelModal" onclick="closeModalByBg(event,'wheelModal')"><div class="wheelBox"><button class="close" onclick="closeModal('wheelModal')">×</button><div class="wheelLogo">🎰 Mykonos Lucky Wheel</div><div class="luckyWheel" id="luckyWheel"></div><div class="wheelResult" id="wheelResult">Завърти и виж късмета си 🎯</div><button onclick="spinWheel()">SPIN</button></div></div>
+<div class="raceWinnerModal" id="raceWinnerModal"><div class="raceWinnerBox"><div class="raceWinnerTitle">🏆 Winner</div><div class="raceWinnerName" id="raceWinnerName">---</div><div id="raceWinnerText">---</div><div class="raceWinnerActions"><button class="green" onclick="closeRaceWinner()">OK</button><button class="red" onclick="resetRaceConfirm()">RESET</button></div></div></div>
+
+<script>
+const URL="https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const KEY="sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+const GAME_FILE="mykonos-hot-5.html";
+const GAME_2_FILE="20-joker.html";
+const GAME_3_FILE="beer-collect-jackpot-index.html";
+const GAME_4_FILE="chef-bells-mykonos-jackpot.html";
+const GAME_5_FILE="CHEFS_GOLDEN_BELLS_DRY_MOBILE.html";
+
+let user=null;
+
+function headers(){return {apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json"}}
+
+async function api(path,options={}){
+  try{
+    let r=await fetch(URL+path,{...options,headers:{...headers(),...(options.headers||{})}});
+    if(!r.ok){
+      const txt=await r.text();
+      console.error("SUPABASE ERROR", r.status, txt);
+      throw new Error(txt || "Supabase error");
+    }
+    if(r.status===204)return null;
+    return await r.json();
+  }catch(err){
+    console.error("API FAILED:", path, err);
+    throw err;
+  }
+}
+
+function money(v){return Number(v||0).toFixed(0)+"€"}
+function makeRefCode(name){return name.replace(/\s+/g,"").toUpperCase()+Math.floor(100+Math.random()*900)}
+function inviteLink(){if(!user || !user.ref_code)return "---";return location.origin+location.pathname+"?ref="+encodeURIComponent(user.ref_code)}
+function todayKey(){return new Date().toISOString().slice(0,10)}
+
+function showPage(name){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+document.getElementById("page-"+name).classList.add("active");
+document.getElementById("nav-"+name).classList.add("active");
+}
+
+function setLoggedInUI(){
+loginBox.classList.add("hidden");
+userChip.classList.add("active");
+guestBtn.classList.add("hidden");
+
+topUserName.textContent=user.Name;
+topUserBalance.textContent=money(user.balance);
+
+welcomeText.textContent="Добре дошъл,";
+heroName.textContent=user.Name+" 👑";
+heroWallet.textContent=money(user.balance);
+
+profileName.textContent=user.Name;
+profileWallet.textContent=money(user.balance);
+profileRank.textContent="VIP Играч";
+
+myLink.textContent=inviteLink();
+}
+
+function setLoggedOutUI(){
+loginBox.classList.remove("hidden");
+userChip.classList.remove("active");
+guestBtn.classList.remove("hidden");
+
+welcomeText.textContent="Добре дошъл,";
+heroName.textContent="ИГРАЧ 👑";
+heroWallet.textContent="0€";
+profileName.textContent="Гост";
+profileWallet.textContent="0€";
+profileRank.textContent="Играч";
+myLink.textContent="---";
+}
+
+function live(text){liveWinText.textContent=text}
+
+async function loadPlayers(){
+  try{
+    // ВАЖНО: в твоята Supabase таблица колоните са Name и Pin с главни букви.
+    let d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&order=id.asc");
+    playerSelect.innerHTML="";
+    let first=document.createElement("option");
+    first.textContent="Избери играч";
+    first.value="";
+    playerSelect.appendChild(first);
+    if(!d || d.length===0){first.textContent="Няма играчи";return}
+    d.forEach(p=>{
+      let playerName = p.Name || p.name || "";
+      let o=document.createElement("option");
+      o.value=playerName;
+      o.textContent=playerName;
+      playerSelect.appendChild(o);
+    });
+    loginStatus.textContent="Готово — избери играч и PIN";
+  }catch(e){
+    console.error(e);
+    playerSelect.innerHTML="<option>Грешка база</option>";
+    loginStatus.textContent="Проблем със Supabase / RLS policy";
+  }
+}
+
+async function login(){
+  let name=playerSelect.value.trim();
+  let pin=pinInput.value.trim();
+
+  if(!name || !pin){alert("Избери играч и въведи PIN");return}
+
+  let allPlayers=[];
+  try{
+    // По-сигурно: теглим играчите и сравняваме Name/Pin в JavaScript.
+    // Така няма проблем с главни/малки букви в URL филтъра.
+    allPlayers=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&order=id.asc");
+  }catch(e){
+    alert("Не мога да заредя профила. Провери Supabase RLS policy за SELECT.");
+    return;
+  }
+
+  const found=(allPlayers||[]).find(p=>
+    String(p.Name || p.name || "").trim().toLowerCase()===name.toLowerCase() &&
+    String(p.Pin || p.pin || "").trim()===pin
+  );
+
+  if(!found){
+    alert("Грешен PIN или играчът не е намерен");
+    return;
+  }
+
+  user=found;
+  user.Name = user.Name || user.name;
+  user.Pin = user.Pin || user.pin;
+  user.balance = Number(user.balance || 0);
+
+  if(!user.ref_code){
+    user.ref_code=makeRefCode(user.Name);
+    try{
+      await api("players?id=eq."+user.id,{
+        method:"PATCH",
+        headers:{Prefer:"return=minimal"},
+        body:JSON.stringify({ref_code:user.ref_code})
+      });
+    }catch(e){console.warn("ref_code не можа да се запише", e)}
+  }
+
+  localStorage.setItem("player",JSON.stringify(user));
+  setLoggedInUI();
+  await loadChat();
+  await loadTop();
+  showPage("home");
+  loginStatus.textContent="Успешен вход";
+  live("🎰 "+user.Name+" вече е в играта");
+  addActivity("🎰 "+user.Name+" вече е в играта");
+  showToast("Добре дошъл, "+user.Name+" 🎰");
+  updateStreakUI();
+  loadLeaderboard();
+  loadRace();
+}
+
+async function register(){
+let name=regName.value.trim();
+let pin=regPin.value.trim();
+let ref=regRef.value.trim();
+
+if(!name || !pin){alert("Попълни име и PIN");return}
+
+let code=makeRefCode(name);
+
+try{
+await api("players",{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({Name:name,Pin:pin,balance:10,ref_code:code,ref_by:ref || null})
+});
+}catch(e){
+alert("Грешка при регистрация");return;
+}
+
+if(ref){
+try{
+let invitedBy=await api("players?select=id,Name,balance,ref_code&ref_code=eq."+encodeURIComponent(ref));
+if(invitedBy[0]){
+let newBalance=Number(invitedBy[0].balance||0)+5;
+await api("players?id=eq."+invitedBy[0].id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({balance:newBalance})
+});
+live("🎁 "+invitedBy[0].Name+" получи +5€ за покана");
+}
+}catch(e){}
+}
+
+alert("Регистрация успешна!");
+
+function resetPlayButtons(){
+  document.querySelectorAll(".playBtn").forEach(btn=>{
+    btn.classList.remove("loading");
+    btn.textContent="ИГРАЙ СЕГА";
+    btn.style.pointerEvents="";
+    btn.disabled=false;
+  });
+}
+
+window.addEventListener("pageshow", resetPlayButtons);
+window.addEventListener("focus", resetPlayButtons);
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden) resetPlayButtons();
+});
+
+loadPlayers();
+}
+
+async function refreshUser(){
+if(!user)return;
+try{
+let d=await api("players?select=id,Name,Pin,balance,ref_code,ref_by&id=eq."+user.id);
+if(d[0]){
+user=d[0];
+localStorage.setItem("player",JSON.stringify(user));
+setLoggedInUI();
+}
+}catch(e){}
+}
+
+async function saveBalance(){
+if(!user)return;
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({balance:Math.round(Number(user.balance||0))})
+});
+}
+
+async function dailyBonus(){
+if(!user)return alert("Първо влез");
+
+const key="daily_bonus_"+user.id;
+const today=todayKey();
+
+if(localStorage.getItem(key)===today){
+alert("Вече взе дневния бонус днес. Опитай пак утре 🎁");
+return;
+}
+
+user.balance=Number(user.balance||0)+5;
+localStorage.setItem(key,today);
+localStorage.setItem("player",JSON.stringify(user));
+setLoggedInUI();
+
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({balance:Math.round(Number(user.balance||0))})
+});
+
+await loadTop();
+live("🎁 "+user.Name+" взе дневен бонус +5€"); addActivity("🎁 "+user.Name+" взе дневен бонус +5€"); showToast("🎁 +5€ дневен бонус"); loadLeaderboard(); loadRace();
+}
+
+async function openGame(file = GAME_FILE, btn = null){
+if(!user)return alert("Първо влез");
+
+localStorage.setItem("player",JSON.stringify(user));
+
+resetPlayButtons();
+
+if(btn){
+btn.classList.add("loading");
+btn.textContent="ЗАРЕЖДАНЕ";
+btn.disabled=true;
+}
+
+setTimeout(()=>{ window.location.href="./"+file; }, 80);
+}
+
+async function sendMsg(){
+if(!user)return alert("Първо влез");
+let text=msgInput.value.trim();
+if(!text)return;
+
+try{
+await api("chat_messages",{
+method:"POST",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({player_name:user.Name,message:text})
+});
+msgInput.value="";
+loadChat();
+}catch(e){alert("Грешка при изпращане")}
+}
+
+async function loadChat(){
+try{
+let d=await api("chat_messages?select=player_name,message,created_at&order=created_at.desc&limit=30");
+chat.innerHTML="";
+d.reverse().forEach(x=>{
+if(String(x.player_name).toUpperCase()==="SYSTEM") return;
+chat.innerHTML+=`<div class="msg"><span class="name">${x.player_name}:</span> ${x.message}</div>`;
+});
+chat.scrollTop=chat.scrollHeight;
+}catch(e){}
+}
+
+async function loadTop(){
+try{
+let d=await api("players?select=Name,balance&order=balance.desc&limit=1");
+if(d[0]) topWinner.textContent=d[0].Name+" "+money(d[0].balance);
+}catch(e){}
+}
+
+function openInvitePopup(){
+if(!user)return alert("Първо влез");
+invitePopupLink.textContent=inviteLink();
+openModal("inviteModal");
+}
+
+async function copyInviteLink(){
+if(!user)return alert("Първо влез");
+let link=inviteLink();
+try{await navigator.clipboard.writeText(link);alert("Линкът е копиран!")}
+catch(e){prompt("Копирай линка:",link)}
+}
+
+function shareWhatsApp(){
+if(!user)return alert("Първо влез");
+const text="Ела в Mykonos Casino 🎰 Регистрирай се от моя линк и вземи бонус: "+inviteLink();
+window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank");
+}
+
+async function nativeShare(){
+if(!user)return alert("Първо влез");
+if(navigator.share){
+try{await navigator.share({title:"Mykonos Casino",text:"Ела в Mykonos Casino 🎰",url:inviteLink()})}catch(e){}
+}else copyInviteLink();
+}
+
+
+let wheelSpinning=false;
+let wheelRotation=0;
+const wheelRewards=[
+  {label:"0€", value:0},
+  {label:"1€", value:1},
+  {label:"2€", value:2},
+  {label:"0€", value:0},
+  {label:"5€", value:5},
+  {label:"1€", value:1},
+  {label:"NO WIN", value:0},
+  {label:"10€", value:10}
+];
+
+function openWheelPopup(){
+if(!user)return alert("Първо влез");
+wheelResult.textContent="Завърти и виж късмета си 🎯";
+openModal("wheelModal");
+}
+
+async function spinWheel(){
+if(!user)return alert("Първо влез");
+if(wheelSpinning)return;
+
+const key="lucky_wheel_"+user.id;
+const today=todayKey();
+
+if(localStorage.getItem(key)===today){
+wheelResult.textContent="⏳ Вече въртя днес. Опитай пак утре.";
+return;
+}
+
+wheelSpinning=true;
+wheelResult.textContent="Колелото се върти...";
+
+const weighted=[0,0,0,1,1,2,3,4,5,6,6,7];
+const index=weighted[Math.floor(Math.random()*weighted.length)];
+const reward=wheelRewards[index];
+
+const slice=45;
+const targetCenter=index*slice + slice/2;
+const pointerAt=270;
+const extra=360*6;
+wheelRotation += extra + (pointerAt - targetCenter);
+luckyWheel.style.transform="rotate("+wheelRotation+"deg)";
+
+setTimeout(async()=>{
+localStorage.setItem(key,today);
+
+if(reward.value>0){
+user.balance=Number(user.balance||0)+reward.value;
+localStorage.setItem("player",JSON.stringify(user));
+setLoggedInUI();
+
+try{
+await api("players?id=eq."+user.id,{
+method:"PATCH",
+headers:{Prefer:"return=minimal"},
+body:JSON.stringify({balance:Math.round(Number(user.balance||0))})
+});
+await loadTop();
+}catch(e){}
+
+wheelResult.textContent="🎉 Спечели "+reward.label+"!";
+live("🎯 "+user.Name+" спечели "+reward.label+" от Колелото на късмета"); addActivity("🎯 "+user.Name+" спечели "+reward.label+" от Колелото"); showToast("🎯 Спечели "+reward.label+"!"); loadLeaderboard(); loadRace();
+}else{
+wheelResult.textContent="🙁 Този път няма печалба";
+live("🎯 "+user.Name+" завъртя Колелото на късмета"); addActivity("🎯 "+user.Name+" завъртя Колелото");
+}
+
+wheelSpinning=false;
+},4200);
+}
+
+
+
+const fakeNames=["Ivan","Maria","Petar","Didi","Mitko","Vasa","Niki","Alex","Toni","Miro"];
+const fakeGames=["Friends Slot","Chef Bells","Beer Collect","Beer Party","Lucky Wheel"];
+const fakeActions=[
+  n=>`🔥 ${n} спечели ${rand(10,280)}€ в ${pick(fakeGames)}`,
+  n=>`🎁 ${n} взе дневен бонус`,
+  n=>`🎯 ${n} завъртя Колелото на късмета`,
+  n=>`💎 ${n} отключи бонус игра`,
+  n=>`🏆 ${n} се качи в класацията`
+];
+
+function rand(a,b){return Math.floor(a+Math.random()*(b-a+1))}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+
+function addActivity(text){
+const list=document.getElementById("activityList");
+if(!list)return;
+const div=document.createElement("div");
+div.className="activityItem";
+div.textContent=text;
+list.appendChild(div);
+while(list.children.length>30) list.removeChild(list.firstElementChild);
+list.scrollTop=list.scrollHeight;
+}
+
+function showToast(text){
+const t=document.getElementById("winToast");
+if(!t)return;
+t.textContent=text;
+t.classList.add("show");
+setTimeout(()=>t.classList.remove("show"),2600);
+}
+
+function startFakeActivity(){
+setInterval(()=>{
+const name=pick(fakeNames);
+const text=pick(fakeActions)(name);
+addActivity(text);
+if(Math.random()<.35) showToast(text);
+},6500);
+}
+
+async function loadLeaderboard(){
+try{
+let d=await api("players?select=Name,balance&order=balance.desc&limit=5");
+const box=document.getElementById("leaderboardList");
+if(!box)return;
+box.innerHTML="";
+const medals=["🥇","🥈","🥉","4.","5."];
+(d||[]).forEach((p,i)=>{
+box.innerHTML+=`
+<div class="leaderRow">
+  <div class="leaderRank">${medals[i]}</div>
+  <div>${p.Name}</div>
+  <div class="leaderBalance">${money(p.balance)}</div>
+</div>`;
+});
+}catch(e){}
+}
+
+function updateStreakUI(){
+if(!user)return;
+let day=Number(localStorage.getItem("streak_day_"+user.id)||1);
+if(day<1)day=1;
+if(day>3)day=3;
+["streak1","streak2","streak3"].forEach((id,i)=>{
+const el=document.getElementById(id);
+if(el)el.classList.toggle("active",i+1===day);
+});
+}
+
+async function claimStreakBonus(){
+if(!user)return alert("Първо влез");
+
+const today=todayKey();
+const lastKey="streak_last_"+user.id;
+const dayKey="streak_day_"+user.id;
+
+if(localStorage.getItem(lastKey)===today){
+alert("Вече взе streak бонуса днес. Опитай утре 🎁");
+return;
+}
+
+let day=Number(localStorage.getItem(dayKey)||1);
+let reward=day===1?5:day===2?10:20;
+
+user.balance=Number(user.balance||0)+reward;
+localStorage.setItem("player",JSON.stringify(user));
+localStorage.setItem(lastKey,today);
+localStorage.setItem(dayKey, day>=3 ? 1 : day+1);
+
+setLoggedInUI();
+updateStreakUI();
+
+try{
+await saveBalance();
+await loadTop();
+await loadLeaderboard(); await loadRace();
+}catch(e){}
+
+const text=`🎁 ${user.Name} взе Daily Streak +${reward}€`;
+addActivity(text);
+showToast(text);
+if(typeof live==="function") live(text);
+}
+
+
+async function loadRace(){
+try{
+  let d=await api("players?select=id,Name,balance&order=balance.desc&limit=5");
+  const box=document.getElementById("raceList");
+  if(!box)return;
+
+  box.innerHTML="";
+  const medals=["🥇","🥈","🥉","4.","5."];
+
+  (d||[]).forEach((p,i)=>{
+    const percent=Math.min(100,Number(p.balance||0));
+    box.innerHTML+=`
+    <div class="leaderRow">
+      <div class="leaderRank">${medals[i]}</div>
+      <div>${p.Name}</div>
+      <div class="leaderBalance">${money(p.balance)}</div>
+    </div>`;
+  });
+
+  if(user){
+    let p=Math.min(100,Number(user.balance||0));
+    const prog=document.getElementById("raceProgress");
+    const text=document.getElementById("raceText");
+    if(prog)prog.style.width=p+"%";
+    if(text)text.textContent=Number(user.balance||0).toFixed(0)+"€ / 100€";
+  }
+
+  const winner=(d||[]).find(p=>Number(p.balance||0)>=100);
+  if(winner){
+    const already=localStorage.getItem("race_winner_seen");
+    const winKey=String(winner.id)+"_"+String(Math.floor(Number(winner.balance||0)));
+    if(already!==winKey){
+      localStorage.setItem("race_winner_seen",winKey);
+      showRaceWinner(winner.Name,winner.balance);
+    }
+  }
+}catch(e){}
+}
+
+function raceWinSound(){
+try{
+  const ctx=new (window.AudioContext||window.webkitAudioContext)();
+  const seq=[420,560,720,920,1180];
+  seq.forEach((f,i)=>{
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.type="triangle";
+    o.frequency.setValueAtTime(f,ctx.currentTime+i*.11);
+    g.gain.setValueAtTime(.05,ctx.currentTime+i*.11);
+    g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+i*.11+.18);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(ctx.currentTime+i*.11);
+    o.stop(ctx.currentTime+i*.11+.18);
+  });
+  setTimeout(()=>ctx.close(),1200);
+}catch(e){}
+}
+
+function showRaceWinner(name,balance){
+const modal=document.getElementById("raceWinnerModal");
+if(!modal)return;
+raceWinnerName.textContent=name;
+raceWinnerText.textContent=name+" достигна "+money(balance)+" точки и спечели рунда!";
+modal.classList.add("active");
+addActivity("🏆 "+name+" достигна 100€ точки и спечели рунда!");
+showToast("🏆 "+name+" достигна 100€!");
+raceWinSound();
+}
+
+function closeRaceWinner(){
+const modal=document.getElementById("raceWinnerModal");
+if(modal)modal.classList.remove("active");
+}
+
+async function resetRaceConfirm(){
+if(!confirm("Сигурен ли си, че искаш да ресетнеш рунда? Всички баланси ще станат 10€ точки."))return;
+await resetRace();
+}
+
+async function resetRace(){
+try{
+  await api("players?balance=gte.0",{
+    method:"PATCH",
+    headers:{Prefer:"return=minimal"},
+    body:JSON.stringify({balance:10})
+  });
+  localStorage.removeItem("race_winner_seen");
+  if(user){
+    user.balance=10;
+    localStorage.setItem("player",JSON.stringify(user));
+    setLoggedInUI();
+  }
+  closeRaceWinner();
+  await loadTop();
+  await loadLeaderboard(); await loadRace();
+  await loadRace();
+  addActivity("🔄 Нов рунд започна. Всички започват от 10€ точки.");
+  showToast("🔄 Нов рунд: старт 10€");
+}catch(e){
+  alert("Не успях да ресетна рунда. Провери Supabase permissions/RLS.");
+}
+}
+
+
+function showInfo(title,text){
+infoTitle.textContent=title;
+infoText.textContent=text;
+openModal("infoModal");
+}
+
+function showTopPopup(){
+let text=topWinner.textContent && topWinner.textContent!=="---" ? "В момента топ играч е: "+topWinner.textContent : "Още няма класация.";
+showInfo("🏆 ТОП ИГРАЧИ",text);
+}
+
+function openModal(id){document.getElementById(id).classList.add("active")}
+function closeModal(id){document.getElementById(id).classList.remove("active")}
+function closeModalByBg(e,id){if(e.target.id===id)closeModal(id)}
+
+function logout(){
+localStorage.removeItem("player");
+user=null;
+setLoggedOutUI();
+showPage("home");
+}
+
+function autoReferral(){
+let ref=new URLSearchParams(location.search).get("ref") || "";
+if(ref) regRef.value=ref;
+}
+
+async function autoLoginFromStorage(){
+let saved=JSON.parse(localStorage.getItem("player") || "null");
+if(saved && saved.id){
+user=saved;
+await refreshUser();
+await loadChat();
+updateStreakUI();
+await loadLeaderboard(); await loadRace();
+}else setLoggedOutUI();
+}
+
+window.addEventListener("focus",async()=>{
+if(user){await refreshUser();await loadTop(); await loadLeaderboard()}
+});
+
+setInterval(async()=>{
+if(user){await refreshUser();await loadTop(); await loadLeaderboard()}
+},15000);
+
+
+function resetPlayButtons(){
+  document.querySelectorAll(".playBtn").forEach(btn=>{
+    btn.classList.remove("loading");
+    btn.textContent="ИГРАЙ СЕГА";
+    btn.style.pointerEvents="";
+    btn.disabled=false;
+  });
+}
+
+window.addEventListener("pageshow", resetPlayButtons);
+window.addEventListener("focus", resetPlayButtons);
+document.addEventListener("visibilitychange", ()=>{
+  if(!document.hidden) resetPlayButtons();
+});
+
+loadPlayers();
+loadTop();
+autoReferral();
+autoLoginFromStorage();
+</script>
+<script>
+function toggleDrawer(force){
+  const d=document.getElementById('sideDrawer');
+  if(!d)return;
+  if(force===true)d.classList.add('show');
+  else if(force===false)d.classList.remove('show');
+  else d.classList.toggle('show');
+}
+function toggleDrop(id){
+  document.querySelectorAll('.dropPanel').forEach(p=>{ if(!id || p.id!==id)p.classList.remove('show'); });
+  if(id)document.getElementById(id)?.classList.toggle('show');
+  const bal=document.getElementById('walletReal');
+  const top=document.getElementById('topUserBalance');
+  if(bal&&top)bal.textContent=top.textContent||'0€';
+}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.topActions')) document.querySelectorAll('.dropPanel').forEach(p=>p.classList.remove('show'));
+});
+const oldSetLogged=setLoggedInUI;
+setLoggedInUI=function(){
+  oldSetLogged();
+  const bal=document.getElementById('walletReal'); if(bal)bal.textContent=document.getElementById('topUserBalance')?.textContent||'0€';
+};
+</script>
+</body>
+</html>
