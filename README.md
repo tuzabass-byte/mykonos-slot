@@ -1,1 +1,1 @@
-# mykonos-slot
+# mykonos-casino
