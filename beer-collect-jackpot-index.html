@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Beer Collect Hold & Win</title>
+<style>
+:root{
+  --bg:#050915;--cyan:#1fe8ff;--gold:#ffd35a;--orange:#ff8a00;--red:#d92323;--green:#36ff8b;
+  --glass:rgba(0,0,0,.48);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050915;color:#fff;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+body{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 18% 9%,rgba(31,232,255,.24),transparent 30%),
+    radial-gradient(circle at 82% 12%,rgba(255,138,0,.20),transparent 28%),
+    radial-gradient(circle at 50% 100%,rgba(54,255,139,.10),transparent 32%),
+    linear-gradient(180deg,#0c2340,#050915 78%);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.9;
+  background:
+    radial-gradient(circle at 12% 82%,rgba(255,255,255,.10) 0 4px,transparent 5px),
+    radial-gradient(circle at 28% 70%,rgba(255,255,255,.08) 0 3px,transparent 4px),
+    radial-gradient(circle at 72% 78%,rgba(255,255,255,.10) 0 5px,transparent 6px),
+    radial-gradient(circle at 86% 62%,rgba(255,255,255,.07) 0 3px,transparent 4px);
+  animation:bubbles 6s linear infinite;
+}
+@keyframes bubbles{from{transform:translateY(0)}to{transform:translateY(-70px)}}
+.game{
+  width:min(1080px,98vw);padding:14px;border-radius:30px;position:relative;overflow:hidden;
+  border:2px solid rgba(31,232,255,.85);
+  background:linear-gradient(180deg,rgba(9,28,50,.94),rgba(0,0,0,.78));
+  box-shadow:0 0 38px rgba(31,232,255,.44),inset 0 0 34px rgba(31,232,255,.12);
+}
+.topHeader{display:grid;grid-template-columns:1fr 1.55fr 1fr;gap:10px;align-items:center;margin-bottom:10px}
+.logoBox,.playerBox,.jpBox{
+  background:rgba(0,0,0,.46);border:2px solid rgba(255,211,90,.62);border-radius:16px;padding:8px;text-align:center;
+  box-shadow:0 0 15px rgba(255,211,90,.22),inset 0 0 16px rgba(255,255,255,.05);
+}
+.logoBox b{display:block;font-size:28px;color:#fff;text-shadow:0 0 10px var(--cyan),0 3px 0 #003b4b}
+.logoBox span,.playerBox span{display:block;color:var(--gold);font-size:12px;font-weight:1000}
+.playerBox b{font-size:18px;color:#fff044;text-shadow:0 0 8px #ff0}
+.jpGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.jpBox{padding:7px 4px;border-color:var(--gold);animation:jpPulse 1s ease-in-out infinite alternate}
+.jpBox span{display:block;font-size:10px;color:#b7ffc0;font-weight:1000}.jpBox strong{display:block;color:var(--gold);font-size:18px;text-shadow:0 0 8px #ff0}
+@keyframes jpPulse{to{box-shadow:0 0 24px rgba(255,211,90,.78),0 0 38px rgba(255,211,90,.22),inset 0 0 16px rgba(255,211,90,.14)}}
+.title{
+  text-align:center;font-size:42px;font-weight:1000;letter-spacing:2px;margin:0 0 8px;color:var(--gold);
+  text-shadow:0 0 14px #ffb300,0 0 34px #ff5a00;
+}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
+.box{
+  background:var(--glass);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:8px 5px;text-align:center;
+  box-shadow:inset 0 0 14px rgba(255,255,255,.05);
+}
+.box span{display:block;font-size:11px;color:#aeefff;font-weight:1000;margin-bottom:3px}.box strong{font-size:22px}
+.boardWrap{
+  border-radius:26px;padding:14px;background:linear-gradient(145deg,#5e090c,#e02727 48%,#5b0608);
+  border:5px solid var(--orange);box-shadow:0 0 25px rgba(255,80,0,.82),inset 0 0 25px rgba(0,0,0,.55);
+}
+.grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:10px;background:#030406;border-radius:19px;
+  padding:12px;box-shadow:inset 0 0 30px #000;position:relative;
+}
+.cell{
+  height:118px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,#103657,#071827);border:2px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 0 22px rgba(0,0,0,.72),0 0 12px rgba(31,232,255,.12);
+  position:relative;overflow:hidden;
+}
+.cell.empty{opacity:.38}.cell.spin{animation:spinCell .08s linear infinite}
+@keyframes spinCell{0%{transform:translateY(-8px);filter:blur(1px) brightness(1.2)}100%{transform:translateY(8px);filter:blur(2px) brightness(.9)}}
+.cell.money{animation:drop .28s ease-out}.cell.new{box-shadow:0 0 28px var(--gold),inset 0 0 28px rgba(255,211,90,.25);border-color:var(--gold)}
+.cell.collect{
+  background:radial-gradient(circle,rgba(54,255,139,.45),rgba(7,24,39,1));animation:collectPulse .55s infinite alternate;border-color:#87ffc1;
+}
+.cell.bonusHold{background:radial-gradient(circle,rgba(255,211,90,.40),rgba(7,24,39,1));animation:holdPulse .7s infinite alternate}
+@keyframes drop{from{transform:translateY(-38px) scale(.80);opacity:.2}to{transform:translateY(0) scale(1);opacity:1}}
+@keyframes collectPulse{to{filter:brightness(1.9);box-shadow:0 0 28px var(--green),inset 0 0 30px rgba(54,255,139,.4)}}
+@keyframes holdPulse{to{filter:brightness(1.8);box-shadow:0 0 30px var(--gold),inset 0 0 30px rgba(255,211,90,.35)}}
+.icon{font-size:42px;line-height:1}.value{margin-top:7px;padding:3px 9px;border-radius:999px;background:rgba(0,0,0,.58);border:1px solid rgba(255,211,90,.5);font-size:17px;font-weight:1000;color:var(--gold);text-shadow:0 0 8px #ff9d00}
+.msg{
+  min-height:42px;margin:10px 0 8px;display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:22px;font-weight:1000;text-shadow:0 0 12px #ffb300;text-align:center;
+}
+.controls{display:grid;grid-template-columns:1fr 1fr 1.55fr 1fr 1fr;gap:8px}
+button{
+  border:0;border-radius:16px;padding:13px 8px;color:white;font-size:16px;font-weight:1000;cursor:pointer;
+  background:linear-gradient(180deg,#185987,#0a2139);box-shadow:0 0 14px rgba(31,232,255,.34),inset 0 1px 0 rgba(255,255,255,.25);
+}
+button:hover{filter:brightness(1.12)}button:disabled{opacity:.45;cursor:not-allowed}
+.spin{
+  font-size:26px;background:linear-gradient(180deg,#ff5353,#b90000);box-shadow:0 0 23px rgba(255,35,35,.86),inset 0 1px 0 rgba(255,255,255,.3);
+}
+.spin.stop{background:linear-gradient(180deg,#ffd35a,#d46a00);color:#1b0700;box-shadow:0 0 24px rgba(255,211,90,.9)}
+.overlay,.payModal{
+  position:absolute;inset:0;background:rgba(0,0,0,.76);z-index:20;border-radius:30px;display:none;align-items:center;justify-content:center;text-align:center;backdrop-filter:blur(3px);padding:10px
+}
+.overlay.show,.payModal.show{display:flex}
+.popup,.payCard{
+  width:min(620px,94%);padding:28px;border-radius:28px;background:linear-gradient(180deg,#321700,#050505);
+  border:3px solid var(--gold);box-shadow:0 0 46px rgba(255,211,90,.86);
+}
+.popup h2,.payCard h2{font-size:46px;margin:0 0 10px;color:var(--gold);text-shadow:0 0 20px #ffae00}.popup p{font-size:22px;font-weight:900;line-height:1.35}
+.payRows{display:grid;gap:8px;text-align:left;margin-top:14px}.payRows div{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px;font-weight:900}
+.big{
+  position:absolute;inset:0;display:none;z-index:18;align-items:center;justify-content:center;flex-direction:column;
+  pointer-events:none;color:var(--gold);font-weight:1000;text-shadow:0 0 20px #ffb300,0 0 42px #ff3200;text-align:center
+}
+.big.show{display:flex;animation:bigPulse .5s infinite alternate}.big .t{font-size:76px}.big .a{font-size:50px}
+@keyframes bigPulse{to{transform:scale(1.08)}}
+.particles{position:absolute;inset:0;pointer-events:none;z-index:16;overflow:hidden}.particle{position:absolute;font-size:28px;animation:fly 1.15s ease-out forwards}
+@keyframes fly{to{transform:translateY(-260px) scale(1.8) rotate(25deg);opacity:0}}
+.shake{animation:shake .28s ease-in-out 2}@keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(-5px,3px)}50%{transform:translate(5px,-3px)}75%{transform:translate(-3px,-2px)}}
+.bonusIntro{animation:bonusGlow .75s alternate infinite}@keyframes bonusGlow{to{box-shadow:0 0 50px rgba(255,211,90,.95),inset 0 0 40px rgba(255,211,90,.18)}}
+@media(max-width:760px){
+  body{display:block;background:radial-gradient(circle at 50% 0%,rgba(31,232,255,.18),transparent 28%),linear-gradient(180deg,#071c34,#030611 78%)}
+  .game{width:100vw;min-height:100vh;border-radius:0;border:none;padding:7px;box-shadow:none}
+  .topHeader{grid-template-columns:1fr;gap:5px}.logoBox{padding:6px}.logoBox b{font-size:22px}.playerBox{display:none}.jpGrid{gap:5px}.jpBox{padding:5px 2px;border-radius:10px}.jpBox strong{font-size:13px}.jpBox span{font-size:9px}
+  .title{font-size:24px;margin:4px 0 7px}.stats{grid-template-columns:repeat(3,1fr);gap:5px}.box{border-radius:10px;padding:5px 2px}.box span{font-size:8px}.box strong{font-size:13px}
+  .boardWrap{padding:6px;border-radius:15px;border-width:3px}.grid{gap:4px;padding:5px;border-radius:12px}.cell{height:21vw;min-height:55px;max-height:82px;border-radius:9px;border-width:1px}.icon{font-size:24px}.value{font-size:10px;padding:2px 5px;margin-top:4px}
+  .msg{min-height:32px;margin:6px 0;font-size:15px}.controls{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(5,9,21,.2),rgba(5,9,21,.98));padding-top:6px;grid-template-columns:1fr 1fr;gap:5px}
+  .spin{grid-column:span 2;order:-1;font-size:22px;padding:14px 6px}button{border-radius:11px;padding:10px 5px;font-size:12px}
+  .popup,.payCard{width:94vw;padding:20px 12px;border-radius:20px}.popup h2,.payCard h2{font-size:32px}.popup p{font-size:16px}.big .t{font-size:40px}.big .a{font-size:29px}
+}
+
+
+/* ===== FINAL MOBILE FIX - BEER COLLECT ===== */
+@media (max-width: 900px){
+  html,body{
+    width:100vw!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    overflow:hidden!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  body{
+    display:block!important;
+    background:radial-gradient(circle at 50% 0%,rgba(31,232,255,.18),transparent 28%),linear-gradient(180deg,#071c34,#030611 78%)!important;
+  }
+  body:before{opacity:.35!important;}
+  .game{
+    width:100vw!important;
+    height:100dvh!important;
+    min-height:100dvh!important;
+    border-radius:0!important;
+    border:none!important;
+    padding:6px!important;
+    box-shadow:none!important;
+    display:grid!important;
+    grid-template-rows:auto auto auto 1fr auto auto!important;
+    gap:5px!important;
+    overflow:hidden!important;
+  }
+  .topHeader{
+    grid-template-columns:1fr!important;
+    gap:4px!important;
+    margin-bottom:0!important;
+  }
+  .logoBox{padding:5px!important;border-radius:11px!important;}
+  .logoBox b{font-size:20px!important;line-height:1!important;}
+  .logoBox span{font-size:10px!important;}
+  .playerBox{display:none!important;}
+  .jpGrid{gap:4px!important;grid-template-columns:repeat(3,1fr)!important;}
+  .jpBox{padding:4px 2px!important;border-radius:9px!important;border-width:1px!important;}
+  .jpBox strong{font-size:12px!important;line-height:14px!important;}
+  .jpBox span{font-size:8px!important;line-height:9px!important;}
+  .title{font-size:20px!important;line-height:1.05!important;margin:2px 0 4px!important;letter-spacing:.5px!important;}
+  .stats{
+    grid-template-columns:repeat(5,1fr)!important;
+    gap:3px!important;
+    margin-bottom:3px!important;
+  }
+  .box{border-radius:8px!important;padding:4px 1px!important;min-width:0!important;}
+  .box span{font-size:7px!important;line-height:8px!important;margin-bottom:2px!important;letter-spacing:0!important;}
+  .box strong{font-size:11px!important;line-height:13px!important;white-space:nowrap!important;}
+  .boardWrap{
+    padding:5px!important;
+    border-radius:14px!important;
+    border-width:3px!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .grid{
+    height:100%!important;
+    grid-template-columns:repeat(5,1fr)!important;
+    grid-template-rows:repeat(3,1fr)!important;
+    gap:4px!important;
+    padding:5px!important;
+    border-radius:12px!important;
+  }
+  .cell{
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    border-radius:9px!important;
+    border-width:1px!important;
+  }
+  .icon{font-size:clamp(23px,8vw,34px)!important;}
+  .value{font-size:10px!important;padding:2px 5px!important;margin-top:3px!important;}
+  .msg{
+    min-height:28px!important;
+    margin:0!important;
+    font-size:13px!important;
+    line-height:1.15!important;
+    padding:2px 4px!important;
+  }
+  .controls{
+    position:static!important;
+    bottom:auto!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr 1.45fr 1fr 1fr!important;
+    gap:4px!important;
+    padding:5px!important;
+    background:linear-gradient(180deg,rgba(5,9,21,.25),rgba(5,9,21,.98))!important;
+    border-radius:14px!important;
+  }
+  button{border-radius:10px!important;padding:8px 3px!important;font-size:11px!important;min-height:44px!important;}
+  .spin{
+    grid-column:auto!important;
+    order:0!important;
+    font-size:19px!important;
+    padding:8px 4px!important;
+    min-height:52px!important;
+  }
+  .popup,.payCard{width:94vw!important;padding:18px 12px!important;border-radius:20px!important;}
+  .popup h2,.payCard h2{font-size:30px!important;}
+  .popup p{font-size:15px!important;}
+  .big .t{font-size:38px!important;}
+  .big .a{font-size:27px!important;}
+}
+@media (max-width: 420px){
+  .game{padding:5px!important;gap:4px!important;}
+  .logoBox b{font-size:18px!important;}
+  .title{font-size:18px!important;}
+  .jpBox strong{font-size:11px!important;}
+  .box strong{font-size:10px!important;}
+  .icon{font-size:clamp(21px,7.5vw,31px)!important;}
+  .value{font-size:9px!important;}
+  button{font-size:10px!important;min-height:40px!important;}
+  .spin{font-size:17px!important;min-height:48px!important;}
+}
+
+</style>
+</head>
+<body>
+<div class="game" id="game">
+  <div class="particles" id="particles"></div>
+  <div class="big" id="big"><div class="t" id="bigT">ГОЛЯМА ПЕЧАЛБА</div><div class="a" id="bigA">0.00 €</div></div>
+  <div class="overlay" id="overlay"><div class="popup" id="popupBox"><h2 id="popT">БОНУС</h2><p id="popP"></p><button onclick="closePopup()">OK</button></div></div>
+  <div class="payModal" id="payModal"><div class="payCard"><h2>ПРАВИЛА</h2><div class="payRows">
+    <div>🍻 Collect събира всички парични символи на екрана.</div>
+    <div>1 🍻 = СЪБРАНО x1, 2 🍻 = СЪБРАНО x2, 3 🍻 = СЪБРАНО x3 + HOLD & WIN БОНУС.</div>
+    <div>В бонуса имаш 3 респина. Всеки нов паричен символ връща респините на 3.</div>
+    <div>Ако се запълни целият екран, печалбата се увеличава.</div>
+  </div><button style="margin-top:14px" onclick="closePaytable()">OK</button></div></div>
+
+  <div class="topHeader">
+    <div class="logoBox"><b>MYKONOS CASINO</b><span>BEER COLLECT</span></div>
+    <div class="jpGrid">
+      <div class="jpBox"><span>MINI</span><strong id="mini">5.00 €</strong></div>
+      <div class="jpBox"><span>MAJOR</span><strong id="major">100.00 €</strong></div>
+      <div class="jpBox"><span>GRAND</span><strong id="grand">500.00 €</strong></div>
+    </div>
+    <div class="playerBox"><span>ИГРАЧ</span><b id="guestName">ЗАРЕЖДАМ...</b></div>
+  </div>
+
+  <h1 class="title">🍺 BEER COLLECT HOLD & WIN 🍺</h1>
+
+  <div class="stats">
+    <div class="box"><span>БАЛАНС</span><strong id="balance">0.00 €</strong></div>
+    <div class="box"><span>ЗАЛОГ</span><strong id="bet">0.20 €</strong></div>
+    <div class="box"><span>ПЕЧАЛБА</span><strong id="win">0.00 €</strong></div>
+    <div class="box"><span>ПОСЛ. ПЕЧАЛБА</span><strong id="lastWin">0.00 €</strong></div>
+    <div class="box"><span>СЪБРАНО / РЕСПИНИ</span><strong id="pot">0.00 € / 0</strong></div>
+  </div>
+
+  <div class="boardWrap"><div class="grid" id="grid"></div></div>
+  <div class="msg" id="msg">Зареждам баланс от профила...</div>
+
+  <div class="controls">
+    <button onclick="changeBet(-1)">ЗАЛОГ -</button>
+    <button onclick="changeBet(1)">ЗАЛОГ +</button>
+    <button class="spin" id="spinBtn" onclick="spinOrStop()">SPIN</button>
+    <button onclick="openAuto()">AUTO</button>
+    <button onclick="openPaytable()">INFO</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/";
+const SUPABASE_KEY = "sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq";
+let dbPlayer=null, balanceLoadedFromSupabase=false, saveBalanceTimer=null;
+function sbHeaders(){return {apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"}}
+async function sbApi(path, options={}){
+  const r=await fetch(SUPABASE_URL+path,{...options,cache:"no-store",headers:{...sbHeaders(),...(options.headers||{})}});
+  if(!r.ok){console.log("Supabase error",await r.text());throw new Error("Supabase error")}
+  if(r.status===204)return null;return await r.json();
+}
+function setGuestName(name){const el=document.getElementById('guestName'); if(el) el.textContent=String(name||'GOST').trim().toUpperCase()||'GOST'}
+async function loadPlayerBalanceFromSupabase(){
+  try{
+    const saved=JSON.parse(localStorage.getItem('player')||'null');
+    if(!saved||!saved.id){msg.textContent='Влез първо през сайта.'; setGuestName('LOGIN FIRST'); return;}
+    const d=await sbApi('players?select=id,Name,balance,Pin,ref_code,ref_by&id=eq.'+encodeURIComponent(saved.id));
+    if(d&&d[0]){
+      dbPlayer=d[0]; balance=Number(dbPlayer.balance||0); balanceLoadedFromSupabase=true;
+      localStorage.setItem('player',JSON.stringify({...saved,...dbPlayer}));
+      setGuestName(dbPlayer.Name||saved.Name||'GOST');
+      msg.textContent='Добре дошъл, '+(dbPlayer.Name||'играч')+'!'; update(); draw();
+    }else{msg.textContent='Профилът не е намерен.'; setGuestName('NO PLAYER')}
+  }catch(e){console.log(e); msg.textContent='Грешка при зареждане на баланс.'; setGuestName('ERROR')}
+}
+async function saveBalanceToSupabase(){
+  if(!dbPlayer||!dbPlayer.id) return;
+  const clean=Math.round(Number(balance||0)*100)/100;
+  try{
+    await sbApi('players?id=eq.'+encodeURIComponent(dbPlayer.id),{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify({balance:clean})});
+    const saved=JSON.parse(localStorage.getItem('player')||'null');
+    if(saved){saved.balance=clean; localStorage.setItem('player',JSON.stringify(saved));}
+  }catch(e){console.log('save balance error',e)}
+}
+function scheduleSaveBalance(){clearTimeout(saveBalanceTimer); saveBalanceTimer=setTimeout(saveBalanceToSupabase,300)}
+window.addEventListener('pagehide',saveBalanceToSupabase);
+window.addEventListener('beforeunload',saveBalanceToSupabase);
+
+const ROWS=3,COLS=5;
+const moneySymbols=[
+  {icon:"🍺", value:0.20, weight:44},
+  {icon:"🍷", value:0.50, weight:28},
+  {icon:"🥃", value:1.00, weight:17},
+  {icon:"🍸", value:2.00, weight:7.5},
+  {icon:"🍾", value:5.00, weight:3.2},
+  {icon:"💰", value:10.00, weight:1.1},
+  {icon:"⭐", value:20.00, weight:.35}
+];
+let balance=0, bet=0.20, win=0, lastWin=0, respins=0, pot=0;
+let spinning=false, stopping=false, soundOn=true, inBonus=false, autoLeft=0, spinTimers=[];
+const betSteps=[0.20,0.50,1.00,2.00,5.00];let betIndex=0;
+let board=emptyBoard(), held=emptyBoard();
+const $=id=>document.getElementById(id), game=$("game"), grid=$("grid"), msg=$("msg");
+function emptyBoard(){return Array.from({length:ROWS},()=>Array.from({length:COLS},()=>null))}
+function money(v){return Number(v||0).toFixed(2)+" €"}
+function update(){
+ $("balance").textContent=money(balance);$("bet").textContent=money(bet);$("win").textContent=money(win);$("lastWin").textContent=money(lastWin);$("pot").textContent=money(pot)+" / "+respins;
+ $("spinBtn").textContent=spinning?"STOP":"SPIN";$("spinBtn").classList.toggle("stop",spinning);
+}
+function pickMoney(){let t=moneySymbols.reduce((a,s)=>a+s.weight,0),x=Math.random()*t;for(const s of moneySymbols){x-=s.weight;if(x<=0)return {icon:s.icon,value:+(s.value*bet).toFixed(2),new:true}}return {icon:"🍺",value:+(0.2*bet).toFixed(2),new:true}}
+function draw(){
+ grid.innerHTML="";
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  const d=document.createElement("div"), item=board[r][c]; d.className="cell";
+  if(!item){d.classList.add("empty");d.innerHTML='<div class="icon">·</div>'}
+  else if(item.collect){d.classList.add("collect");d.innerHTML='<div class="icon">🍻</div><div class="value">COLLECT</div>'}
+  else{d.classList.add(inBonus?"bonusHold":"money"); if(item.new)d.classList.add("new"); d.innerHTML='<div class="icon">'+item.icon+'</div><div class="value">'+money(item.value)+'</div>'}
+  grid.appendChild(d);
+ }
+}
+function countCollects(b){let n=0;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(b[r][c]?.collect)n++;return n}
+function boardPot(b){let s=0;for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(b[r][c]&&!b[r][c].collect)s+=b[r][c].value;return +s.toFixed(2)}
+function baseSpinBoard(){
+ const b=emptyBoard();let moneyCount=0,collects=0;
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  const roll=Math.random();
+  if(roll<0.18){b[r][c]=pickMoney();moneyCount++}
+  else if(roll<0.205){b[r][c]={collect:true};collects++}
+ }
+ if(moneyCount===0&&collects===0&&Math.random()<0.24){b[Math.floor(Math.random()*ROWS)][Math.floor(Math.random()*COLS)]=pickMoney()}
+ if(moneyCount>0&&collects===0&&Math.random()<0.18){b[Math.floor(Math.random()*ROWS)][Math.floor(Math.random()*COLS)]={collect:true}}
+ if(moneyCount===0&&collects===0&&Math.random()<0.055){let p=0;while(p<2){let r=Math.floor(Math.random()*ROWS),c=Math.floor(Math.random()*COLS);if(!b[r][c]){b[r][c]={collect:true};p++}}}
+ return b;
+}
+function spinOrStop(){ if(spinning){stopping=true;msg.textContent="STOP...";return} spin() }
+async function spin(){
+ if(spinning)return; unlockAudio();
+ if(!balanceLoadedFromSupabase){msg.textContent="Влез първо през сайта.";badSound();loadPlayerBalanceFromSupabase();return}
+ if(!inBonus && balance<bet){msg.textContent="Няма баланс";badSound();return}
+ spinning=true;stopping=false;win=0;update();clearFx();jackpotTick();
+ if(inBonus) await bonusSpin(); else await normalSpin();
+ jackpotTick();spinning=false;stopping=false;update();
+ if(autoLeft>0){autoLeft--; if(autoLeft>0&&balance>=bet)setTimeout(spin,750); else msg.textContent=autoLeft<=0?"AUTO приключи":"Няма баланс за AUTO"}
+}
+async function reelAnimation(ms=650){
+ grid.querySelectorAll(".cell").forEach(c=>c.classList.add("spin"));startSpinSound();
+ let start=Date.now();
+ while(Date.now()-start<ms){if(stopping)break;await wait(45)}
+ stopSpinSound();grid.querySelectorAll(".cell").forEach(c=>c.classList.remove("spin"));landSound();
+}
+async function normalSpin(){
+ balance=+(balance-bet).toFixed(2);scheduleSaveBalance();msg.textContent="Върти...";update();await reelAnimation(720);
+ board=baseSpinBoard();draw();
+ const cc=countCollects(board);pot=boardPot(board);
+ if(cc>=3&&pot>0){
+  win=+(pot*3).toFixed(2);balance=+(balance+win).toFixed(2);lastWin=win;scheduleSaveBalance();cashSound();bigMaybe(win,"x3 COLLECT");particles("💰",26);
+  msg.textContent="3 🍻 = x3 печалба + БОНУС";
+  await wait(500);enterBonus();
+ }else if(cc===2&&pot>0){
+  win=+(pot*2).toFixed(2);balance=+(balance+win).toFixed(2);lastWin=win;scheduleSaveBalance();cashSound();bigMaybe(win,"x2 COLLECT");particles("💰",18);nearMissFx();msg.textContent="2 🍻 = x2 печалба "+money(win);
+ }else if(cc===1&&pot>0){
+  win=pot;balance=+(balance+win).toFixed(2);lastWin=win;scheduleSaveBalance();cashSound();particles("💰",12);msg.textContent="1 🍻 = събрано "+money(win);
+ }else if(pot>0&&Math.random()<0.30){
+  win=+(pot*0.15).toFixed(2);balance=+(balance+win).toFixed(2);lastWin=win;scheduleSaveBalance();cashSound();msg.textContent="Малка печалба "+money(win);
+ }else{msg.textContent=pot>0?"Няма COLLECT":"Опитай пак";loseSound()}
+ update();
+}
+function enterBonus(){
+ inBonus=true;respins=3;held=emptyBoard();board=emptyBoard();pot=0;bonusSound();draw();update();
+ popup("HOLD & WIN BONUS","Имате 3 респина. Всеки нов символ връща респините на 3.");
+}
+async function bonusSpin(){
+ msg.textContent="БОНУС РЕСПИН...";await reelAnimation(520);
+ let newHit=false;board=held.map(r=>r.slice());
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+   if(!board[r][c]&&Math.random()<0.13){board[r][c]=pickMoney();newHit=true}
+ }
+ held=board.map(r=>r.slice());pot=boardPot(board);draw();
+ if(newHit){respins=3;msg.textContent="НОВ СИМВОЛ! Респините се връщат на 3";particles("🍺",18);bonusSound()}
+ else{respins--;msg.textContent="Няма нов символ — остават "+respins}
+ update();
+ if(isFull(board)||respins<=0){
+   await wait(600);win=pot;if(isFull(board))win=+(win*1.7).toFixed(2);else if(win>=bet*40)win=+(win*1.15).toFixed(2);
+   balance=+(balance+win).toFixed(2);lastWin=win;scheduleSaveBalance();bigWin(isFull(board)?"ПЪЛЕН ЕКРАН!":"БОНУС ПЕЧАЛБА",win);cashSound();particles("🍻",42);
+   inBonus=false;respins=0;pot=0;held=emptyBoard();msg.textContent="Бонус печалба "+money(win);update();
+ }
+}
+function isFull(b){for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(!b[r][c])return false;return true}
+function changeBet(dir){if(spinning||inBonus)return;betIndex=Math.max(0,Math.min(betSteps.length-1,betIndex+dir));bet=betSteps[betIndex];tap();update()}
+function openAuto(){if(spinning)return;const n=prompt("AUTO SPINS: 10, 20 или 50","10");if(!n)return;autoLeft=[10,20,50].includes(Number(n))?Number(n):10;msg.textContent="AUTO "+autoLeft+" стартира";spin()}
+function openPaytable(){$("payModal").classList.add("show");tap()}function closePaytable(){$("payModal").classList.remove("show");tap()}
+function popup(t,p){$("popT").textContent=t;$("popP").textContent=p;$("overlay").classList.add("show");$("popupBox").classList.add("bonusIntro");particles("🍻",28)}
+function closePopup(){tap();$("overlay").classList.remove("show");$("popupBox").classList.remove("bonusIntro")}
+function wait(ms){return new Promise(r=>setTimeout(r,ms))}
+function clearFx(){$("big").classList.remove("show");$("particles").innerHTML=""}
+function bigMaybe(a,t){if(a>=bet*10)bigWin(t,a)}
+function bigWin(t,a){$("bigT").textContent=t;$("bigA").textContent=money(a);$("big").classList.add("show");game.classList.add("shake");setTimeout(()=>{game.classList.remove("shake");$("big").classList.remove("show")},1850)}
+function particles(s,n){const box=$("particles");for(let i=0;i<n;i++){const p=document.createElement("div");p.className="particle";p.textContent=s;p.style.left=Math.random()*100+"%";p.style.top=60+Math.random()*28+"%";p.style.animationDelay=Math.random()*.18+"s";box.appendChild(p);setTimeout(()=>p.remove(),1250)}}
+function nearMissFx(){[...grid.children].filter(x=>x.innerHTML.includes("COLLECT")).forEach(c=>c.classList.add("new"));bonusSound();particles("🍻",12)}
+function readJP(id,f){const el=$(id);const n=parseFloat(String(el.textContent).replace("€","").replace(/\s/g,"").replace(",","."));return isNaN(n)?f:n}
+function setJP(id,v){$(id).textContent=v.toFixed(2)+" €"}
+function jackpotTick(){setJP("mini",readJP("mini",5)+bet*.010);setJP("major",readJP("major",100)+bet*.004);setJP("grand",readJP("grand",500)+bet*.0015)}
+/* AUDIO */
+let ac=null,spinTimer=null;function audio(){if(!ac)ac=new (AudioContext||webkitAudioContext)();return ac}
+function unlockAudio(){const a=audio();if(a.state==="suspended")a.resume()}document.body.addEventListener("pointerdown",unlockAudio,{once:true});
+function tone(f,d=.06,v=.045,type="triangle",delay=0){if(!soundOn)return;const a=audio(),o=a.createOscillator(),g=a.createGain(),fl=a.createBiquadFilter();o.type=type;o.frequency.setValueAtTime(f,a.currentTime+delay);fl.type="lowpass";fl.frequency.value=1700;g.gain.setValueAtTime(.0001,a.currentTime+delay);g.gain.exponentialRampToValueAtTime(v,a.currentTime+delay+.01);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+delay+d);o.connect(fl);fl.connect(g);g.connect(a.destination);o.start(a.currentTime+delay);o.stop(a.currentTime+delay+d+.03)}
+function noise(d=.025,v=.025,delay=0){if(!soundOn)return;const a=audio(),size=Math.floor(a.sampleRate*d),b=a.createBuffer(1,size,a.sampleRate),data=b.getChannelData(0);for(let i=0;i<size;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/size,2.2);const src=a.createBufferSource(),g=a.createGain(),fl=a.createBiquadFilter();fl.type="bandpass";fl.frequency.value=900;g.gain.value=v;src.buffer=b;src.connect(fl);fl.connect(g);g.connect(a.destination);src.start(a.currentTime+delay)}
+function tap(){noise(.02,.025);tone(320,.035,.018)}function startSpinSound(){stopSpinSound();let n=0;spinTimer=setInterval(()=>{noise(.018,.016);if(n%3===0)tone(120,.03,.012,"sine");n++},95)}
+function stopSpinSound(){if(spinTimer){clearInterval(spinTimer);spinTimer=null}}function landSound(){noise(.035,.04);tone(210,.055,.035)}
+function cashSound(){[360,470,620,780].forEach((f,i)=>tone(f,.07,.05,"triangle",i*.07))}function bonusSound(){[240,340,480,660,860,1020].forEach((f,i)=>tone(f,.12,.065,"triangle",i*.085))}
+function badSound(){noise(.06,.045);tone(120,.08,.025)}function loseSound(){tone(95,.08,.016,"sawtooth")}
+draw();update();loadPlayerBalanceFromSupabase();
+</script>
+</body>
+</html>
