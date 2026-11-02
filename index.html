@@ -514,33 +514,24 @@ window.addEventListener('DOMContentLoaded', function(){
     a.appendChild(inner); li.appendChild(a); grid.appendChild(li);
   });
 
-  // Game handoff: update the shared player snapshot from the server before navigation.
-  // The game must still read the same-origin `player` key or integrate the bridge.
+  // Use the same `player` snapshot as the original working index.
   grid.addEventListener('click', async function(e){
     const link=e.target.closest('a[href]:not([data-missing])');
-    if(!link || e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button!==0)return;
-    const token=localStorage.getItem('stefbet_token');
-    if(!token)return; // Guest mode is unchanged.
+    if(!link||e.defaultPrevented||e.ctrlKey||e.metaKey||e.shiftKey||e.altKey||e.button!==0)return;
+    const saved=localStorage.getItem('player');
+    if(!saved){e.preventDefault();document.getElementById('profile').click();return;}
     e.preventDefault();
-    const destination=link.href;
-    link.style.pointerEvents='none';
+    const target=link.href;
     try{
-      const timeout=new AbortController();
-      const timer=setTimeout(()=>timeout.abort(),3500);
-      try{
-        const res=await fetch('https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/rpc/stefbet_profile',{
-          method:'POST',headers:{'apikey':'sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq','Authorization':'Bearer sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq','Content-Type':'application/json'},
-          body:JSON.stringify({p_token:token}),signal:timeout.signal
+      const p=JSON.parse(saved);
+      if(p&&p.id!=null){
+        const res=await fetch('https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/players?select=id,Name,balance&id=eq.'+encodeURIComponent(p.id)+'&limit=1',{
+          headers:{apikey:'sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq',Authorization:'Bearer sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq'}
         });
-        if(res.ok){
-          const profile=await res.json();
-          if(profile && profile.ok===true && profile.id!=null){
-            localStorage.setItem('player',JSON.stringify({id:profile.id,Name:profile.name,balance:Number(profile.balance)||0}));
-          }
-        }
-      }finally{clearTimeout(timer);}
-    }catch(err){console.warn('STEFBET: неуспешно обновяване на баланса',err);}
-    window.location.assign(destination);
+        if(res.ok){const rows=await res.json();if(rows&&rows[0])localStorage.setItem('player',JSON.stringify({...p,Name:rows[0].Name,balance:Number(rows[0].balance)||0}));}
+      }
+    }catch(err){console.warn('Balance refresh failed',err);}
+    location.assign(target);
   });
 
   // missing-file toast
@@ -802,64 +793,70 @@ $('.tabs').addEventListener('keydown',function(e){
   if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var l=e.key==='ArrowLeft';selTab(l?'login':'reg');(l?$('#tabLogin'):$('#tabReg')).focus();}
 });
 
-/* ---------- auth ---------- */
-function setFormBusy(form,busy,label){
+/* ---------- STEFBET legacy-compatible players auth ---------- */
+var LEGACY_API='https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/';
+function legacyApi(path,opts){
+  opts=opts||{};
+  return fetch(LEGACY_API+path,{...opts,headers:{apikey:KEY,Authorization:'Bearer '+KEY,'Content-Type':'application/json',...(opts.headers||{})}}).then(async function(res){
+    var txt=await res.text();if(!res.ok)throw Error(txt||'Supabase '+res.status);
+    try{return JSON.parse(txt);}catch(_){return null;}
+  });
+}
+function legacySnapshot(p){
+  return {id:p.id,Name:p.Name||p.name,balance:Number(p.balance)||0,ref_code:p.ref_code||null,ref_by:p.ref_by||null};
+}
+function setLegacyPlayer(p){
+  var v=legacySnapshot(p);ls.set(PK,JSON.stringify(v));
+  S.user={id:v.id,name:v.Name,balance:v.balance};
+  S.token=null;ls.del(TK);S.limited=true;S.bonus=0;S.hist=[];S.loading=false;
+  render();startTimer();
+}
+function legacyRefresh(){
+  var p;try{p=JSON.parse(ls.get(PK)||'null');}catch(_){p=null;}
+  if(!p||p.id==null)return Promise.resolve();
+  return legacyApi('players?select=id,Name,balance,ref_code,ref_by&id=eq.'+encodeURIComponent(p.id)+'&limit=1').then(function(rows){
+    if(rows&&rows[0])setLegacyPlayer(rows[0]);
+  }).catch(function(err){console.warn('STEFBET: balance refresh failed',err);});
+}
+function setFormBusy(form,busy){
   S.busy=busy;
   Array.prototype.forEach.call(form.querySelectorAll('button,input'),function(n){n.disabled=busy;});
   var b=form.querySelector('button[type=submit]');
-  if(busy){b.dataset.t=b.textContent;b.textContent='Моля, изчакай…';form.setAttribute('aria-busy','true');}
-  else{if(b.dataset.t)b.textContent=b.dataset.t;form.removeAttribute('aria-busy');}
+  if(busy){b.dataset.t=b.textContent;b.textContent='Моля, изчакай…';}
+  else if(b.dataset.t){b.textContent=b.dataset.t;}
 }
-function submitAuth(form,fn,msgEl,validate){
-  var name=form.elements.name.value.trim();
-  var pin=form.elements.pin.value;
-  var pin2=form.elements.pin2?form.elements.pin2.value:null;
-  form.elements.pin.value='';if(form.elements.pin2)form.elements.pin2.value='';
-  msgEl.className='msg';
-  var err=validate(name,pin,pin2);
-  if(err){msgEl.textContent=err;return;}
-  msgEl.textContent='';
-  setFormBusy(form,true);
-  rpc(fn,{p_name:name,p_pin:pin}).then(function(r){
-    pin=null;pin2=null;
-    if(r.ok===true&&r.token){
-      S.token=String(r.token);ls.set(TK,S.token);form.elements.name.value='';
-      return loadProfile().then(function(st){
-        if(st!=='ok'){setLimited(r);}
-        $('#mIn').textContent='';
-        S.loading=false;render();
-        if(cur==='profile')focusFirst('profile');
-      });
-    }
-    msgEl.textContent=r.error?String(r.error):SRV_MSG;
-  }).then(function(){setFormBusy(form,false);},function(){msgEl.textContent=SRV_MSG;setFormBusy(form,false);});
-}
-$('#fLogin').addEventListener('submit',function(e){
-  e.preventDefault();
-  submitAuth(this,'stefbet_login',$('#mLogin'),function(n,p){
-    if(!n)return 'Въведи име.';
-    if(p.length<4)return 'ПИН трябва да е поне 4 знака.';
-    return '';
-  });
+$('#fLogin').addEventListener('submit',async function(e){
+  e.preventDefault();var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,msg=$('#mLogin');
+  if(!name||!pin){msg.textContent='Въведи име и ПИН.';return;}
+  setFormBusy(form,true);msg.textContent='';
+  try{
+    // Same player lookup and PIN comparison as the working old index.
+    var rows=await legacyApi('players?select=id,Name,Pin,balance,ref_code,ref_by&order=id.asc');
+    var found=(rows||[]).find(function(p){return String(p.Name||'').trim().toLowerCase()===name.toLowerCase()&&String(p.Pin||'').trim()===pin.trim();});
+    if(!found){msg.textContent='Грешен ПИН или непознат играч.';return;}
+    setLegacyPlayer(found);form.elements.pin.value='';form.elements.name.value='';
+    msg.textContent='Успешен вход!';
+  }catch(err){console.error(err);msg.textContent='Не мога да вляза. Провери връзката със Supabase.';}
+  finally{setFormBusy(form,false);}
 });
-$('#fReg').addEventListener('submit',function(e){
-  e.preventDefault();
-  submitAuth(this,'stefbet_register',$('#mReg'),function(n,p,p2){
-    if(n.length<3||n.length>40||!/^[\p{L}\p{N} _-]+$/u.test(n))return 'Името трябва да е 3–40 знака: букви, цифри, интервал, _ или -.';
-    if(p.length<6)return 'ПИН трябва да е поне 6 знака.';
-    if(p!==p2)return 'ПИН кодовете не съвпадат.';
-    return '';
-  });
+$('#fReg').addEventListener('submit',async function(e){
+  e.preventDefault();var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,pin2=form.elements.pin2.value,msg=$('#mReg');
+  if(name.length<3||!pin||pin.length<3||pin!==pin2){msg.textContent='Въведи име (поне 3 знака) и еднакъв ПИН (поне 3 знака).';return;}
+  setFormBusy(form,true);msg.textContent='';
+  try{
+    var rows=await legacyApi('players?select=id,Name&order=id.asc');
+    if((rows||[]).some(function(p){return String(p.Name||'').trim().toLowerCase()===name.toLowerCase();})){msg.textContent='Това име вече съществува.';return;}
+    var ref=name.replace(/\s+/g,'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
+    await legacyApi('players',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({Name:name,Pin:pin,balance:10,ref_code:ref,ref_by:new URLSearchParams(location.search).get('ref')||null})});
+    form.elements.pin.value='';form.elements.pin2.value='';
+    msg.textContent='Регистрацията е успешна. Влез с името и ПИН.';
+  }catch(err){console.error(err);msg.textContent='Неуспешна регистрация. Провери Supabase.';}
+  finally{setFormBusy(form,false);}
 });
-$('#btnOut').addEventListener('click',function(){
-  var t=S.token,btn=this;
-  btn.disabled=true;
-  dropSession();
-  closeModal();
-  btn.disabled=false;
-  if(t)rpc('stefbet_logout',{p_token:t});
-});
-
+$('#btnOut').addEventListener('click',function(){dropSession();closeModal();});
+/* refresh on returning from games */
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')legacyRefresh();});
+window.addEventListener('pageshow',function(){legacyRefresh();});
 /* ---------- daily bonus ---------- */
 function setMsg(t,ok){var m=$('#mIn');m.textContent=t||'';m.className='msg'+(ok?' ok':'');}
 $('#btnDaily').addEventListener('click',function(){
@@ -985,14 +982,20 @@ document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'&&S.token&&S.user&&Date.now()-S.lastRefresh>10000)refreshQuiet();
 });
 (function restore(){
+  // Prefer the legacy shared player object, which existing games expect.
+  var p=null;try{p=JSON.parse(ls.get(PK)||'null');}catch(_){}
+  if(p&&p.id!=null){setLegacyPlayer(p);legacyRefresh();return;}
+  // Existing new-style token users are migrated when possible.
   var t=ls.get(TK);
-  if(!t){ls.del(PK);return;}
+  if(!t)return;
   S.token=t;S.loading=true;render();
   loadProfile().then(function(st){
     S.loading=false;
-    if(st==='invalid'){dropSession();}
-    else if(st!=='ok'){S.token=t;$('#mLogin').textContent=st==='net'?NET_MSG:SRV_MSG;render();}
-    else render();
+    if(st==='invalid')dropSession();
+    else if(st==='ok'&&S.user&&S.user.id!=null){
+      var p={id:S.user.id,Name:S.user.name,balance:S.user.balance};
+      setLegacyPlayer(p);legacyRefresh();
+    }else render();
   });
 })();
 })();
