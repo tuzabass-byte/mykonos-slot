@@ -262,6 +262,38 @@ body.pm-lock{overflow:hidden}
 .rres{min-height:46px;text-align:center;font-weight:900;font-size:19px;color:#ffd75e;margin-bottom:10px}
 .rres.err{color:#ff9aa8;font-size:15px;font-weight:700}
 </style>
+
+<style id="stefbet-lobby-v2">
+/* Visual upgrade: original game catalog and profile scripts stay intact. */
+:root{--gold:#ffd45b;--panel:rgba(12,8,27,.84)}
+body{background-color:#080511}
+.wrap{max-width:1380px}
+header{gap:12px}
+.hero{box-shadow:0 0 38px #f5c54238,0 20px 55px #000a}
+.lobby-featured{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin:22px 0 12px}
+.lobby-featured a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:94px;padding:18px 20px;text-decoration:none;border-radius:18px;border:1px solid #cfa34d;background:linear-gradient(125deg,#3a1959,#150b29 66%,#492709);box-shadow:inset 0 1px #fff3,0 10px 25px #0008;transition:transform .2s,box-shadow .2s}
+.lobby-featured a:hover{transform:translateY(-4px);box-shadow:0 0 22px #f5c54235}
+.lobby-featured strong{font-size:clamp(16px,1.9vw,22px);color:#ffe28a}
+.lobby-featured small{display:block;color:#e6d6ed;margin-top:5px;font-size:13px}
+.lobby-featured .glyph{font-size:26px;color:#ffd55e}
+.lobby-toolbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0 4px}
+.lobby-intro{font-weight:900;font-size:clamp(17px,2.2vw,25px);color:#ffe28a}
+.lobby-search{min-height:48px;flex:1 1 240px;max-width:400px;border:1px solid #c69a42;border-radius:14px;padding:0 16px;background:#150e28;color:#fff;font:inherit;font-size:16px}
+.lobby-search::placeholder{color:#b9a8cb}
+.tile a{box-shadow:0 8px 25px #000a,0 0 14px #e9a51622}
+.tile .in::before{content:"▶ ИГРАЙ";position:absolute;z-index:7;left:50%;top:44%;transform:translate(-50%,-40%) scale(.9);opacity:0;white-space:nowrap;background:linear-gradient(#fff1a3,#e5a620);color:#291700;border:1px solid #fff4c3;border-radius:100px;padding:11px 20px;font-size:clamp(12px,1.4vw,17px);font-weight:900;box-shadow:0 4px 25px #000c;transition:opacity .2s,transform .2s;pointer-events:none}
+.tile a:hover .in::before,.tile a:focus-visible .in::before{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.lobby-status{text-align:center;font-size:13px;color:#e4d5f2;padding:12px 6px 4px}
+@media(max-width:650px){
+ .lobby-featured{grid-template-columns:1fr;gap:9px;margin-top:14px}
+ .lobby-featured a{min-height:68px;padding:12px 16px}
+ .lobby-toolbar{margin-top:16px}
+ .lobby-search{width:100%;max-width:none}
+ .tile .in::before{display:none}
+ .hero{border-radius:16px}
+}
+@media(prefers-reduced-motion:reduce){.lobby-featured a{transition:none}}
+</style>
 </head>
 <body id="home">
 <div class="bg" id="bg"></div><div class="bg-ov"></div>
@@ -295,8 +327,15 @@ body.pm-lock{overflow:hidden}
   </div>
 </div>
 
+
+<div class="lobby-featured" aria-label="Бърз достъп">
+ <a href="#games"><span><strong>🎰 ВСИЧКИ ИГРИ</strong><small>Избери любим слот</small></span><span class="glyph" aria-hidden="true">❯</span></a>
+ <a href="#jackpots"><span><strong>🏆 ДЖАКПОТИ</strong><small>Специални награди</small></span><span class="glyph" aria-hidden="true">❯</span></a>
+ <a href="#bonuses"><span><strong>🎁 БОНУСИ</strong><small>Дневни награди и рулетка</small></span><span class="glyph" aria-hidden="true">❯</span></a>
+</div>
 <section id="games" aria-labelledby="gh">
   <div class="sec-h"><h2 id="gh">Игри</h2><span class="cnt" id="cnt"></span></div>
+  <div class="lobby-toolbar"><span class="lobby-intro">✨ ОТКРИЙ СВОЯТА ИГРА</span><input class="lobby-search" id="gameSearch" type="search" placeholder="🔎 Търси игра..." aria-label="Търси игра"></div>
   <div class="filters" id="filters" role="group" aria-label="Филтър по тип игра"></div>
   <div class="grid" id="grid"></div>
 </section>
@@ -318,6 +357,7 @@ body.pm-lock{overflow:hidden}
     <div class="fi"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16"/><path d="M11 15.5l3-1.5v11M20.5 18.5c0-2 1.3-3 2.8-3s2.8 1 2.8 2.7c0 1.4-.8 2-2.8 3.3-2 1.2-3 2.2-3 3.5h6M29 17l-5 6M24 17l5 6" stroke-width="0"/><text x="20" y="25" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="700" font-size="12.5" fill="#f5c542" stroke="none">18+</text></svg><span>18+ Само за пълнолетни</span></div>
     <div class="fi"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 23v-4a13 13 0 0 1 26 0v4"/><rect x="5" y="22" width="7" height="11" rx="3"/><rect x="28" y="22" width="7" height="11" rx="3"/><path d="M32 33c0 3-4 4-8 4"/><circle cx="22" cy="37" r="1.5"/></svg><span>Поддръжка 24/7</span></div>
   </div>
+<div class="lobby-status">STEFBET • Игри с виртуални кредити • Без реални залози</div>
 </footer>
 </div>
 <!-- ===== STEFBET profile / bonus modals ===== -->
@@ -490,7 +530,9 @@ window.addEventListener('DOMContentLoaded', function(){
   function applyFilter(name){
     let n = 0;
     grid.querySelectorAll('.tile').forEach(t => {
-      const show = name === FILTERS[0] || t.dataset.tag === name;
+      const matchCategory = name === FILTERS[0] || t.dataset.tag === name;
+       const matchSearch = !query || t.textContent.toLocaleLowerCase('bg').includes(query);
+       const show = matchCategory && matchSearch;
       t.hidden = !show;
       if (show) { n++; t.classList.remove('pop'); void t.offsetWidth; t.classList.add('pop'); }
     });
@@ -503,6 +545,7 @@ window.addEventListener('DOMContentLoaded', function(){
     fbox.appendChild(b);
   });
   applyFilter(FILTERS[0]);
+   $('#gameSearch').addEventListener('input', () => applyFilter(window.__stefbetActiveFilter || FILTERS[0]));
 
   // nav pills
   const links = document.querySelectorAll('[data-nav]');
