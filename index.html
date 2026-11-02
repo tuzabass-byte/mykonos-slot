@@ -2146,23 +2146,28 @@ async function rpcAuth(fn, payload){
 }
 async function login(){
   const name=document.getElementById("playerSelect").value.trim();
-  const pin=document.getElementById("pinInput").value.trim();
-  if(!name || !pin){alert("Въведи име и PIN");return;}
+  const pin=document.getElementById("pinInput").value;
+  if(!name || !pin){alert("Въведи име и PIN.");return;}
+  const btn=document.getElementById("loginBtn");
   try{
+    if(btn) btn.disabled=true;
     const result=await rpcAuth("stefbet_login",{p_name:name,p_pin:pin});
-    const token=result.token || result.session_token || result.p_token || result.session?.token;
-    if(!token) throw new Error("Сървърът не върна сесиен токен.");
+    const token=result.token;
+    if(typeof token!=="string" || !token) throw new Error("Липсва сесиен токен.");
     sessionStorage.setItem("stefbet_session",token);
     const me=await rpcAuth("stefbet_me",{p_token:token});
-    user={id:me.id || result.id || result.player_id || name,Name:me.name || name,balance:Number(me.balance || 0)};
-    localStorage.removeItem("player");
+    user={Name:me.name,balance:Number(me.balance??0)};
+    document.getElementById("pinInput").value="";
     setUI();
     const drawer=document.getElementById("loginDrawer");
     if(drawer) drawer.classList.remove("show");
     if(typeof showLoginSuccess==="function") showLoginSuccess(user.Name);
     const st=document.getElementById("profileStatus");
-    if(st) st.textContent="Успешен вход 🍀";
-  }catch(e){console.error("Login RPC:",e);alert("Входът не успя: "+e.message);}
+    if(st) st.textContent="Успешен вход.";
+  }catch(e){
+    console.error("Login RPC:",e);
+    alert("Входът не успя: "+e.message);
+  }finally{if(btn) btn.disabled=false;}
 }
 function makeRefCode(name){
   return String(name || "PLAYER").replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toUpperCase() + Math.floor(100 + Math.random()*900);
@@ -2185,13 +2190,14 @@ function inviteLink(){
 }
 async function register(){
   const name=document.getElementById("regName").value.trim();
-  const pin=document.getElementById("regPin").value.trim();
-  if(!name || !pin){alert("Попълни име и PIN");return;}
+  const pin=document.getElementById("regPin").value;
+  if(!name || pin.length<4){alert("Въведи име и PIN с поне 4 знака.");return;}
   try{
     await rpcAuth("stefbet_register",{p_name:name,p_pin:pin});
     document.getElementById("playerSelect").value=name;
-    document.getElementById("pinInput").value="";
-    alert("Регистрацията е успешна. Влез с името и PIN кода си.");
+    document.getElementById("pinInput").value=pin;
+    document.getElementById("regPin").value="";
+    await login();
   }catch(e){console.error("Register RPC:",e);alert("Регистрацията не успя: "+e.message);}
 }
 function logoutUser(){
@@ -2357,7 +2363,7 @@ async function refreshUser(){
 }
 
 /* init */
-try{localStorage.removeItem("player");}catch(e){}
+
 try{
   const refFromUrl = new URLSearchParams(location.search).get("ref");
   if(refFromUrl && document.getElementById("regRef")){
@@ -2879,5 +2885,5 @@ document.querySelectorAll('.stef3d-card').forEach(btn=>{
  });
 });
 })();
-</script></body>
+</script><div id="stefbet-system-note" style="max-width:1120px;margin:14px auto;padding:12px 16px;border:1px solid #a88635;border-radius:12px;background:#121b19;color:#f6e5b3;font:14px system-ui;text-align:center">STEFBET • Входът и регистрацията използват Supabase. Част от старите игри все още изискват отделно обновяване за общ баланс и завъртания.</div></body>
 </html>
