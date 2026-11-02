@@ -514,6 +514,35 @@ window.addEventListener('DOMContentLoaded', function(){
     a.appendChild(inner); li.appendChild(a); grid.appendChild(li);
   });
 
+  // Game handoff: update the shared player snapshot from the server before navigation.
+  // The game must still read the same-origin `player` key or integrate the bridge.
+  grid.addEventListener('click', async function(e){
+    const link=e.target.closest('a[href]:not([data-missing])');
+    if(!link || e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button!==0)return;
+    const token=localStorage.getItem('stefbet_token');
+    if(!token)return; // Guest mode is unchanged.
+    e.preventDefault();
+    const destination=link.href;
+    link.style.pointerEvents='none';
+    try{
+      const timeout=new AbortController();
+      const timer=setTimeout(()=>timeout.abort(),3500);
+      try{
+        const res=await fetch('https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/rpc/stefbet_profile',{
+          method:'POST',headers:{'apikey':'sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq','Authorization':'Bearer sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq','Content-Type':'application/json'},
+          body:JSON.stringify({p_token:token}),signal:timeout.signal
+        });
+        if(res.ok){
+          const profile=await res.json();
+          if(profile && profile.ok===true && profile.id!=null){
+            localStorage.setItem('player',JSON.stringify({id:profile.id,Name:profile.name,balance:Number(profile.balance)||0}));
+          }
+        }
+      }finally{clearTimeout(timer);}
+    }catch(err){console.warn('STEFBET: неуспешно обновяване на баланса',err);}
+    window.location.assign(destination);
+  });
+
   // missing-file toast
   let tt;
   function showToast(msg){
@@ -528,6 +557,8 @@ window.addEventListener('DOMContentLoaded', function(){
   // filters
   const fbox = $('#filters'), cnt = $('#cnt');
   function applyFilter(name){
+    window.__stefbetActiveFilter = name;
+    const query = ($('#gameSearch')?.value || '').trim().toLocaleLowerCase('bg');
     let n = 0;
     grid.querySelectorAll('.tile').forEach(t => {
       const matchCategory = name === FILTERS[0] || t.dataset.tag === name;
