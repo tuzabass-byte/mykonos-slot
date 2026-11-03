@@ -873,17 +873,29 @@ $('#fLogin').addEventListener('submit',async function(e){
   finally{setFormBusy(form,false);}
 });
 $('#fReg').addEventListener('submit',async function(e){
-  e.preventDefault();var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,pin2=form.elements.pin2.value,msg=$('#mReg');
-  if(name.length<3||!pin||pin.length<3||pin!==pin2){msg.textContent='Въведи име (поне 3 знака) и еднакъв ПИН (поне 3 знака).';return;}
+  e.preventDefault();
+  var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,pin2=form.elements.pin2.value,msg=$('#mReg');
+  if(name.length<3||name.length>40||!/^[\p{L}\p{N}_ -]+$/u.test(name)){
+    msg.textContent='Името трябва да е 3–40 знака: букви, цифри, интервал, _ или -.';return;
+  }
+  if(pin.length<6||pin.length>64||pin!==pin2){
+    msg.textContent='ПИН трябва да е 6–64 знака и да съвпада с повторения ПИН.';return;
+  }
   setFormBusy(form,true);msg.textContent='';
   try{
-    var rows=await legacyApi('players?select=id,Name&order=id.asc');
-    if((rows||[]).some(function(p){return String(p.Name||'').trim().toLowerCase()===name.toLowerCase();})){msg.textContent='Това име вече съществува.';return;}
-    var ref=name.replace(/\s+/g,'').replace(/[^a-zA-Z0-9]/g,'').toUpperCase()+Math.floor(100+Math.random()*900);
-    await legacyApi('players',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({Name:name,Pin:pin,balance:10,ref_code:ref,ref_by:new URLSearchParams(location.search).get('ref')||null})});
+    var r=await rpc('stefbet_register',{p_name:name,p_pin:pin});
+    if(r.ok!==true){msg.textContent=r.error||'Неуспешна регистрация.';return;}
+    if(!r.token){msg.textContent='Профилът е създаден, но липсва сесия. Опитай вход.';return;}
+    S.token=String(r.token);
+    ls.set(TK,S.token);
     form.elements.pin.value='';form.elements.pin2.value='';
-    msg.textContent='Регистрацията е успешна. Влез с името и ПИН.';
-  }catch(err){console.error(err);msg.textContent='Неуспешна регистрация. Провери Supabase.';}
+    var status=await loadProfile();
+    if(status!=='ok'){
+      msg.textContent='Регистрацията е успешна, но профилът не се зареди. Опитай вход отново.';
+      return;
+    }
+    closeModal();
+  }catch(err){console.error(err);msg.textContent='Неуспешна регистрация. Провери връзката със Supabase.';}
   finally{setFormBusy(form,false);}
 });
 $('#btnOut').addEventListener('click',function(){dropSession();closeModal();});
