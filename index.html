@@ -432,7 +432,7 @@ header{gap:12px}
     <h2 id="t-roul" style="margin-top:34px">Дневна рулетка</h2>
     <p class="sub">Едно безплатно завъртане на всеки 24 часа. Наградата отива в бонус баланса.</p>
     <div class="wheelbox" id="wheelBox">
-      <canvas id="wheel" width="640" height="640" role="img" aria-label="Колело с награди: 0,20 €, 0,50 €, 1,00 €, 0,20 €, 2,00 €, 0,50 €, 5,00 €, 1,00 €"></canvas>
+      <canvas id="wheel" width="640" height="640" role="img" aria-label="Колело с награди: 2 €, 3 €, 5 €, 10 €, 20 €, 50 €, 100 €, 200 €"></canvas>
       <div class="hub" aria-hidden="true"></div>
       <svg class="ptr" id="ptr" viewBox="0 0 30 38" aria-hidden="true"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".6" stop-color="#e9a516"/><stop offset="1" stop-color="#9a5f08"/></linearGradient></defs><path d="M15 37 2 8a14 14 0 0 1 26 0z" fill="url(#pg)" stroke="#6b3f06" stroke-width="1.5" stroke-linejoin="round"/><circle cx="15" cy="10" r="3.5" fill="#fff3b0" stroke="#6b3f06"/></svg>
     </div>
@@ -607,7 +607,7 @@ var TK='stefbet_token', PK='player';
 var NET_MSG='Няма връзка със сървъра. Провери интернета и опитай отново.';
 var SRV_MSG='Сървърна грешка. Опитай отново по-късно.';
 var BAD_SESSION='Невалидна сесия';
-var PRIZES=[0.2,0.5,1,0.2,2,0.5,5,1];
+var PRIZES=[2,3,5,10,20,50,100,200];
 var DAY=86400;
 function $(s){return document.querySelector(s);}
 var ls={
@@ -826,16 +826,24 @@ function setFormBusy(form,busy){
   else if(b.dataset.t){b.textContent=b.dataset.t;}
 }
 $('#fLogin').addEventListener('submit',async function(e){
-  e.preventDefault();var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,msg=$('#mLogin');
+  e.preventDefault();
+  var form=this,name=form.elements.name.value.trim(),pin=form.elements.pin.value,msg=$('#mLogin');
   if(!name||!pin){msg.textContent='Въведи име и ПИН.';return;}
   setFormBusy(form,true);msg.textContent='';
   try{
-    // Same player lookup and PIN comparison as the working old index.
-    var rows=await legacyApi('players?select=id,Name,Pin,balance,ref_code,ref_by&order=id.asc');
-    var found=(rows||[]).find(function(p){return String(p.Name||'').trim().toLowerCase()===name.toLowerCase()&&String(p.Pin||'').trim()===pin.trim();});
-    if(!found){msg.textContent='Грешен ПИН или непознат играч.';return;}
-    setLegacyPlayer(found);form.elements.pin.value='';form.elements.name.value='';
+    var r=await rpc('stefbet_login',{p_name:name,p_pin:pin});
+    if(r.ok!==true){msg.textContent=r.error||'Неуспешен вход.';return;}
+    S.token=String(r.token);
+    ls.set(TK,S.token);
+    var status=await loadProfile();
+    if(status!=='ok'){
+      if(status==='invalid'){dropSession();msg.textContent='Сесията не е валидна. Опитай отново.';}
+      else {msg.textContent='Входът е успешен, но профилът не се зареди. Опитай да обновиш страницата.';}
+      return;
+    }
+    form.elements.pin.value='';form.elements.name.value='';
     msg.textContent='Успешен вход!';
+    // setProfile() keeps the legacy player snapshot for all existing games.
   }catch(err){console.error(err);msg.textContent='Не мога да вляза. Провери връзката със Supabase.';}
   finally{setFormBusy(form,false);}
 });
@@ -855,8 +863,8 @@ $('#fReg').addEventListener('submit',async function(e){
 });
 $('#btnOut').addEventListener('click',function(){dropSession();closeModal();});
 /* refresh on returning from games */
-document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')legacyRefresh();});
-window.addEventListener('pageshow',function(){legacyRefresh();});
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'&&!S.token)legacyRefresh();});
+window.addEventListener('pageshow',function(){if(S.token)refreshQuiet();else legacyRefresh();});
 /* ---------- daily bonus ---------- */
 function setMsg(t,ok){var m=$('#mIn');m.textContent=t||'';m.className='msg'+(ok?' ok':'');}
 $('#btnDaily').addEventListener('click',function(){
@@ -890,7 +898,7 @@ function drawWheel(){
   var R=286,step=Math.PI/4;
   for(var i=0;i<8;i++){
     var a0=-Math.PI/2+i*step,a1=a0+step;
-    var big=PRIZES[i]===5,even=i%2===0;
+    var big=PRIZES[i]===200,even=i%2===0;
     var gr=c.createRadialGradient(cx,cy,40,cx,cy,R);
     if(big){gr.addColorStop(0,'#ffe58a');gr.addColorStop(1,'#fffbe0');}
     else if(even){gr.addColorStop(0,'#d9a21e');gr.addColorStop(1,'#ffd75e');}
@@ -982,21 +990,21 @@ document.addEventListener('visibilitychange',function(){
   if(document.visibilityState==='visible'&&S.token&&S.user&&Date.now()-S.lastRefresh>10000)refreshQuiet();
 });
 (function restore(){
-  // Prefer the legacy shared player object, which existing games expect.
-  var p=null;try{p=JSON.parse(ls.get(PK)||'null');}catch(_){}
-  if(p&&p.id!=null){setLegacyPlayer(p);legacyRefresh();return;}
-  // Existing new-style token users are migrated when possible.
+  // A valid server session takes priority; keep the legacy player snapshot for games.
   var t=ls.get(TK);
-  if(!t)return;
-  S.token=t;S.loading=true;render();
-  loadProfile().then(function(st){
-    S.loading=false;
-    if(st==='invalid')dropSession();
-    else if(st==='ok'&&S.user&&S.user.id!=null){
-      var p={id:S.user.id,Name:S.user.name,balance:S.user.balance};
-      setLegacyPlayer(p);legacyRefresh();
-    }else render();
-  });
+  if(t){
+    S.token=t;S.loading=true;render();
+    loadProfile().then(function(st){
+      S.loading=false;
+      if(st==='invalid')dropSession();
+      else if(st!=='ok')render();
+      else render();
+    });
+    return;
+  }
+  // Old accounts may need one new sign-in to enable the bonus system.
+  var p=null;try{p=JSON.parse(ls.get(PK)||'null');}catch(_){}
+  if(p&&p.id!=null){setLegacyPlayer(p);legacyRefresh();}
 })();
 })();
 </script>
