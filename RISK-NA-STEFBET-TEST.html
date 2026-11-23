@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="bg"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>РИСК НА STEFBET</title>
+<style>
+:root{--cw:clamp(120px,24vw,200px);--gold:#e6b84a}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#020b1d;color:#fff;font-family:system-ui,Segoe UI,Arial,sans-serif;display:flex;flex-direction:column;align-items:center}
+header{width:100%;max-width:1000px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+h1{margin:0;font-size:clamp(16px,3vw,26px);letter-spacing:.12em;background:linear-gradient(#fff2b0,#c8932a);-webkit-background-clip:text;background-clip:text;color:transparent}
+main{width:100%;max-width:1000px;display:grid;grid-template-columns:1fr 130px;gap:12px;padding:0 12px}
+@media(max-width:640px){main{grid-template-columns:1fr}.ladder{flex-direction:row!important}.ladder li{flex:1}}
+.table{position:relative;height:clamp(300px,50vw,420px);border-radius:22px;border:6px solid #8a6a22;box-shadow:inset 0 0 70px #000c,0 10px 30px #000a;background:radial-gradient(ellipse at 50% 40%,#14503f 0%,#0b2f4a 62%,#061a2e 100%);overflow:hidden}
+.table::before{content:"";position:absolute;inset:0;opacity:.3;mix-blend-mode:overlay;pointer-events:none;background:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+.stage{position:absolute;inset:0;perspective:1000px}
+.deck{position:absolute;left:5%;top:50%;width:calc(var(--cw)*.8);height:calc(var(--cw)*1.12);margin-top:calc(var(--cw)*-.56);border-radius:6px;background:linear-gradient(135deg,#102a5c,#07142e);border:2px solid var(--gold);box-shadow:1px 1px 0 #1b2c55,2px 2px 0 #0b1a3a,3px 3px 0 #1b2c55,4px 4px 0 #0b1a3a,5px 5px 0 #1b2c55,6px 6px 0 #0b1a3a,10px 14px 18px #000a}
+.shadow{position:absolute;left:50%;top:50%;width:calc(var(--cw)*.9);height:calc(var(--cw)*.35);margin:calc(var(--cw)*.55) 0 0 calc(var(--cw)*-.45);background:#000;border-radius:50%;filter:blur(14px);opacity:.45;transition:transform .8s,opacity .8s}
+.shadow.lift{transform:scale(1.25);opacity:.25}
+.cw{position:absolute;left:50%;top:50%;width:var(--cw);height:calc(var(--cw)*1.4);margin:calc(var(--cw)*-.7) 0 0 calc(var(--cw)*-.5);transform-style:preserve-3d;transition:transform .6s cubic-bezier(.2,.8,.2,1),opacity .35s}
+.float,.tilt,.card{position:absolute;inset:0;transform-style:preserve-3d}
+.float{animation:br 3s ease-in-out infinite}
+@keyframes br{50%{transform:translateY(-8px)}}
+.tilt{transition:transform .15s;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.card{transition:transform .85s cubic-bezier(.3,.7,.2,1)}
+.card.flip{transform:rotateY(180deg)}
+.face,.back,.edge{position:absolute;inset:0;border-radius:6%/4.3%;overflow:hidden}
+.face,.back{backface-visibility:hidden;box-shadow:0 0 0 1px #0004}
+.back{transform:translateZ(2.5px);background:#07142e}
+.face{transform:rotateY(180deg) translateZ(2.5px);background:#fbf9f3}
+.face::after,.back::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,30%) var(--my,20%),#ffffff55,#fff0 55%)}
+.edge{background:#d9d4c6}
+.e1{transform:translateZ(-1.5px)}.e2{transform:translateZ(0)}.e3{transform:translateZ(1.5px)}
+.hist{position:absolute;left:0;right:0;bottom:8px;display:flex;gap:6px;justify-content:center}
+.hc{width:30px;height:42px;border-radius:4px;background:#fbf9f3;font:700 13px/1.1 Georgia,serif;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 2px 4px #000a}
+.msg{position:absolute;top:10px;left:0;right:0;text-align:center;font-weight:600;color:#ffe9a8;text-shadow:0 2px 6px #000;min-height:22px;padding:0 8px}
+.ladder{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ladder li{background:#0a1d44;border:1px solid #2a3f73;border-radius:10px;padding:8px;text-align:center;font-size:13px;display:flex;flex-direction:column;justify-content:center}
+.ladder li b{color:var(--gold);font-size:15px}
+.ladder li.cur{background:linear-gradient(#f6d77b,#b98a22);color:#1b1200;border-color:#fff3b0;box-shadow:0 0 18px #e6b84a99}
+.ladder li.cur b{color:#1b1200}
+.acts{width:100%;max-width:1000px;padding:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{min-height:54px;border-radius:14px;border:2px solid var(--gold);color:#fff;font-weight:800;font-size:16px;cursor:pointer;background:#0a1d44}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.red{background:linear-gradient(#e0314e,#8f0d26)}.blk{background:linear-gradient(#3a3f4d,#0b0d14)}
+.col{background:linear-gradient(#f6d77b,#b98a22);color:#1b1200}
+.suits{width:100%;max-width:1000px;padding:0 12px;display:flex;gap:8px;align-items:center;justify-content:center}
+.suits .btn{width:56px;min-height:48px;font-size:22px}
+.bar{width:100%;max-width:1000px;padding:12px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
+.box{background:#07183a;border:1px solid #2a3f73;border-radius:12px;padding:8px 14px;text-align:center;min-width:110px}
+.box small{display:block;color:#9fb2de;font-size:11px;letter-spacing:.1em}.box b{font-size:18px;color:var(--gold)}
+.sm{min-width:48px;min-height:48px;border-radius:12px;border:1px solid var(--gold);background:#0a1d44;color:#fff;font-size:20px;cursor:pointer}
+.note{font-size:11px;color:#8ea0cc;padding:4px 12px 16px;text-align:center;max-width:900px}
+#test{position:fixed;top:0;left:0;right:0;background:#000d;padding:10px;font:12px monospace;white-space:pre}
+</style></head><body>
+<header><h1>РИСК НА STEFBET</h1><div><button class="sm" id="mute" title="Звук">🔊</button> <button class="sm" id="reset" title="Нова игра">↺</button></div></header>
+<main>
+ <div class="table"><div class="msg" id="msg">Избери цвят, за да започнеш рунд.</div>
+  <div class="stage" id="stage"><div class="deck"></div><div class="shadow" id="sh"></div>
+   <div class="cw" id="cw"><div class="float"><div class="tilt" id="tilt"><div class="card" id="card">
+    <div class="edge e1"></div><div class="edge e2"></div><div class="edge e3"></div>
+    <div class="back" id="back"></div><div class="face" id="face"></div></div></div></div></div></div>
+  <div class="hist" id="hist"></div></div>
+ <ul class="ladder" id="ladder"></ul>
+</main>
+<div class="acts"><button class="btn red" id="bR">ЧЕРВЕНО</button><button class="btn col" id="bC">СЪБЕРИ</button><button class="btn blk" id="bB">ЧЕРНО</button></div>
+<div class="suits"><span style="font-size:12px;color:#9fb2de">Боя ×3.80 (само първи ход):</span>
+ <button class="btn blk" data-s="0">♠</button><button class="btn red" data-s="1">♥</button><button class="btn blk" data-s="2">♣</button><button class="btn red" data-s="3">♦</button></div>
+<div class="bar">
+ <div class="box"><small>БАЛАНС</small><b id="bal"></b></div>
+ <button class="sm" id="bm">−</button><div class="box"><small>ЗАЛОГ</small><b id="bet"></b></div><button class="sm" id="bp">+</button>
+ <div class="box"><small>ПОСЛЕДНА ПЕЧАЛБА</small><b id="last"></b></div>
+</div>
+<div class="note">Виртуални кредити, без реални пари. Връщане 95% при събиране след първата печалба; по-дълбоките стъпки връщат по-малко, но дават по-голям максимум (×24.76).</div>
+<script>
+/* ===== ДВИГАТЕЛ (чист, без DOM) ===== */
+const LADDER=[190,361,685,1303,2476],SUITX=380;
+const pay=(bet,u)=>bet*u/100;
+function drawIdx(){let v;const b=new Uint8Array(1);do{crypto.getRandomValues(b);v=b[0]}while(v>=208);return v%52}
+function resolve(st,g,idx){
+ const suit=Math.floor(idx/13),red=suit===1||suit===3,n={...st};
+ if(!st.active){if(st.bal<st.bet)return{st,err:'balance'};n.bal-=st.bet;n.active=true;n.step=0}
+ if(g.t==='s'){
+  if(st.active)return{st,err:'rule'};
+  const win=suit===g.v;n.active=false;n.step=0;const p=win?pay(st.bet,SUITX):0;n.bal+=p;return{st:n,win,payout:p,suit:true}}
+ const win=red===g.v;
+ if(!win){n.active=false;n.step=0;return{st:n,win:false,payout:0}}
+ n.step=st.step+1;
+ if(n.step===5){const p=pay(st.bet,LADDER[4]);n.bal+=p;n.active=false;n.step=0;return{st:n,win:true,payout:p,auto:true}}
+ return{st:n,win:true,payout:0}}
+function collect(st){if(!st.active||st.step<1)return{st,err:'rule'};
+ const p=pay(st.bet,LADDER[st.step-1]);return{st:{...st,bal:st.bal+p,active:false,step:0},payout:p}}
+/* ===== КАРТИ (SVG) ===== */
+const P=[
+'<path d="M50 8C70 30 92 42 88 62C85 78 64 80 56 68C57 80 60 88 68 92L32 92C40 88 43 80 44 68C36 80 15 78 12 62C8 42 30 30 50 8Z"/>',
+'<path d="M50 90C8 60 4 30 28 21C40 17 48 25 50 34C52 25 60 17 72 21C96 30 92 60 50 90Z"/>',
+'<circle cx="50" cy="29" r="19"/><circle cx="27" cy="60" r="19"/><circle cx="73" cy="60" r="19"/><path d="M50 48L38 92H62Z"/>',
+'<path d="M50 6C60 30 72 42 90 50C72 58 60 70 50 94C40 70 28 58 10 50C28 42 40 30 50 6Z"/>'];
+const RK=['А','2','3','4','5','6','7','8','9','10','J','Q','K'],SN=['пика','купа','спатия','каро'];
+const L=82,C=125,R=168;
+const P6=[[L,80],[R,80],[L,175],[R,175],[L,270],[R,270]];
+const PIPS={2:[[C,80],[C,270]],3:[[C,80],[C,175],[C,270]],4:[[L,80],[R,80],[L,270],[R,270]],5:[[L,80],[R,80],[C,175],[L,270],[R,270]],6:P6,7:[...P6,[C,127]],8:[...P6,[C,127],[C,223]],
+ 9:[[L,80],[R,80],[L,143],[R,143],[L,207],[R,207],[L,270],[R,270],[C,175]],10:[[L,80],[R,80],[L,143],[R,143],[L,207],[R,207],[L,270],[R,270],[C,111],[C,239]]};
+const sg=(s,x,y,z,rot,col)=>`<g fill="${col}" transform="translate(${x-z/2} ${y-z/2}) scale(${z/100})${rot?' rotate(180 50 50)':''}">${P[s]}</g>`;
+function cardSVG(idx){
+ const s=Math.floor(idx/13),r=idx%13,col=(s===1||s===3)?'#c8102e':'#111',v=r+1;let b='';
+ if(r===0)b=sg(s,125,175,110,0,col);
+ else if(r>=10)b=`<rect x="50" y="62" width="150" height="226" rx="10" fill="#f4e3a8" stroke="#a37a1c" stroke-width="3"/><rect x="60" y="72" width="130" height="206" rx="6" fill="none" stroke="#a37a1c" stroke-width="1.5"/><text x="125" y="205" text-anchor="middle" font-size="104" font-family="Georgia,serif" font-weight="bold" fill="${col}">${RK[r]}</text>`+sg(s,125,108,34,0,col)+sg(s,125,242,34,1,col);
+ else b=PIPS[v].map(p=>sg(s,p[0],p[1],44,p[1]>175,col)).join('');
+ const idxg=`<text x="24" y="50" text-anchor="middle" font-size="${r===9?30:38}" font-weight="bold" font-family="Georgia,serif" fill="${col}">${RK[r]}</text>`+sg(s,24,76,24,0,col);
+ return `<svg viewBox="0 0 250 350" width="100%" height="100%"><rect x="5" y="5" width="240" height="340" rx="14" fill="none" stroke="#0002"/>${idxg}<g transform="rotate(180 125 175)">${idxg}</g>${b}</svg>`}
+function backSVG(){let t='';for(let i=0;i<12;i++)t+=`<rect x="-6" y="-44" width="12" height="16" fill="#e6b84a" transform="rotate(${i*30})"/>`;
+ return `<svg viewBox="0 0 250 350" width="100%" height="100%"><defs><pattern id="lt" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0H28M0 0V28" stroke="#e6b84a" stroke-opacity=".28" stroke-width="1.4"/></pattern></defs><rect width="250" height="350" fill="#0a1d44"/><rect width="250" height="350" fill="url(#lt)"/><rect x="12" y="12" width="226" height="326" rx="10" fill="none" stroke="#e6b84a" stroke-width="3"/><rect x="22" y="22" width="206" height="306" rx="6" fill="none" stroke="#e6b84a" stroke-opacity=".6"/><g transform="translate(125 175)"><circle r="56" fill="#07142e" stroke="#e6b84a" stroke-width="4"/>${t}<circle r="38" fill="none" stroke="#e6b84a" stroke-width="3"/><circle r="14" fill="#e6b84a"/><circle r="6" fill="#07142e"/></g></svg>`}
+/* ===== ЗВУК ===== */
+let AC,mute=localStorage.sb_mute==='1';
+const ac=()=>{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC};
+function noise(d,f,g){if(mute)return;const c=ac(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),a=b.getChannelData(0);
+ for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*(1-i/a.length);
+ const s=c.createBufferSource();s.buffer=b;const fl=c.createBiquadFilter();fl.type='bandpass';fl.frequency.value=f;fl.Q.value=.8;
+ const gn=c.createGain();gn.gain.value=g;s.connect(fl);fl.connect(gn);gn.connect(c.destination);s.start()}
+function tone(f,d,g,t0=0,type='sine'){if(mute)return;const c=ac(),o=c.createOscillator(),gn=c.createGain(),t=c.currentTime+t0;
+ o.type=type;o.frequency.value=f;gn.gain.setValueAtTime(g,t);gn.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(gn);gn.connect(c.destination);o.start(t);o.stop(t+d)}
+const sDeal=()=>noise(.28,2600,.5),sFlip=()=>{noise(.06,1400,.9);tone(180,.08,.25,0,'triangle')},sLand=()=>tone(90,.12,.3,.45,'sine');
+const sWin=n=>[0,1,2].slice(0,n).forEach((i)=>tone(880*Math.pow(1.26,i),.6,.2,i*.09,'triangle')),sLose=()=>tone(110,.5,.25,0,'sawtooth');
+/* ===== СЪСТОЯНИЕ И ИЗГЛЕД ===== */
+const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,ms)),fmt=n=>n.toLocaleString('bg-BG');
+const BETS=[100,200,500,1000,2000,5000];
+let S={bal:parseInt(localStorage.sb_bal)||10000,bet:100,step:0,active:false},busy=false,last=0,hist=[];
+const save=()=>localStorage.sb_bal=S.bal;
+$('back').innerHTML=backSVG();
+function msg(t){$('msg').textContent=t}
+function render(){
+ $('bal').textContent=fmt(S.bal);$('bet').textContent=fmt(S.bet);$('last').textContent=fmt(last);
+ $('ladder').innerHTML=[5,4,3,2,1].map(k=>`<li class="${S.step===k?'cur':''}"><span>Стъпка ${k}</span><b>${fmt(pay(S.bet,LADDER[k-1]))}</b></li>`).join('');
+ $('bC').textContent=S.step>=1?'СЪБЕРИ '+fmt(pay(S.bet,LADDER[S.step-1])):'СЪБЕРИ';
+ $('bC').disabled=busy||S.step<1;$('bR').disabled=$('bB').disabled=busy;
+ document.querySelectorAll('[data-s]').forEach(b=>b.disabled=busy||S.active);
+ $('bm').disabled=$('bp').disabled=busy||S.active;
+ $('hist').innerHTML=hist.slice(-10).map(i=>{const s=Math.floor(i/13),c=(s===1||s===3)?'#c8102e':'#111';return`<div class="hc" style="color:${c}"><span>${RK[i%13]}</span><svg viewBox="0 0 100 100" width="13" height="13" fill="${c}">${P[s]}</svg></div>`}).join('');
+ $('mute').textContent=mute?'🔇':'🔊'}
+async function deal(){
+ const cw=$('cw'),card=$('card');
+ cw.style.transition='transform .3s ease,opacity .25s';cw.style.opacity=0;cw.style.transform='translate(140px,-20px) rotate(10deg)';await wait(320);
+ card.style.transition='none';card.classList.remove('flip');void card.offsetWidth;card.style.transition='';
+ const dx=$('stage').clientWidth*.36;cw.style.transition='none';cw.style.transform=`translate(${-dx}px,10px) rotate(-14deg)`;void cw.offsetWidth;
+ cw.style.transition='transform .6s cubic-bezier(.2,.8,.2,1),opacity .3s';cw.style.opacity=1;cw.style.transform='none';sDeal();await wait(620)}
+async function reveal(idx){
+ $('face').innerHTML=cardSVG(idx);$('sh').classList.add('lift');$('card').classList.add('flip');sFlip();await wait(900);$('sh').classList.remove('lift');sLand()}
+async function play(g){
+ if(busy)return;const idx=drawIdx(),r=resolve(S,g,idx);
+ if(r.err){msg(r.err==='balance'?'Недостатъчен баланс.':'Това не е позволено сега.');return}
+ busy=true;S=r.st;save();render();
+ await reveal(idx);hist.push(idx);const nm=RK[idx%13]+' '+SN[Math.floor(idx/13)];
+ if(r.win){
+  if(r.payout>0){last=r.payout;msg((r.auto?'Максимум! ':'Верен избор! ')+'Печалба '+fmt(r.payout)+' ('+nm+')');sWin(3)}
+  else{msg('Верен избор! ('+nm+') Събери или рискувай стъпка '+(S.step+1)+'.');sWin(1)}
+ }else{msg('Грешка. Картата е '+nm+'.');sLose();last=0}
+ render();await wait(1100);await deal();busy=false;render()}
+async function doCollect(){
+ if(busy)return;const r=collect(S);if(r.err)return;
+ S=r.st;save();last=r.payout;msg('Събрано: '+fmt(r.payout));sWin(3);render()}
+$('bR').onclick=()=>play({t:'c',v:true});$('bB').onclick=()=>play({t:'c',v:false});$('bC').onclick=doCollect;
+document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>play({t:'s',v:+b.dataset.s}));
+$('bm').onclick=()=>{const i=BETS.indexOf(S.bet);if(i>0){S.bet=BETS[i-1];render()}};
+$('bp').onclick=()=>{const i=BETS.indexOf(S.bet);if(i<BETS.length-1){S.bet=BETS[i+1];render()}};
+$('mute').onclick=()=>{mute=!mute;localStorage.sb_mute=mute?'1':'0';render()};
+$('reset').onclick=()=>{if(busy)return;S={bal:10000,bet:100,step:0,active:false};last=0;hist=[];save();msg('Нова игра: 10 000 кредита.');render()};
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k==='r')play({t:'c',v:true});if(k==='b')play({t:'c',v:false});if(k==='c')doCollect()});
+$('stage').addEventListener('pointermove',e=>{const b=$('stage').getBoundingClientRect(),x=(e.clientX-b.left)/b.width,y=(e.clientY-b.top)/b.height,t=$('tilt');
+ t.style.setProperty('--ry',((x-.5)*24)+'deg');t.style.setProperty('--rx',((.5-y)*18)+'deg');
+ document.querySelectorAll('.face,.back').forEach(f=>{f.style.setProperty('--mx',(x*100)+'%');f.style.setProperty('--my',(y*100)+'%')})});
+render();
+/* ===== САМОПРОВЕРКА: добави ?test=1 към адреса ===== */
+if(location.search.includes('test=1')){
+ const out=[];const T=(n,c)=>out.push((c?'OK   ':'FAIL ')+n);
+ let s={bal:1000,bet:100,step:0,active:false},r;
+ for(let i=0;i<4;i++){r=resolve(s,{t:'c',v:true},13);s=r.st}
+ T('4 печалби: стъпка 4',s.step===4&&s.bal===900);
+ r=collect(s);T('събиране на стъпка 4 = 1303',r.payout===1303&&r.st.bal===2203);
+ r=resolve(s,{t:'c',v:true},13);T('стъпка 5 авто-събиране 2476',r.auto&&r.payout===2476&&!r.st.active&&r.st.bal===3376);
+ r=resolve({bal:1000,bet:100,step:0,active:false},{t:'c',v:false},13);T('загуба: баланс 900',!r.win&&r.st.bal===900&&!r.st.active);
+ r=resolve({bal:1000,bet:100,step:0,active:false},{t:'s',v:0},0);T('боя печалба 380',r.payout===380&&r.st.bal===1280);
+ r=resolve({bal:1000,bet:100,step:0,active:false},{t:'s',v:0},13);T('боя загуба',r.payout===0&&r.st.bal===900);
+ r=resolve({bal:1000,bet:100,step:2,active:true},{t:'s',v:0},0);T('боя е забранена в рунд',r.err==='rule');
+ r=resolve({bal:50,bet:100,step:0,active:false},{t:'c',v:true},13);T('недостатъчен баланс',r.err==='balance');
+ T('залог 5000 е цяло число',pay(5000,2476)===123800&&Number.isInteger(pay(5000,2476)));
+ let w=0,N=200000,bal=0;for(let i=0;i<N;i++){const idx=drawIdx(),red=[1,3].includes(Math.floor(idx/13));if(red)w+=pay(100,190)}
+ T('симулация (събиране на стъпка 1): RTP '+(w/(N*100)*100).toFixed(1)+'% (очаквано 95%)',Math.abs(w/(N*100)-.95)<.02);
+ const d=document.createElement('div');d.id='test';d.textContent=out.join('\n');document.body.appendChild(d)}
+</script></body></html>
