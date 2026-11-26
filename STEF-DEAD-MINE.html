@@ -113,7 +113,7 @@ body{background-size:cover;background-position:center}
 }
 </style></head><body>
 <div id="app">
- <header id="top"><canvas id="logo"></canvas><span id="demo">DEMO</span></header>
+ <header id="top"><canvas id="logo"></canvas></header>
  <aside id="left" class="col">
   <button class="btn" id="bMenu">MENU</button>
   <button class="btn" id="bSound">SOUND ON</button>
@@ -134,9 +134,9 @@ body{background-size:cover;background-position:center}
  <footer id="bar">
   <div class="grp"><span class="l">BET</span><div class="betrow"><button class="btn" id="bMinus" aria-label="Decrease bet">-</button><span class="v" id="betV">1.00</span><button class="btn" id="bPlus" aria-label="Increase bet">+</button></div></div>
   <div class="grp"><span class="l">xBET</span><button class="btn" id="xbet">xBET OFF</button></div>
-  <div class="grp"><span class="l">BALANCE</span><span class="v" id="balV">1000.00</span></div>
+  <div class="grp"><span class="l">BALANCE</span><span class="v" id="balV">0.00</span></div>
   <div class="grp"><span class="l">LAST WIN</span><span class="v" id="lastV">0.00</span></div>
-  <div id="note">DEMO - virtual credits only. No real payments or withdrawals.</div>
+  <div id="note">Virtual credits only. No real payments or withdrawals.</div>
  </footer>
 </div>
 <div class="ov" id="ovPanel"><div class="panel" id="panel"></div></div>
@@ -285,10 +285,16 @@ $('errReload').onclick=()=>location.reload();$('errCont').onclick=()=>{$('err').
 window.onerror=function(m,src,l,c,e){showErr('Неочаквана грешка в стъпка: '+curStep,String(m)+(l?(' (ред '+l+')'):''),false);};
 window.addEventListener('unhandledrejection',function(ev){showErr('Необработено отхвърляне (promise) в стъпка: '+curStep,String(ev.reason&&ev.reason.message||ev.reason),false);});
 // ---------- wallet ----------
-const Wallet=(function(){const K='stef_dead_mine_balance_v1';let mem=1000;
- function save(){try{localStorage.setItem(K,String(mem));}catch(e){}}
- try{const v=localStorage.getItem(K);if(v!==null&&isFinite(+v))mem=+v;else save();}catch(e){}
- return{getBalance:()=>mem,applyDelta(d){mem=Math.round((mem+d)*100)/100;save();return mem;},reset(){mem=1000;save();return mem;}};})();
+const Wallet=(()=>{
+ const URL='https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/', KEY='sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq';
+ const current=()=>{try{return JSON.parse(localStorage.getItem('player')||'null')}catch(e){return null}};
+ const player=current();
+ function path(){if(!player?.id||String(current()?.id)!==String(player.id))throw new Error('Влезте в профила си от лобито.');return 'players?id=eq.'+encodeURIComponent(player.id)}
+ async function api(p,o={}){const r=await fetch(URL+p,{...o,cache:'no-store',headers:{apikey:KEY,'Content-Type':'application/json',...o.headers}});if(!r.ok)throw new Error('Supabase '+r.status);return r.json()}
+ async function read(){const rows=await api(path()+'&select=id,balance');if(rows.length!==1||rows[0].balance==null)throw new Error('Балансът не е достъпен.');const n=Number(rows[0].balance);if(!Number.isFinite(n)||n<0)throw new Error('Невалиден баланс');return n}
+ function cache(n){const p=current();if(p&&String(p.id)===String(player.id))localStorage.setItem('player',JSON.stringify({...p,balance:n}));return n}
+ let mem=0; return {getBalance(){return mem},async sync(){return mem=cache(await read())},async applyDelta(d){if(!Number.isFinite(d))throw new Error('Невалидна сума');for(let i=0;i<3;i++){const old=await read(),balance=Math.round((old+d)*100)/100;if(balance<0)throw new Error('Недостатъчен баланс');const rows=await api(path()+'&balance=eq.'+encodeURIComponent(old)+'&select=id,balance',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({balance})});if(rows.length===1)return mem=cache(Number(rows[0].balance));}throw new Error('Балансът е променен. Опитайте отново.')}};
+})();
 window.Wallet=Wallet;
 const fmt=x=>(Math.round(x*100)/100).toFixed(2);
 const store={get(k,d){try{const v=localStorage.getItem('sdm_'+k);return v===null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem('sdm_'+k,JSON.stringify(v));}catch(e){}}};
@@ -587,8 +593,9 @@ async function playFreeSpins(v,label,b){
 }
 async function doSpin(){
  if(busy)return;
- const c=cost();if(Wallet.getBalance()<c-1e-9){toast('Недостатъчно виртуални кредити за този залог.');stopAuto();return;}
- busy=true;stopReq=false;Wallet.applyDelta(-c);lastWin=0;refreshUI();$('lastV').textContent='0.00';
+ busy=true;try{await Wallet.sync();}catch(e){busy=false;stopAuto();toast(e.message);return;}
+ const c=cost();if(Wallet.getBalance()<c-1e-9){toast('Недостатъчно виртуални кредити за този залог.');busy=false;stopAuto();return;}
+ busy=true;stopReq=false;try{await Wallet.applyDelta(-c);}catch(e){busy=false;stopAuto();toast(e.message);return;}lastWin=0;refreshUI();$('lastV').textContent='0.00';
  setMultQuiet(1);const b=bet();
  let res;
  try{
@@ -597,9 +604,9 @@ async function doSpin(){
   const acc={v:0};
   await playSteps(res.steps,acc);
   let total=res.win*b;
-  if(total>0){Wallet.applyDelta(total);}
+  if(total>0){await Wallet.applyDelta(total);}
   lastWin=total;refreshUI();
-  if(res.fs&&!res.capped){await showBanner('3 CANARIES','CANARY FREESPINS TRIGGERED',1500);const w=await playFreeSpins('classic','CLASSIC',b);Wallet.applyDelta(w);total+=w;lastWin=total;}
+  if(res.fs&&!res.capped){await showBanner('3 CANARIES','CANARY FREESPINS TRIGGERED',1500);const w=await playFreeSpins('classic','CLASSIC',b);await Wallet.applyDelta(w);total+=w;lastWin=total;}
   const tx=total/b;if(tx>=15)await bigWin(tx,total);
   refreshUI();
   if(res.wm||res.fs)stopAuto(true);
@@ -609,12 +616,13 @@ async function doSpin(){
 }
 function stopAuto(quiet){auto.left=0;stopReq=true;refreshUI();}
 async function buyBonus(v,label){
+ if(busy)return;busy=true;try{await Wallet.sync();}catch(e){busy=false;toast(e.message);return;}
  const b=bet(),price=Math.round(E.PRICES[v]*b*100)/100;
- if(Wallet.getBalance()<price-1e-9){toast('Недостатъчно виртуални кредити за тази покупка.');return;}
- busy=true;Wallet.applyDelta(-price);lastWin=0;refreshUI();closePanels();
+ if(Wallet.getBalance()<price-1e-9){toast('Недостатъчно виртуални кредити за тази покупка.');busy=false;return;}
+ busy=true;try{await Wallet.applyDelta(-price);}catch(e){busy=false;toast(e.message);return;}lastWin=0;refreshUI();closePanels();
  try{
   await clearBoard();
-  const w=await playFreeSpins(v,label,b);Wallet.applyDelta(w);lastWin=w;
+  const w=await playFreeSpins(v,label,b);await Wallet.applyDelta(w);lastWin=w;
   const tx=w/b;if(tx>=15)await bigWin(tx,w);
  }catch(e){busy=false;inFS=false;refreshUI();throw e;}
  busy=false;refreshUI();
@@ -648,13 +656,12 @@ function infoPanel(){
  '<h3>RULES</h3><ul><li>The play field is a lattice of diamond cells, up to 7x7. The two lattice axes are the two screen diagonals (up-right and down-right).</li><li>3 or more identical symbols in a row along either diagonal pay. A run counts once per maximal line; a cell can belong to a run in each direction. WILD substitutes for every symbol except CANARY and DYNAMITE.</li><li>CASCADES: winning cells explode, symbols above fall down the screen and new symbols fill from the top. This repeats until there is no win.</li><li>MULTIPLIER: starts at x1 and rises by 1 with every further winning cascade in the same spin. It resets on every paid spin and is persistent during free spins.</li><li>UNLOCKING: the game starts with the central 5x5 area. Locked cells next to any winning cell unlock, up to the full 7x7.</li><li>xBOMB WILD: a WILD showing a multiplier. When it takes part in a win, its value is added to the cascade multiplier for the rest of the spin.</li><li>WILD MINING: 3 DYNAMITE trigger it. Six dynamite sticks drop one by one and each blast turns a 3x3 zone into WILD, some of them xBOMB WILD. Then cascades pay out.</li><li>CANARY FREESPINS: 3 CANARY trigger the Classic variant (10 spins, persistent multiplier and active area). Pay values in WILD MINING and free spins are calibrated separately: line pays x'+fmt(T.wmps)+' in base WILD MINING, x'+fmt(T.ps.classic/T.psBase)+' Classic, x'+fmt(T.ps.deep/T.psBase)+' Deep Shaft, x'+fmt(T.ps.vein/T.psBase)+' Dynamite Vein relative to the table above.</li></ul>'+
  '<h3>BONUS BUY (price x bet, EUR for current bet)</h3><ul><li>CANARY FREESPINS Classic: 10 spins, never resets the multiplier - '+P.classic+'x (EUR '+fmt(P.classic*b)+')</li><li>CANARY FREESPINS Deep Shaft: 8 spins, whole 7x7 unlocked, more xBOMB - '+P.deep+'x (EUR '+fmt(P.deep*b)+')</li><li>CANARY FREESPINS Dynamite Vein: 6 spins, each begins with WILD MINING, multiplier starts at x3 - '+P.vein+'x (EUR '+fmt(P.vein*b)+')</li></ul>'+
  '<h3>xBET</h3><p>Total spin cost is 1.25x the bet (shown as the BET value). CANARY and DYNAMITE weights double. Can be turned off any time; disabled during free spins and bonus purchases.</p>'+
- '<h3>MAX WIN</h3><p>The maximum win in one spin or feature is capped at 5000x the bet.</p><h3>DEMO</h3><p>This is a demo with virtual credits only. No real payments, no withdrawals. Balance is stored in this browser.</p>');
+ '<h3>MAX WIN</h3><p>The maximum win in one spin or feature is capped at 5000x the bet.</p><h3>VIRTUAL CREDITS</h3><p>Virtual credits only. No real payments or withdrawals. Balance is shared with the lobby.</p>');
 }
 function menuPanel(){
- openPanel('<h2>MENU</h2><div class="menu-list"><button class="btn" id="mFull">FULLSCREEN</button><button class="btn" id="mQuick">QUICK SPIN: '+(quick?'ON':'OFF')+'</button><button class="btn" id="mReset">RESET DEMO BALANCE</button></div><p style="margin-top:14px">DEMO - virtual credits only. No real payments or withdrawals.</p>');
+ openPanel('<h2>MENU</h2><div class="menu-list"><button class="btn" id="mFull">FULLSCREEN</button><button class="btn" id="mQuick">QUICK SPIN: '+(quick?'ON':'OFF')+'</button></div><p style="margin-top:14px">Virtual credits only. No real payments or withdrawals.</p>');
  $('mFull').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen();}catch(e){toast('Цял екран не се поддържа на това устройство.');}};
  $('mQuick').onclick=()=>{quick=!quick;store.set('quick',quick);menuPanel();};
- $('mReset').onclick=()=>{if(busy||inFS){toast('Не може да нулирате баланса по време на въртене.');return;}confirmBox('Reset the demo balance to EUR 1000.00?',()=>{Wallet.reset();refreshUI();closePanels();});};
 }
 function autoPanel(){
  if(auto.left>0){stopAuto();return;}
@@ -674,7 +681,7 @@ function wire(){
  $('bAuto').onclick=()=>{Snd.click();autoPanel();};
  $('bTurbo').onclick=()=>{turbo=!turbo;Snd.click();refreshUI();};
  $('bSound').onclick=()=>{Snd.setOn(!Snd.isOn());refreshUI();};
- $('bHome').onclick=()=>{location.href='index.html';};
+ $('bHome').onclick=()=>{if(busy){toast('Изчакайте края на завъртането.');return;}location.href='index.html';};
  document.addEventListener('keydown',e=>{if(e.code==='Space'&&!$('ovPanel').classList.contains('show')){e.preventDefault();if(!busy)doSpin();}});
  window.addEventListener('resize',resize);if(window.ResizeObserver)new ResizeObserver(resize).observe($('fieldWrap'));
 }
@@ -689,6 +696,7 @@ async function boot(){
   else{const ok=await loadImage(k);if(!ok)failed.push(k);}
   prog(curStep);}
  curStep='Изграждане на аудио';try{Snd.build();}catch(e){showErr('Аудиото не може да бъде изградено (стъпка: '+curStep+'). Играта продължава без звук.',String(e&&e.message||e),true);}prog(curStep);
+ curStep='Свързване с баланса';try{await Wallet.sync();}catch(e){$('pstep').textContent=e.message; $('tap').style.display='flex';$('tap').onclick=()=>location.href='index.html';return;}
  curStep='Подготовка на полето';initAmbient();wire();{const r0=E.baseSpin(rng,false,true);V.sym.set(r0.steps[0].sym);V.bv.set(r0.steps[0].bv);}$('app').classList.add('on');resize();refreshUI();requestAnimationFrame(render);
  await new Promise(r=>setTimeout(r,60));resize();prog(curStep);
  if(failed.length)showErr('Неуспешно декодиране на изображения: '+failed.join(', ')+'. Използва се векторна резервна графика.','Стъпка: '+curStep,true);
