@@ -124,7 +124,7 @@ table.pt{width:100%;border-collapse:collapse;font-size:14px}
 </style></head><body>
 <div id="bg"></div><div id="warm"></div><canvas id="glit"></canvas><div id="vig"></div>
 <div id="app"><div id="cab">
- <header id="top"><div class="badge">ТЕСТОВ РЕЖИМ · виртуални кредити</div><button class="btn mini" id="resetBtn" type="button">Нулирай баланса</button></header>
+ <header id="top"><button class="btn mini" id="homeBtn" type="button">← HOME</button><div class="badge" id="walletStatus">Виртуални кредити</div></header>
  <div id="titleBox"><div id="brand">STEFBET</div><h1 id="title">GOLDEN BELLS DELUXE</h1></div>
  <div id="fsHud"><span class="hs">БЕЗПЛАТНИ ЗАВЪРТАНИЯ</span><span>Остават: <b id="hudLeft">0</b> / <b id="hudTot">0</b></span><span>Бонус печалба: <b id="hudWin">0,00 €</b></span><span class="hx">x2</span></div>
  <section id="stageWrap"><canvas id="reels" width="10" height="10"></canvas><div id="banner"></div><div id="toast"></div></section>
@@ -373,7 +373,7 @@ var CFG=GB_DATA.cfg, IMGD=GB_DATA.img, AUD=GB_DATA.aud;
 var WILD=CFG.wildId;   // GOLDEN BELL = WILD (id 0), substitutes everything except the scatter
 var SCAT=CFG.scatterId; // GOLDEN STAR = SCATTER (id 7), pays anywhere, triggers free spins
 var NL=CFG.lines.length;
-var SELFTEST=/[?&]selftest/.test(location.search);
+var SELFTEST=false;
 var $=function(id){return document.getElementById(id);};
 var BETS=CFG.betLevelsEUR.map(function(e){return Math.round(e*100);});
 var SYMKEY=['bell','seven','diamond','bar','cherry','lemon','plum','star'];
@@ -402,15 +402,14 @@ function drawStops(mode){var st=mode==='free'?CFG.strips.free:CFG.strips.base,s=
    (and reset) with calls to an authenticated backend that performs the draw, the payout and an ATOMIC
    balance update on the server. This standalone version keeps the balance only in localStorage. */
 var Wallet=(function(){
-  var KEY='stefbet_gb_balance_v1',START=10000,bal=START;
-  try{var v=localStorage.getItem(KEY);if(v!==null&&/^\d+$/.test(v))bal=parseInt(v,10);}catch(e){}
-  function save(){try{localStorage.setItem(KEY,String(bal));}catch(e){}}
-  return {
-    balance:function(){return bal;},
-    debit:function(c){if(!Number.isInteger(c)||c<=0||c>bal)return false;bal-=c;save();return true;},
-    credit:function(c){if(!Number.isInteger(c)||c<0)return false;bal+=c;save();return true;},
-    reset:function(){bal=START;save();}
-  };
+ var bal=0,id=null,ready=false;
+ var url='https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/players';
+ var key='sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq';
+ async function api(query,options={}){var r=await fetch(url+query,{...options,cache:'no-store',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json',...(options.headers||{})}});if(!r.ok)throw Error('Supabase '+r.status);return r.json();}
+ function cache(){var p=JSON.parse(localStorage.getItem('player')||'null');if(p&&String(p.id)===String(id))localStorage.setItem('player',JSON.stringify({...p,balance:bal/100}));}
+ async function load(){var p=JSON.parse(localStorage.getItem('player')||'null');if(!p||!p.id)throw Error('Влез първо през лобито');id=p.id;var rows=await api('?select=id,balance&id=eq.'+encodeURIComponent(id));if(rows.length!==1||!Number.isFinite(Number(rows[0].balance)))throw Error('Балансът не е достъпен');bal=Math.round(Number(rows[0].balance)*100);ready=true;cache();}
+ async function change(delta){if(!ready)return false;try{await load();if(bal+delta<0)return false;var old=bal,next=bal+delta;var rows=await api('?id=eq.'+encodeURIComponent(id)+'&balance=eq.'+encodeURIComponent(old/100),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({balance:next/100})});if(rows.length!==1)throw Error('Балансът е променен');bal=Math.round(Number(rows[0].balance)*100);cache();return true;}catch(e){ready=false;document.getElementById('walletStatus').textContent='Грешка при баланса — презареди';toast('Грешка при запис на баланса',5000);return false;}}
+ return {balance:()=>bal,ready:()=>ready,load:load,debit:c=>change(-c),credit:c=>c===0?Promise.resolve(true):change(c)};
 })();
 
 /* ---------- win maths in integer cents (rounded ONCE per spin) ---------- */
@@ -683,9 +682,9 @@ function refreshButtons(){
   $('spinT').textContent=S.phase==='spinning'?'СТОП':(S.fs?'БОНУС':'ЗАВЪРТИ');
   $('spinS').textContent=A.running?('АВТО · '+A.left):'';
   sp.classList.toggle('idle',idle);
-  sp.disabled=S.broken||(S.phase==='bonus')||(S.phase==='overlay');
+  sp.disabled=!Wallet.ready()||S.broken||(S.phase==='bonus')||(S.phase==='overlay');
   var au=$('auto');au.classList.toggle('stop',A.running);au.textContent=A.running?('СТОП · остават '+A.left):'АВТОМАТИЧНА ИГРА';
-  au.disabled=!A.running&&!idle;
+  au.disabled=!Wallet.ready()||(!A.running&&!idle);
   updateBet();
 }
 var sleepW=[];
@@ -747,10 +746,10 @@ async function spinRound(mode){
 }
 async function baseRound(){
   var bet=BETS[S.betIdx];
-  if(Wallet.balance()<bet){toast('Недостатъчен баланс. Нулирайте баланса от бутона горе.',3200);return {ok:false};}
-  Wallet.debit(bet);updateBal();setWin(0);
+  if(Wallet.balance()<bet){toast('Недостатъчен баланс.',3200);return {ok:false};}
+  if(!await Wallet.debit(bet)){updateBal();return {ok:false};}updateBal();setWin(0);
   var r=await spinRound('base'),cents=winCents(r.res,'base',bet),out={ok:true,win:cents,bonusWin:0,bonus:false};
-  if(cents>0)Wallet.credit(cents);
+  if(cents>0&&!await Wallet.credit(cents)){updateBal();return {ok:false};}
   await present(r.res,cents,'base',bet,0);updateBal();
   if(r.res.freeSpinsAwarded>0){out.bonus=true;out.bonusWin=await runBonus(r.res.freeSpinsAwarded,bet);}
   setPhase('idle');
@@ -776,7 +775,7 @@ async function runBonus(n,bet){
     hud();
   }
   setPhase('bonus');await rawSleep(tm(500));
-  Wallet.credit(fs.win);
+  await Wallet.credit(fs.win);
   $('feAmt').textContent=fmt(0);$('feInfo').textContent='Изиграни завъртания: '+fs.played+(fs.retr?' · повторни задействания: '+fs.retr:'')+(fs.capped?' · достигнат лимит на печалбата':'');
   $('fsEnd').classList.add('on');Snd.bell();var cn=Snd.coins();S.skipping=false;
   var endP=new Promise(function(res){var d=false;function f(){if(d)return;d=true;S.overlayHandler=null;res();}S.overlayHandler=f;$('feBtn').onclick=f;setTimeout(f,A.running?tm(5500):12000);});
@@ -797,7 +796,7 @@ async function manualSpin(){
 function quickStop(){S.quick=true;}
 function onSpin(){
   Snd.unlock();
-  if(S.broken)return;
+  if(S.broken||!Wallet.ready())return;
   if(S.overlayHandler){S.overlayHandler();return;}
   if(S.phase==='spinning'){quickStop();return;}
   if(S.phase==='present'){requestSkip();if(!S.fs&&!A.running)S.queueSpin=true;return;}
@@ -835,7 +834,7 @@ function buildPay(){
   h+='<h3>Правила</h3><ul><li><b>WILD – златната камбана</b> замества всички символи освен златната звезда и има собствена печалба (3/4/5 камбани).</li><li><b>SCATTER – златната звезда</b> плаща навсякъде на екрана: 3 / 4 / 5 звезди = '+CFG.scatterPay['3']+'× / '+CFG.scatterPay['4']+'× / '+CFG.scatterPay['5']+'× от общия залог и не се замества от WILD.</li><li>Печелившите комбинации започват от първата макара отляво надясно. Само най-добрата печалба на линия.</li></ul>';
   h+='<h3>Безплатни завъртания</h3><ul><li>3 / 4 / 5 звезди дават '+CFG.freeSpins.award['3']+' / '+CFG.freeSpins.award['4']+' / '+CFG.freeSpins.award['5']+' безплатни завъртания.</li><li>Печалбите по линии се умножават по <b>x'+CFG.freeSpins.lineMultiplier+'</b>; печалбата от звезди не се умножава.</li><li>3 или повече звезди по време на бонуса добавят още '+CFG.freeSpins.retrigger+' завъртания.</li><li>Лимити: най-много '+CFG.caps.maxFreeSpinsPerBonus+' безплатни завъртания и бонус печалба до '+CFG.caps.maxBonusWinX+'× залога.</li></ul>';
   h+='<h3>'+NL+' линии за печалба</h3><div class="lines">'+CFG.lines.map(function(l,i){return '<div>'+lineSvg(l,i)+(i+1)+'</div>';}).join('')+'</div>';
-  h+='<h3>Честна бележка за RTP</h3><p>Точният теоретичен RTP е <b>95,995%</b> (пълно изброяване на всички комбинации), проверен със симулация от 100 000 000 завъртания. Всяко завъртане е независимо, с фиксирани шансове. Играта е в тестов режим само с виртуални кредити – няма реални пари. Кратките серии могат да се отклоняват силно от теоретичния процент.</p>';
+  h+='<h3>Честна бележка за RTP</h3><p>Точният теоретичен RTP е <b>95,995%</b> (пълно изброяване на всички комбинации), проверен със симулация от 100 000 000 завъртания. Всяко завъртане е независимо, с фиксирани шансове. Играта е само с виртуални кредити – няма реални пари. Кратките серии могат да се отклоняват силно от теоретичния процент.</p>';
   $('payBody').innerHTML=h;
 }
 function syncSnd(){var p=Snd.prefs;$('muteBtn').textContent=p.muted?'Звукът е изключен – включи':'Звукът е включен – изключи';$('muteBtn').classList.toggle('on',p.muted);$('snd').textContent=p.muted?'звук: изкл.':'звук';$('sMusic').value=Math.round(p.music*100);$('sSfx').value=Math.round(p.sfx*100);}
@@ -847,7 +846,7 @@ function wire(){
   $('betDn').addEventListener('click',function(){setBet(S.betIdx-1);});
   $('betUp').addEventListener('click',function(){setBet(S.betIdx+1);});
   $('turbo').addEventListener('click',function(){S.turbo=!S.turbo;this.classList.toggle('on',S.turbo);this.setAttribute('aria-pressed',S.turbo);});
-  $('resetBtn').addEventListener('click',function(){if(S.phase!=='idle'||A.running||S.fs){toast('Изчакайте края на завъртането');return;}Wallet.reset();updateBal();setWin(0);toast('Балансът е нулиран на '+fmt(10000));});
+  $('homeBtn').addEventListener('click',function(){if(S.busy||A.running||S.fs){toast('Изчакайте края на завъртането');return;}location.href='./index.html';});
   $('pay').addEventListener('click',function(){buildPay();openModal('mPay');});
   $('snd').addEventListener('click',function(){syncSnd();openModal('mSnd');});
   $('fs').addEventListener('click',fullscreen);
@@ -893,7 +892,7 @@ S.broken=!tests.ok;
 if(!tests.ok)console.warn('GB self-test failed',tests.results);
 if(SELFTEST){var stEl=$('selftest');stEl.textContent='SELFTEST '+(tests.ok?'PASS':'FAIL')+' '+tests.results.filter(function(r){return r.pass;}).length+'/'+tests.results.length;stEl.style.color=tests.ok?'#8f8':'#f66';}
 try{var sb=parseInt(localStorage.getItem('stefbet_gb_bet'),10);if(sb>=0&&sb<BETS.length)S.betIdx=sb;}catch(e){}
-wire();updateBal();syncSnd();refreshButtons();
+wire();updateBal();syncSnd();refreshButtons();Wallet.load().then(function(){updateBal();refreshButtons();}).catch(function(e){$('walletStatus').textContent=e.message;toast(e.message,5000);});
 Promise.all(SYMKEY.map(loadImg)).then(function(){imagesReady=true;setReelsStatic(drawStops('base'),CFG.strips.base);layout();buildAll();requestAnimationFrame(frame);});
 if(SELFTEST){window.__GB={cfg:CFG,S:S,A:A,Wallet:Wallet,Snd:Snd,force:function(){for(var i=0;i<arguments.length;i++)FORCE.push(arguments[i]);},forceQ:FORCE,simulate:simulate,winCents:winCents,evaluate:gbEvaluate,ft:FT,fmt:fmt,BETS:BETS,tests:tests,drawStops:drawStops,tierOf:tierOf};}
 })();
