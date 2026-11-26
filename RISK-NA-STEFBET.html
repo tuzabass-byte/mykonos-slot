@@ -69,7 +69,7 @@ main{width:100%;max-width:1000px;display:grid;grid-template-columns:1fr 130px;ga
  <button class="sm" id="bm">−</button><div class="box"><small>ЗАЛОГ</small><b id="bet"></b></div><button class="sm" id="bp">+</button>
  <div class="box"><small>ПОСЛЕДНА ПЕЧАЛБА</small><b id="last"></b></div>
 </div>
-<div class="note">Виртуални кредити, без реални пари. ТЕСТОВ РЕЖИМ: повишени шансове за печалба, за да пробваш нивата и ефектите. Не е реално RTP. Максимум ×120.</div>
+<div class="note">Виртуални кредити, без реални пари. Шансове по нива: 48%, 46%, 30%, 20%, 15%. Максимум ×120.</div>
 <script>
 /* ===== ДВИГАТЕЛ (чист, без DOM) ===== */
 const LADDER=[200,400,1200,4600,12000],SUITX=380;
@@ -123,17 +123,25 @@ const sWin=n=>[0,1,2].slice(0,n).forEach((i)=>tone(880*Math.pow(1.26,i),.6,.2,i*
 /* ===== СЪСТОЯНИЕ И ИЗГЛЕД ===== */
 const $=id=>document.getElementById(id),wait=ms=>new Promise(r=>setTimeout(r,ms)),fmt=n=>n.toLocaleString('bg-BG');
 const BETS=[100,200,500,1000,2000,5000];
-let S={bal:parseInt(localStorage.sb_bal)||10000,bet:100,step:0,active:false},busy=false,last=0,hist=[];
-const save=()=>localStorage.sb_bal=S.bal;
+let S={bal:0,bet:100,step:0,active:false},busy=false,last=0,hist=[];
+let ready=false, playerId=null;
+const apiBase='https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/players';
+const apiKey='sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq';
+async function api(q,o={}){const r=await fetch(apiBase+q,{...o,cache:'no-store',headers:{apikey:apiKey,Authorization:'Bearer '+apiKey,'Content-Type':'application/json',...(o.headers||{})}});if(!r.ok)throw Error('Supabase '+r.status);return r.json()}
+function cacheBalance(){const p=JSON.parse(localStorage.getItem('player')||'null');if(p&&String(p.id)===String(playerId))localStorage.setItem('player',JSON.stringify({...p,balance:S.bal/100}));}
+async function loadBalance(){const p=JSON.parse(localStorage.getItem('player')||'null');if(!p||!p.id)throw Error('Влез първо през лобито');playerId=p.id;const rows=await api('?select=id,balance&id=eq.'+encodeURIComponent(playerId));if(rows.length!==1||rows[0].balance===null||!Number.isFinite(Number(rows[0].balance)))throw Error('Балансът не е достъпен');S.bal=Math.round(Number(rows[0].balance)*100);cacheBalance();ready=true;}
+async function commitBalance(next){const old=S.bal;if(next===old)return;const rows=await api('?id=eq.'+encodeURIComponent(playerId)+'&balance=eq.'+encodeURIComponent(old/100),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({balance:next/100})});if(rows.length!==1)throw Error('Балансът е променен');}
+async function walletError(e){ready=false;msg('Грешка при баланса: '+e.message+' — презареди.');}
+
 $('back').innerHTML=backSVG();
 function msg(t){$('msg').textContent=t}
 function render(){
  $('bal').textContent=fmt(S.bal);$('bet').textContent=fmt(S.bet);$('last').textContent=fmt(last);
  $('ladder').innerHTML=[5,4,3,2,1].map(k=>`<li class="${S.step===k?'cur':''}"><span>Стъпка ${k}</span><b>${fmt(pay(S.bet,LADDER[k-1]))}</b></li>`).join('');
  $('bC').textContent=S.step>=1?'СЪБЕРИ '+fmt(pay(S.bet,LADDER[S.step-1])):'СЪБЕРИ';
- $('bC').disabled=busy||S.step<1;$('bR').disabled=$('bB').disabled=busy;
- document.querySelectorAll('[data-s]').forEach(b=>b.disabled=busy||S.active);
- $('bm').disabled=$('bp').disabled=busy||S.active;
+ $('bC').disabled=!ready||busy||S.step<1;$('bR').disabled=$('bB').disabled=!ready||busy;
+ document.querySelectorAll('[data-s]').forEach(b=>b.disabled=!ready||busy||S.active);
+ $('bm').disabled=$('bp').disabled=!ready||busy||S.active;
  $('hist').innerHTML=hist.slice(-10).map(i=>{const s=Math.floor(i/13),c=(s===1||s===3)?'#c8102e':'#111';return`<div class="hc" style="color:${c}"><span>${RK[i%13]}</span><svg viewBox="0 0 100 100" width="13" height="13" fill="${c}">${P[s]}</svg></div>`}).join('');
  $('mute').textContent=mute?'🔇':'🔊'}
 async function deal(){
@@ -156,9 +164,9 @@ function drawTestIdx(g,step){
  return suits[Math.floor(rand01()*2)]*13+Math.floor(rand01()*13);
 }
 async function play(g){
- if(busy)return;const idx=drawTestIdx(g,S.step),r=resolve(S,g,idx);
- if(r.err){msg(r.err==='balance'?'Недостатъчен баланс.':'Това не е позволено сега.');return}
- busy=true;S=r.st;save();render();
+ if(busy||!ready)return;busy=true;render();let idx,r;try{await loadBalance();idx=drawTestIdx(g,S.step);r=resolve(S,g,idx);if(!r.err)await commitBalance(r.st.bal);}catch(e){await walletError(e);busy=false;render();return;}
+ if(r.err){busy=false;render();msg(r.err==='balance'?'Недостатъчен баланс.':'Това не е позволено сега.');return}
+ S=r.st;cacheBalance();render();
  await reveal(idx);hist.push(idx);const nm=RK[idx%13]+' '+SN[Math.floor(idx/13)];
  if(r.win){
   if(r.payout>0){last=r.payout;msg((r.auto?'Максимум! ':'Верен избор! ')+'Печалба '+fmt(r.payout)+' ('+nm+')');sWin(3)}
@@ -166,14 +174,16 @@ async function play(g){
  }else{msg('Грешка. Картата е '+nm+'.');sLose();last=0}
  render();await wait(1100);await deal();busy=false;render()}
 async function doCollect(){
- if(busy)return;const r=collect(S);if(r.err)return;
- S=r.st;save();last=r.payout;msg('Събрано: '+fmt(r.payout));sWin(3);render()}
+ if(busy||!ready||!S.active||S.step<1)return;
+ busy=true;render();
+ try{await loadBalance();const r=collect(S);if(r.err)return;await commitBalance(r.st.bal);S=r.st;cacheBalance();last=r.payout;msg('Събрано: '+fmt(r.payout));sWin(3);}
+ catch(e){await walletError(e);}finally{busy=false;render();}}
 $('bR').onclick=()=>play({t:'c',v:true});$('bB').onclick=()=>play({t:'c',v:false});$('bC').onclick=doCollect;
 document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>play({t:'s',v:+b.dataset.s}));
 $('bm').onclick=()=>{const i=BETS.indexOf(S.bet);if(i>0){S.bet=BETS[i-1];render()}};
 $('bp').onclick=()=>{const i=BETS.indexOf(S.bet);if(i<BETS.length-1){S.bet=BETS[i+1];render()}};
 $('mute').onclick=()=>{mute=!mute;localStorage.sb_mute=mute?'1':'0';render()};
-$('reset').onclick=()=>{if(busy)return;S={bal:10000,bet:100,step:0,active:false};last=0;hist=[];save();msg('Нова игра: 10 000 кредита.');render()};
+$('reset').onclick=()=>{if(busy)return;if(S.active&&!confirm('Незавършеният рунд ще бъде прекратен. Назад към лобито?'))return;location.href='index.html';};
 addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(k==='r')play({t:'c',v:true});if(k==='b')play({t:'c',v:false});if(k==='c')doCollect()});
 $('stage').addEventListener('pointermove',e=>{const b=$('stage').getBoundingClientRect(),x=(e.clientX-b.left)/b.width,y=(e.clientY-b.top)/b.height,t=$('tilt');
  t.style.setProperty('--ry',((x-.5)*24)+'deg');t.style.setProperty('--rx',((.5-y)*18)+'deg');
@@ -253,14 +263,14 @@ body{justify-content:flex-start;padding:clamp(16px,4vh,48px) 0 24px}
  <button aria-label="Намали залога" data-hit="minus" style="left:34.4%;top:86%;width:6%;height:10%"></button>
  <button aria-label="Увеличи залога" data-hit="plus" style="left:57.2%;top:86%;width:6%;height:10%"></button>
  <button aria-label="Звук" data-hit="sound" style="left:90%;top:84%;width:9%;height:13%"></button>
- <button aria-label="Нова игра" data-hit="reset" style="left:1.5%;top:84%;width:9%;height:13%"></button>
+ <button aria-label="Към лобито" data-hit="reset" style="left:1.5%;top:84%;width:9%;height:13%"></button>
  <div class="winfx" id="pFx"></div>
 </div>
 <script>
 (function(){
 const pg=document.getElementById('photoGame'),$p=id=>document.getElementById(id);
 const originalRender=render;
-render=function(){originalRender();$p('pBal').textContent='€ '+(S.bal/100).toFixed(2);$p('pBet').textContent='€ '+(S.bet/100).toFixed(2);$p('pLast').textContent='€ '+(last/100).toFixed(2);for(let i=1;i<=5;i++){let active=S.active&&S.step===i;$p('pLevel'+i).classList.toggle('active',active);$p('pAmount'+i).classList.toggle('active',active);$p('pAmount'+i).textContent='€ '+(pay(S.bet,LADDER[i-1])/100).toFixed(2)}pg.querySelector('[data-hit="collect"]').disabled=busy||S.step<1;pg.querySelectorAll('[data-hit^="s"]').forEach(b=>{if(b.dataset.hit!=='sound')b.disabled=busy||S.active});};
+render=function(){originalRender();$p('pBal').textContent='€ '+(S.bal/100).toFixed(2);$p('pBet').textContent='€ '+(S.bet/100).toFixed(2);$p('pLast').textContent='€ '+(last/100).toFixed(2);for(let i=1;i<=5;i++){let active=S.active&&S.step===i;$p('pLevel'+i).classList.toggle('active',active);$p('pAmount'+i).classList.toggle('active',active);$p('pAmount'+i).textContent='€ '+(pay(S.bet,LADDER[i-1])/100).toFixed(2)}pg.querySelector('[data-hit="collect"]').disabled=!ready||busy||S.step<1;pg.querySelectorAll('[data-hit^="s"]').forEach(b=>{if(b.dataset.hit!=='sound')b.disabled=!ready||busy||S.active});};
 const originalMsg=msg;msg=function(t){originalMsg(t);$p('pMsg').textContent=t;};
 const originalReveal=reveal;reveal=async function(idx){$p('pCard').innerHTML=cardSVG(idx);$p('pCard').classList.remove('hidden');await originalReveal(idx);};
 function updateRecent(){const target=$p('pRecent');target.querySelectorAll('.recent-card').forEach(e=>e.remove());hist.slice(-3).forEach(idx=>{let suit=Math.floor(idx/13),symbols=['♠','♥','♣','♦'];let el=document.createElement('div');el.className='recent-card';el.style.color=(suit===1||suit===3)?'#b8172d':'#152032';el.textContent=RK[idx%13]+symbols[suit];target.append(el)})}
@@ -268,9 +278,9 @@ const originalDeal=deal;deal=async function(){await originalDeal();$p('pCard').c
 function fireworks(){const fx=$p('pFx');fx.innerHTML='';const colors=['#ffe37a','#ffae2c','#fff','#ff496e','#6dcfff'];for(let k=0;k<85;k++){let s=document.createElement('i');s.className='spark';let angle=Math.random()*Math.PI*2,dist=60+Math.random()*350;s.style.cssText='left:'+(40+Math.random()*20)+'%;top:'+(28+Math.random()*22)+'%;--dx:'+Math.cos(angle)*dist+'px;--dy:'+Math.sin(angle)*dist+'px;--color:'+colors[k%colors.length]+';animation-delay:'+(Math.random()*.45)+'s';fx.append(s)}let title=document.createElement('div');title.className='wintext';title.textContent='🏆 МАКСИМУМ!';fx.append(title);setTimeout(()=>fx.innerHTML='',2900)}
 const originalPlay=play;play=async function(g){let oldStep=S.step,oldActive=S.active;await originalPlay(g);updateRecent();if(oldActive&&oldStep===4&&!S.active&&last===pay(S.bet,LADDER[4]))fireworks();};
 const actions={red:()=>play({t:'c',v:true}),black:()=>play({t:'c',v:false}),collect:()=>doCollect(),s0:()=>play({t:'s',v:0}),s1:()=>play({t:'s',v:1}),s2:()=>play({t:'s',v:2}),s3:()=>play({t:'s',v:3}),minus:()=>$('bm').click(),plus:()=>$('bp').click(),sound:()=>$('mute').click(),reset:()=>$('reset').click()};
-pg.querySelectorAll('[data-hit]').forEach(b=>b.addEventListener('click',()=>{if(!busy||b.dataset.hit==='sound')actions[b.dataset.hit]()}));
+pg.querySelectorAll('[data-hit]').forEach(b=>b.addEventListener('click',()=>{if((!busy&&ready)||b.dataset.hit==='sound'||(b.dataset.hit==='reset'&&!busy))actions[b.dataset.hit]()}));
 /* Постоянен режим: няма тестов превключвател. */
-msg('Среден режим · 5 нива · печалба до ×120.');render();updateRecent();
+msg('Зареждане на общия баланс…');render();updateRecent();loadBalance().then(()=>{msg('Виртуални кредити · 5 нива · до ×120.');render();}).catch(e=>{walletError(e);render();});
 })();
 </script>
 </body></html>
