@@ -71,7 +71,6 @@ button:focus-visible{outline:2px solid #ffe38a}
 .stat b{font-size:28px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.15}
 #bal{left:24px;top:0;width:240px;height:68px}
 #lw{right:24px;top:0;width:292px;height:68px;text-align:right;align-items:flex-end}
-.demo{font-size:10px;background:#e8b32a;color:#3a0a05;border-radius:4px;padding:1px 6px;letter-spacing:.12em;font-weight:900}
 /* landscape absolute positions */
 #stage.land #jps{left:280px;top:84px;width:668px;height:76px}
 #stage.land #left{left:24px;top:170px;width:240px;height:412px}
@@ -128,7 +127,7 @@ button:focus-visible{outline:2px solid #ffe38a}
 .row .btn{padding:0 16px;min-height:46px;min-width:70px}
 .fld{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:13px;color:#f2dcc0}
 .fld input{width:110px;height:40px;border-radius:8px;border:2px solid #b98a2e;background:#1a0408;color:#fff;font-size:16px;padding:0 10px;margin-left:auto;user-select:text;-webkit-user-select:text}
-.demo-note{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(232,179,42,.14);border:1px solid #e8b32a;color:#ffe9a8;font-size:13px}
+.wallet-note{margin-top:12px;padding:10px 12px;border-radius:10px;background:rgba(232,179,42,.14);border:1px solid #e8b32a;color:#ffe9a8;font-size:13px}
 #err{z-index:100;background:rgba(10,0,0,.92)}
 #err .pnl{max-width:560px;border-color:#ff5a4a}
 #err .msg{color:#ffb4aa;font-size:15px;line-height:1.5;margin:8px 0 14px;white-space:pre-wrap;-webkit-user-select:text;user-select:text}
@@ -206,7 +205,7 @@ button:focus-visible{outline:2px solid #ffe38a}
   <button class="b btn" id="plus" aria-label="Increase bet">+</button>
  </div>
  <div id="bets"></div>
- <div id="botbar"><div class="stat panel-glass" id="bal"><small>BALANCE <span class="demo">DEMO</span></small><b id="balv">1,000.00 €</b></div><div class="stat panel-glass" id="lw"><small>LAST WIN</small><b id="lwv">0.00 €</b></div></div>
+ <div id="botbar"><div class="stat panel-glass" id="bal"><small>BALANCE </small><b id="balv">0.00 €</b></div><div class="stat panel-glass" id="lw"><small>LAST WIN</small><b id="lwv">0.00 €</b></div></div>
 </div>
 
 <div id="toast"></div>
@@ -220,8 +219,8 @@ button:focus-visible{outline:2px solid #ffe38a}
 <div class="ov" id="ovMenu"><div class="pnl" style="max-width:460px"><button class="ib x" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
  <h2 class="gold-txt">MENU</h2>
  <div class="row"><button class="btn" id="mSound">SOUND: ON</button><button class="btn" id="mTurbo">TURBO: OFF</button><button class="btn" id="mInfo">INFORMATION</button></div>
- <div class="row"><button class="btn" id="mReset">RESET DEMO BALANCE</button><button class="btn" id="mHome">HOME</button></div>
- <div class="demo-note"><b>DEMO MODE.</b> Virtual money only (start balance 1,000.00 EUR). No real payments, deposits or withdrawals.</div>
+ <div class="row"><button class="btn" id="mHome">HOME</button></div>
+ <div class="wallet-note">Virtual credits only. No real payments or withdrawals.</div>
  <div class="row"><button class="btn" data-close>CLOSE</button></div></div></div>
 <div class="ov" id="ovAuto"><div class="pnl" style="max-width:480px"><button class="ib x" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
  <h2 class="gold-txt">AUTO SPIN</h2><p>Choose the number of spins to start:</p>
@@ -230,7 +229,6 @@ button:focus-visible{outline:2px solid #ffe38a}
  <label class="fld">Stop if balance falls below (EUR)<input id="asBelow" type="number" min="0" step="0.01" inputmode="decimal" placeholder="off"></label>
  <label class="fld">Stop if balance rises above (EUR)<input id="asAbove" type="number" min="0" step="0.01" inputmode="decimal" placeholder="off"></label>
  <label class="fld">Stop if a single win exceeds (EUR)<input id="asWin" type="number" min="0" step="0.01" inputmode="decimal" placeholder="off"></label></div></div>
-<div class="ov" id="ovConfirm"><div class="pnl" style="max-width:380px"><h2 class="gold-txt">RESET</h2><p>Reset demo balance to 1,000.00 EUR and jackpots to their seed values?</p><div class="row"><button class="btn" id="cYes">YES, RESET</button><button class="btn" data-close>CANCEL</button></div></div></div>
 <div class="ov" id="err"><div class="pnl"><h2 style="color:#ff8a7a">ГРЕШКА</h2><div class="msg" id="errMsg"></div><div class="row"><button class="btn" id="errReload">RELOAD</button><button class="btn" id="errOk">CONTINUE</button></div></div></div>
 
 <div id="load"><div class="logo"><span class="w1">STEFHOT</span><span class="w2">5</span><img id="lgc2" alt=""></div><div id="bar"><div id="barf"></div></div><div id="pct">0%</div><div id="lstep">Starting...</div><button class="btn on" id="start">TAP TO START</button></div>
@@ -313,17 +311,17 @@ window.addEventListener('unhandledrejection',e=>{ showErr('Необработе�
 $('#errOk').onclick=()=>$('#err').classList.remove('show');
 $('#errReload').onclick=()=>location.reload();
 /* ---------- wallet module (swap for Supabase later) ---------- */
-const Wallet=(function(){
-  const KEY='stefhot5_wallet_v1',START=1000; let bal=START; const subs=[];
-  try{const v=parseFloat(localStorage.getItem(KEY)); if(isFinite(v)&&v>=0) bal=v;}catch(e){}
-  const persist=()=>{try{localStorage.setItem(KEY,String(bal));}catch(e){}};
-  return {
-    getBalance:()=>bal,
-    applyDelta(d){ bal=Math.round((bal+d)*100)/100; persist(); subs.forEach(f=>f(bal,d)); return bal; },
-    reset(){ bal=START; persist(); subs.forEach(f=>f(bal,0)); return bal; },
-    subscribe(f){ subs.push(f); }
-  };
+const Wallet=(()=>{
+ const URL='https://xjcvntplrbjsaozkduqd.supabase.co/rest/v1/', KEY='sb_publishable_EmZ_3ANedid8beyhVypb9Q_cGj5RMnq';
+ const current=()=>{try{return JSON.parse(localStorage.getItem('player')||'null')}catch(e){return null}};
+ const player=current();
+ function path(){if(!player?.id||String(current()?.id)!==String(player.id))throw new Error('Влезте в профила си от лобито.');return 'players?id=eq.'+encodeURIComponent(player.id)}
+ async function api(p,o={}){const r=await fetch(URL+p,{...o,cache:'no-store',headers:{apikey:KEY,'Content-Type':'application/json',...o.headers}});if(!r.ok)throw new Error('Supabase '+r.status);return r.json()}
+ async function read(){const rows=await api(path()+'&select=id,balance');if(rows.length!==1||rows[0].balance==null)throw new Error('Балансът не е достъпен.');const n=Number(rows[0].balance);if(!Number.isFinite(n)||n<0)throw new Error('Невалиден баланс');return n}
+ function cache(n){const p=current();if(p&&String(p.id)===String(player.id))localStorage.setItem('player',JSON.stringify({...p,balance:n}));return n}
+ const subs=[]; let mem=0; return {subscribe(f){subs.push(f)},getBalance(){return mem},async sync(){return mem=cache(await read())},async applyDelta(d){if(!Number.isFinite(d))throw new Error('Невалидна сума');for(let i=0;i<3;i++){const old=await read(),balance=Math.round((old+d)*100)/100;if(balance<0)throw new Error('Недостатъчен баланс');const rows=await api(path()+'&balance=eq.'+encodeURIComponent(old)+'&select=id,balance',{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify({balance})});if(rows.length===1){mem=cache(Number(rows[0].balance));subs.forEach(f=>f(mem,d));return mem;}}throw new Error('Балансът е променен. Опитайте отново.')}};
 })();
+
 /* ---------- persisted game state ---------- */
 const SKEY='stefhot5_state_v1';
 let S={bet:2,pools:SEEDS.slice(),snd:true,turbo:false};
@@ -475,7 +473,7 @@ function quickStop(){ const t=performance.now()/1000; reels.forEach((r,i)=>{ if(
 let busy=false, bonusActive=false, bannerActive=false, skipFlag=false, lastWinTotal=0;
 const auto={on:false,left:0,total:0};
 function updateAutoUI(){ $('#autoTxt').innerHTML=auto.on?('STOP AUTO'+(auto.left===Infinity?'':' <br>('+auto.left+')')):'AUTO SPIN'; $('#auto').className='b btn'+(auto.on?' on':''); }
-function startAuto(n){ if(auto.on||busy||bonusActive) return; if(!(Wallet.getBalance()>=bet())){ toast('Недостатъчен баланс. Намалете залога или нулирайте демо баланса от MENU.'); return; } auto.on=true; auto.left=n; updateAutoUI(); autoLoop(); }
+function startAuto(n){ if(auto.on||busy||bonusActive) return; if(!(Wallet.getBalance()>=bet())){ toast('Недостатъчен баланс. Намалете залога.'); return; } auto.on=true; auto.left=n; updateAutoUI(); autoLoop(); }
 function stopAuto(){ auto.on=false; updateAutoUI(); if(busy){ quickStop(); skipFlag=true; } }
 function numVal(id){ const v=parseFloat($(id).value); return isFinite(v)&&v>0?v:null; }
 async function autoLoop(){ try{ while(auto.on&&auto.left>0){ const res=await doSpin(); if(res===false) break; auto.left--; updateAutoUI(); if(!auto.on) break;
@@ -486,16 +484,18 @@ async function autoLoop(){ try{ while(auto.on&&auto.left>0){ const res=await doS
       await sleep(S.turbo?250:700); } }catch(e){ showErr('Грешка по време на автоматична игра: '+e.message,false); } auto.on=false; updateAutoUI(); }
 async function doSpin(){
   if(busy||bonusActive) return false;
+  busy=true;
+  try { await Wallet.sync(); } catch(e){busy=false;throw e;}
   const b=bet();
-  if(Wallet.getBalance()+1e-9<b){ toast('Недостатъчен баланс за този залог. Изберете по-малък залог или нулирайте демо баланса от MENU.'); return false; }
+  if(Wallet.getBalance()+1e-9<b){ toast('Недостатъчен баланс за този залог. Изберете по-малък залог.'); busy=false; return false; }
   busy=true; skipFlag=false; hl=null; $('#spin').classList.add('busy'); ensureAudio();
-  Wallet.applyDelta(-b); for(let i=0;i<4;i++) S.pools[i]+=CONTRIB[i]; save();
+  await Wallet.applyDelta(-b); for(let i=0;i<4;i++) S.pools[i]+=CONTRIB[i]; save();
   setMsg('GOOD LUCK');
   stops=reels.map(()=>randInt(L)); grid=reels.map((r,i)=>stripWindow(r.strip,stops[i]));
   await spinReels();
   const ev=evaluate(grid); let win=r2(ev.totalMult*b/5); const cap=MAXWIN_X*b; if(win>cap) win=cap;
   let total=win;
-  if(win>0){ Wallet.applyDelta(win); const x=win/b; sfxJingle(x); const dur=Math.min(2600,500+x*60);
+  if(win>0){ await Wallet.applyDelta(win); const x=win/b; sfxJingle(x); const dur=Math.min(2600,500+x*60);
     setNum($('#lwv'),0); animNum($('#lwv'),0,win,dur); animNum($('#balv'),Wallet.getBalance()-win,Wallet.getBalance(),dur);
     hl={wins:ev.wins,t0:performance.now(),cur:-2,summary:'WIN '+fmt(win)}; setMsg('WIN '+fmt(win));
     if(x>=15){ await bigWin(win,x); } else { await waitSkip(S.turbo?650:1500+Math.min(1000,x*60)); }
@@ -507,7 +507,7 @@ async function waitSkip(ms){ const t=performance.now(); while(performance.now()-
 async function bigWin(win,x){ const name=x>=60?'SUPER WIN':x>=30?'MEGA WIN':'BIG WIN'; bannerActive=true; const bn=$('#banner'); $('#bnT').textContent=name; $('#bnS').textContent=''; bn.style.display='flex'; let closed=false; bn.onclick=()=>{closed=true;};
   const dur=S.turbo?1200:2400; await Promise.all([animNum($('#bnA'),0,win,dur),waitSkip(0)]); const t=performance.now(); while(performance.now()-t<(S.turbo?500:1100)&&!closed&&!skipFlag) await sleep(30);
   bn.style.display='none'; bannerActive=false; if(hl) setMsg(hl.summary); }
-$('#spin').onclick=()=>{ if(bonusActive) return; if(busy){ if(reels.some(r=>r.mode==='spin')) quickStop(); else skipFlag=true; } else doSpin().catch(e=>{ busy=false; showErr('Грешка при завъртане: '+e.message,false); }); };
+$('#spin').onclick=()=>{ if(bonusActive) return; if(busy){ if(reels.some(r=>r.mode==='spin')) quickStop(); else skipFlag=true; } else doSpin().catch(e=>{ busy=false; $('#spin').classList.remove('busy'); showErr('Грешка при завъртане: '+e.message,false); }); };
 $('#auto').onclick=()=>{ if(auto.on) stopAuto(); else if(!busy&&!bonusActive) $('#ovAuto').classList.add('show'); };
 $('#turbo').onclick=()=>{ S.turbo=!S.turbo; save(); updateTurboUI(); };
 $('#plus').onclick=()=>setBet(S.bet+1); $('#minus').onclick=()=>setBet(S.bet-1);
@@ -521,22 +521,22 @@ function burst(name,n,cx,cy){ const im=IMG[name]; for(let i=0;i<n;i++){ const a=
 function fitBonus(){ const w=$('#bGridWrap').getBoundingClientRect(); if(!w.width) return; const gap=Math.max(5,Math.min(12,w.height/30)); const cw=Math.floor(Math.max(30,Math.min((w.width-gap*2)/3,((w.height-gap*2)/3)*0.734))); const g=$('#bGrid'); g.style.setProperty('--cw',cw+'px'); g.style.setProperty('--ch',Math.round(cw/0.734)+'px'); g.style.setProperty('--gap',gap+'px'); }
 async function runBonus(){
   bonusActive=true; hl=null; sfxBonus(); const bo=$('#bonus'), grid_=$('#bGrid'), trk=$('#bTrack'), msg=$('#bMsg');
-  const tier=pickTier(), cards=makeCards(tier), win=TIER_COLOR[tier]; const counts=[0,0,0,0]; const flipped=new Array(9).fill(false); let done=false, auto_=false, resolveDone;
+  const tier=pickTier(), cards=makeCards(tier), win=TIER_COLOR[tier]; const counts=[0,0,0,0]; const flipped=new Array(9).fill(false); let done=false, auto_=false, resolveDone, rejectDone;
   grid_.innerHTML=''; trk.innerHTML='';
   const tk=[]; [0,1,2,3].forEach(c=>{ const d=document.createElement('div'); d.className='tk'; d.style.setProperty('--c',COL_HEX[c]); d.innerHTML='<img src="'+URLS[COL_NAMES[c]]+'" alt=""><div><small>'+COL_JP[c]+'</small><b>0 / 3</b></div>'; trk.appendChild(d); tk.push(d); });
   const els=cards.map((c,i)=>{ const d=document.createElement('div'); d.className='card'; d.style.setProperty('--c',COL_HEX[c]); d.innerHTML='<div class="in"><div class="f"><img src="'+URLS.card+'" alt=""></div><div class="f bk"><img src="'+URLS[COL_NAMES[c]]+'" alt=""></div></div>'; grid_.appendChild(d); return d; });
   bo.classList.add('show'); $('#bAuto').disabled=false; fitBonus(); setTimeout(fitBonus,50); msg.textContent='Tap a card to flip - first colour to collect 3 clovers wins';
-  const finished=new Promise(r=>resolveDone=r);
+  const finished=new Promise((r,j)=>{resolveDone=r;rejectDone=j});
   function flip(i,quick){ if(flipped[i]||done&&!quick) return; flipped[i]=true; els[i].classList.add('flip'); sfxFlip(); const c=cards[i]; counts[c]++; const reached=counts[c]>=3&&!done; if(reached){ done=true; }
     setTimeout(()=>{ tk[c].querySelector('b').textContent=Math.min(3,counts[c])+' / 3'; tk[c].classList.remove('pop'); void tk[c].offsetWidth; tk[c].classList.add('pop'); },380);
-    if(reached) setTimeout(()=>finish(c),1200); }
+    if(reached) setTimeout(()=>finish(c).catch(e=>{bonusActive=false;bo.classList.remove('show');rejectDone(e)}),1200); }
   async function finish(c){ $('#bAuto').disabled=true; msg.textContent='';
     for(let i=0;i<9;i++){ if(!flipped[i]){ flipped[i]=true; els[i].classList.add('flip'); } }
     await sleep(450); let k=0; els.forEach((e,i)=>{ if(cards[i]===c&&k<3){ e.classList.add('win'); k++; } else e.classList.add('dim'); });
     sfxJackpot(tier); const r=els.find(e=>e.classList.contains('win')).getBoundingClientRect(); burst(COL_NAMES[c],70,innerWidth/2,innerHeight/2); await sleep(250); burst(COL_NAMES[c],50,innerWidth/2,innerHeight*.4);
     await sleep(900);
     const amount=r2(S.pools[tier]*bet()); const bn=$('#banner'); bannerActive=true; $('#bnT').textContent=JP_NAMES[tier]+' JACKPOT'; $('#bnT').style.backgroundImage='linear-gradient(180deg,#fff,'+COL_HEX[c]+')'; $('#bnA').textContent=fmt(0); $('#bnS').textContent=''; bn.style.display='flex'; burst(COL_NAMES[c],60,innerWidth/2,innerHeight/2);
-    Wallet.applyDelta(Math.min(amount, MAXWIN_X*bet())); const dur=2600; await Promise.all([animNum($('#bnA'),0,amount,dur),animNum($('#balv'),Wallet.getBalance()-amount,Wallet.getBalance(),dur),animNum($('#lwv'),0,amount,dur)]);
+    await Wallet.applyDelta(Math.min(amount, MAXWIN_X*bet())); const dur=2600; await Promise.all([animNum($('#bnA'),0,amount,dur),animNum($('#balv'),Wallet.getBalance()-amount,Wallet.getBalance(),dur),animNum($('#lwv'),0,amount,dur)]);
     S.pools[tier]=SEEDS[tier]; save(); jpEls[tier].box.classList.add('pop'); setTimeout(()=>jpEls[tier].box.classList.remove('pop'),700);
     $('#bnS').textContent='ADDED TO BALANCE'; burst(COL_NAMES[c],40,innerWidth/2,innerHeight/2); await sleep(S.turbo?1200:2200);
     bn.style.display='none'; $('#bnT').style.backgroundImage=''; bannerActive=false; bo.classList.remove('show'); bonusActive=false; resolveDone(amount); }
@@ -548,7 +548,7 @@ async function runBonus(){
 }
 /* ---------- info / menu ---------- */
 function lineSvg(li){ let s='<svg width="70" height="46" viewBox="0 0 70 46"><rect x="1" y="1" width="68" height="44" rx="4" fill="#150407" stroke="#7a5a1e"/>'; for(let i=0;i<5;i++)for(let j=0;j<3;j++) s+='<rect x="'+(5+i*12.6)+'" y="'+(5+j*12.6)+'" width="10" height="10" rx="2" fill="#3a1218"/>'; const pts=LINES[li].map((r,i)=>(10+i*12.6)+','+(10+r*12.6)).join(' '); return s+'<polyline points="'+pts+'" fill="none" stroke="'+LINE_COL[li]+'" stroke-width="3" stroke-linejoin="round"/></svg>'; }
-function buildInfo(){ const b=bet(), lb=b/5; let h='<h2 class="gold-txt">INFORMATION</h2><div class="demo-note"><b>DEMO MODE.</b> Virtual money only. No real payments, deposits or withdrawals. Balance is stored in this browser.</div><h4>PAYTABLE (bet '+fmt(b)+', '+fmt(lb)+' per line)</h4><div class="pt">';
+function buildInfo(){ const b=bet(), lb=b/5; let h='<h2 class="gold-txt">INFORMATION</h2><div class="wallet-note">Virtual credits only. No real payments or withdrawals.</div><h4>PAYTABLE (bet '+fmt(b)+', '+fmt(lb)+' per line)</h4><div class="pt">';
   for(let s=6;s>=0;s--){ let rows=''; for(let n=(s===0?2:3);n<=5;n++){ const m=PAY[s][n-2]; rows+='<tr><td>'+n+' x</td><td>'+m+'x</td><td>'+fmt(m*lb)+'</td></tr>'; } h+='<div class="it"><img src="'+URLS[SYM[s]]+'" alt=""><table>'+rows+'</table></div>'; }
   h+='<div class="it"><img src="'+URLS.gold+'" alt=""><div style="font-size:12.5px;color:#f2dcc0">SCATTER<br>Reels 2, 3, 4 only.<br>Triggers CLOVER CHANCE.</div></div></div>';
   h+='<p>Wins pay from the leftmost reel on adjacent reels along a payline. Cherry also pays from 2 symbols. Multipliers apply to the line bet. Only the highest win per line is paid; line wins are added together. There is no wild symbol.</p>';
@@ -564,13 +564,12 @@ $('#bMenu').onclick=()=>openOv('ovMenu'); $('#bHome').onclick=()=>{ location.hre
 $('#bFull').onclick=()=>{ try{ if(document.fullscreenElement) document.exitFullscreen(); else (document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen).call(document.documentElement); }catch(e){ toast('Цял екран не се поддържа от този браузър.'); } };
 const togSound=()=>{ soundOn=!soundOn; S.snd=soundOn; save(); applySound(); ensureAudio(); };
 $('#bSound').onclick=togSound; $('#mSound').onclick=togSound; $('#mTurbo').onclick=()=>$('#turbo').click();
-$('#mReset').onclick=()=>{ $('#ovMenu').classList.remove('show'); $('#ovConfirm').classList.add('show'); };
-$('#cYes').onclick=()=>{ if(busy||bonusActive){ toast('Изчакайте края на текущото завъртане.'); return; } Wallet.reset(); S.pools=SEEDS.slice(); save(); updateJP(true); setNum($('#lwv'),0); $('#ovConfirm').classList.remove('show'); toast('Demo balance reset.'); };
 function ensureAudio(){ if(ac&&ac.state==='suspended') ac.resume().catch(()=>{}); }
 setInterval(()=>{ if(document.hidden) return; for(let i=0;i<4;i++) S.pools[i]+=AMBIENT[i]*0.25; },250);
 setInterval(save,5000);
 /* ---------- loading ---------- */
 async function boot(){
+ await Wallet.sync();
   const names=Object.keys(ASSETS); const total=names.length+3; let done=0;
   const prog=(label)=>{ done++; const p=Math.round(done/total*100); $('#barf').style.width=p+'%'; $('#pct').textContent=p+'%'; $('#lstep').textContent=label; };
   layout(); updateBetUI(); updateTurboUI(); applySound(); setNum($('#balv'),Wallet.getBalance()); setNum($('#lwv'),0); updateAutoUI();
@@ -585,5 +584,5 @@ async function boot(){
   $('#start').onclick=()=>{ ensureAudio(); musicStart(); $('#load').style.display='none'; loadingDone=true; };
 }
 boot().catch(e=>showErr('Грешка при зареждане на стъпка „'+curStep+'“: '+e.message,true));
-window.__sf={doSpin,runBonus,S,Wallet,reels,busy:()=>busy};
+
 </script></body></html>
