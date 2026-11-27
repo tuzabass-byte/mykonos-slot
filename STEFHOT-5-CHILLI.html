@@ -132,7 +132,7 @@ body{background-size:cover;background-position:center}
 #errov{position:fixed;inset:0;background:rgba(10,0,0,.94);z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;gap:22px;padding:24px;text-align:center}
 #errov h2{margin:0;color:#ff6a4a;font-size:30px}
 #errmsg{font-size:19px;max-width:760px;line-height:1.45;color:#ffd9c0;word-break:break-word}
-</style></head>
+#loading{gap:18px;padding:20px} #loading .logo,#pbar,#pct,#pstep{flex-shrink:0} #tap{flex:0 0 auto;width:min(82vw,340px);height:66px;min-height:66px;padding:0 24px;font-size:24px;background:linear-gradient(#ffdf76,#e58b20);color:#401400;box-shadow:0 0 24px #ff790066}</style></head>
 <body>
 <div id="shade"></div>
 <div id="game" class="land">
@@ -150,7 +150,7 @@ body{background-size:cover;background-position:center}
  <button class="round red" id="btnSpin" aria-label="Spin"><svg viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round"><path d="M20 50a30 30 0 0 1 52-20"/><path d="M80 50a30 30 0 0 1-52 20"/><path d="M76 12v22H54" fill="#fff" stroke-linejoin="round"/><path d="M24 88V66h22" fill="#fff" stroke-linejoin="round"/></svg></button>
  <button id="btnBuy" aria-label="Buy wild">BUY WILD</button>
  <div id="autoBadge"></div>
- <div id="note">Virtual credits only. No real payments or withdrawals.</div>
+ <div id="note">Play credits · No cash value</div>
  <div id="rsBanner"><div id="rsTitle">FREE RESPIN</div></div>
  <div id="seqBox"></div>
  <div id="banner"><div id="bTitle">BIG WIN</div><div id="bAmt">€0.00</div></div>
@@ -444,17 +444,17 @@ function buildInfo(){const bet=BETS[betIdx],lb=bet/5;let h='<p class="demo">Virt
  h+='</div><h3>RULES</h3><p>Wins pay from the left on adjacent reels, 3, 4 or 5 matching symbols on a payline. Cherry also pays for 2. Line wins are multipliers of the line bet (bet / 5) = '+fmt(lb)+'. Only the highest win per line is paid; line wins are added together.</p>'+
  '<p><b>WILD</b> (red chilli) appears only on reels 2, 3 and 4. When a WILD lands anywhere on its reel, the whole reel expands into a full WILD reel. WILD substitutes all symbols except the SCATTER. All three reels can be WILD at once.</p>'+
  '<p><b>SCATTER</b> (bananas) pays anywhere on the reels, not by line: 3 / 4 / 5 bananas pay 2x / 10x / 50x the total bet ('+[3,4,5].map(n=>fmt(SCATTER_PAY[n]*bet)).join(' / ')+'), added to line wins. WILD never substitutes the SCATTER.</p>'+
- '<h3>BUY WILD</h3><p>The BUY WILD button buys a paid spin with guaranteed expanded WILD reels, followed by a <b>FREE RESPIN</b>. <b>BUY 3 WILD</b> ('+BUY_X[3]+'x bet = '+fmt(buyPrice(3))+'): reels 2, 3 and 4 are all expanded WILD; after the spin you get exactly 1 free respin. <b>BUY 2 WILD</b> ('+BUY_X[2]+'x bet = '+fmt(buyPrice(2))+'): two randomly chosen reels among 2, 3 and 4 are expanded WILD and you get 1 free respin; if the remaining reel lands a WILD in a respin it expands too and awards 1 more free respin (max 2 respins). During each free respin the expanded WILD reels stay locked and the other reels spin again at no extra charge. Line wins and scatter are evaluated after the spin and after every respin; all wins of the sequence are added together, capped at the max win, and paid at the end. The price is deducted once after you confirm and covers the whole sequence, so the normal bet is not charged on top. Free respins exist only for bought spins; natural WILDs in normal spins work as before with no respin. Spin, BUY WILD and autoplay are disabled during the sequence.</p><p><b>BIG WIN</b> from 10x total bet, <b>MEGA WIN</b> from 25x, <b>SUPER WIN</b> from 50x.</p><p><b>MAX WIN:</b> '+MAX_WIN_X+'x total bet = '+fmt(MAX_WIN_X*bet)+' per spin.</p>';
+ '<h3>BUY WILD</h3><p>The BUY WILD button buys a paid spin with guaranteed expanded WILD reels, followed by a <b>FREE RESPIN</b>. <b>BUY 3 WILD</b> ('+BUY_X[3]+'x bet = '+fmt(buyPrice(3))+'): reels 2, 3 and 4 are all expanded WILD; after the spin you get exactly 1 free respin. <b>BUY 2 WILD</b> ('+BUY_X[2]+'x bet = '+fmt(buyPrice(2))+'): two randomly chosen reels among 2, 3 and 4 are expanded WILD and you get 1 free respin; if the remaining reel lands a WILD in a respin it expands too and awards 1 more free respin (max 2 respins). During each free respin the expanded WILD reels stay locked and the other reels spin again at no extra charge. Line wins and scatter are evaluated after the spin and after every respin; each stage win is displayed separately; the balance is settled once for the whole sequence. The price is deducted once after you confirm and covers the whole sequence, so the normal bet is not charged on top. Free respins exist only for bought spins; natural WILDs in normal spins work as before with no respin. Spin, BUY WILD and autoplay are disabled during the sequence.</p><p><b>BIG WIN</b> from 10x total bet, <b>MEGA WIN</b> from 25x, <b>SUPER WIN</b> from 50x.</p><p><b>MAX WIN:</b> '+MAX_WIN_X+'x total bet = '+fmt(MAX_WIN_X*bet)+' per spin.</p>';
  $('infoBody').innerHTML=h;}
 /* ---------- game flow ---------- */
 function countUp(to,ms,fn){return new Promise(res=>{const t0=performance.now();let lt=0;(function f(now){if(S.skip){fn(to);res();return;}const k=Math.min(1,(now-t0)/ms);fn(to*(1-Math.pow(1-k,2)));if(now-lt>75&&k<1){Snd.tick();lt=now;}if(k<1)requestAnimationFrame(f);else res();})(t0);});}
 async function banner(lvl,total,bet){const b=$('banner');$('bTitle').textContent=['','BIG WIN','MEGA WIN','SUPER WIN'][lvl];$('bAmt').textContent=fmt(0);b.style.display='flex';
  const dur=(turbo?.55:1)*[0,3200,4800,6500][lvl];let on=true;const sp=setInterval(()=>spawnCoins(8+lvl*5),120);
  await countUp(total,dur,v=>{$('bAmt').textContent=fmt(v);setLast(v);});$('bAmt').textContent=fmt(total);await sleep(1300);clearInterval(sp);b.style.display='none';}
-async function present(res,bet){const lvl=winLevel(res.total,bet),x=res.total/bet;setHL(res);
+async function present(res,bet,refreshBalance=true){const lvl=winLevel(res.total,bet),x=res.total/bet;setHL(res);
  if(res.scatter.cells.length)Snd.scatter();Snd.win(lvl,x);
  if(lvl>0)await banner(lvl,res.total,bet);else await countUp(res.total,(turbo?.5:1)*(600+Math.min(1600,x*130)),v=>setLast(v));
- setLast(res.total);setBal();S.skip=false;}
+ setLast(res.total);if(refreshBalance)setBal();S.skip=false;}
 async function expandWilds(cols,grid){$('glow').classList.remove('on');void $('glow').offsetWidth;$('glow').classList.add('on');Snd.wild();
  await Promise.all(cols.map((c,i)=>sleep(i*160).then(()=>{const r=reels[c];r.wild={t:0,row:Math.max(0,grid.raw[c].indexOf(9))};return tween(r.wild,'t',0,1,turbo?380:850);})));await sleep(turbo?120:450);}
 async function spin(buyN){if(busy)return false;const bet=BETS[betIdx],cost=buyN?buyPrice(buyN):bet;
@@ -471,7 +471,7 @@ async function spin(buyN){if(busy)return false;const bet=BETS[betIdx],cost=buyN?
 /* bought WILD sequence: initial spin + free respin(s) with locked WILD reels; one total win presentation */
 let seqOn=false;
 function seqShow(left,tot){const b=$('seqBox');b.style.display='block';b.innerHTML='FREE RESPINS LEFT: '+left+'<small>TOTAL '+fmt(tot)+'</small>';}
-async function runBuy(n,bet,sq){const cap=bet*MAX_WIN_X;let cum=0,left=1,locked=[];seqOn=true;$('btnSpin').disabled=true;let finalRes=null;
+async function runBuy(n,bet,sq){const cap=bet*MAX_WIN_X;let cum=0,left=1,locked=[];seqOn=true;$('btnSpin').disabled=true;let finalRes=null;const base=Balance.getBalance()-sq.total;const showStageBalance=()=>{$('vBal').textContent=fmt(base+cum);};showStageBalance();
  try{for(let i=0;i<sq.stages.length;i++){const st=sq.stages[i];S.skip=false;clearHL();
    if(i>0){seqShow(left,cum);Snd.scatter();$('rsBanner').style.display='flex';await sleep(turbo?550:1500);$('rsBanner').style.display='none';}
    Snd.spinLoop(true);startSpin(st.grid,locked);
@@ -479,12 +479,13 @@ async function runBuy(n,bet,sq){const cap=bet*MAX_WIN_X;let cum=0,left=1,locked=
    Snd.spinLoop(false);phase='present';$('btnSpin').classList.remove('busy');
    if(st.newWilds.length)await expandWilds(st.newWilds,st.grid);
    locked=locked.concat(st.newWilds);if(i>0){left--;if(st.newWilds.length)left++;}
-   cum=Math.round(Math.min(cap,cum+st.res.total)*100)/100;seqShow(left,cum);
-   if(i<sq.stages.length-1){if(st.res.total>0){setHL(st.res);if(st.res.scatter.cells.length)Snd.scatter();await sleep(turbo?500:1300);}}
-   else finalRes={total:sq.total,lines:st.res.lines,scatter:st.res.scatter,wilds:st.res.wilds,capped:sq.capped};
-   S.skip=false;}
-  if(finalRes.total>0)await present(finalRes,bet);
- }finally{seqOn=false;$('btnSpin').disabled=false;$('seqBox').style.display='none';$('rsBanner').style.display='none';busy=false;phase='idle';S.skip=false;setBet();}
+   const stageWin=Math.round(Math.min(Math.max(0,cap-cum),st.res.total)*100)/100;
+    cum=Math.round((cum+stageWin)*100)/100;seqShow(left,cum);
+    const stageRes={...st.res,total:stageWin};setLast(0);
+    if(stageWin>0){await present(stageRes,bet,false);showStageBalance();await sleep(turbo?350:850);}
+    finalRes={...stageRes,total:cum,capped:sq.capped};S.skip=false;}
+   setLast(cum);setBal();
+  }finally{seqOn=false;$('btnSpin').disabled=false;$('seqBox').style.display='none';$('rsBanner').style.display='none';busy=false;phase='idle';S.skip=false;setBet();}
  window.__last={grid:sq.stages[sq.stages.length-1].grid,res:finalRes,seq:sq};return true;}
 async function runAuto(n){if(auto>0)return;ensureAudio();auto=n;updAuto();while(auto>0){const ok=await spin();if(!ok){auto=0;break;}if(auto<=0)break;auto--;updAuto();if(auto<=0)break;await sleep(turbo?250:((window.__last&&window.__last.res.total>0)?1500:450));}auto=0;updAuto();}
 function stopAuto(){auto=0;updAuto();skipNow();}
